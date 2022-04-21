@@ -10,8 +10,9 @@ class User extends Validate
     protected $rule = [
         'username' => 'require|alphaNum|length:5,20',
         'password' => 'require|length:5,20',
-        'repassword' => 'require',
         'captcha' => 'require|captcha',
+        'useremail' => 'require|email',
+        'appid' => 'require|number',
 
     ];
 
@@ -21,12 +22,17 @@ class User extends Validate
         'username.alphaNum' => '用户名只能是字母和数字',
         'password.require' => '密码不能为空',
         'repassword.require' => '确认密码不能为空',
+        'password.length' => '密码长度不正确',
+        'useremail.require' => '邮箱不能为空',
+        'useremail.email' => '邮箱格式不正确',
+        'appid.require' => 'appid不能为空',
+        'appid.number' => 'appid必须是数字',
     ];
 
     //验证场景
     protected $scene = [
         'Login' => ['username', 'password', 'captcha'],
-        'edit' => ['username', 'password', 'repassword'],
+        'adduser' => ['username', 'password', 'useremail', 'appid'],
     ];
 
 }

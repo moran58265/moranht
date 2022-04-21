@@ -30,6 +30,7 @@ class Index extends BaseController
         $data = array();
         $data['register'] = Db::query("SELECT FROM_UNIXTIME( creattime, '%m-%d' ) AS date,COUNT( * ) AS count FROM mr_user GROUP BY date ORDER BY date desc LIMIT 7");
         //循环获取数组中的日期date
+        $result = array();
         foreach ($data['register'] as $key => $value) {
             $result['date'][] = $value['date'];
             $result['count'][] = $value['count'];
@@ -41,6 +42,7 @@ class Index extends BaseController
         $data = array();
         $data['register'] = Db::query("SELECT FROM_UNIXTIME( creattime, '%m-%d' ) AS month,COUNT( * ) AS usernum FROM mr_user GROUP BY month ORDER BY month desc LIMIT 10");
         //循环获取数组中的日期date
+        $result = array();
         foreach ($data['register'] as $key => $value) {
             $result['month'][] = $value['month'];
             $result['usernum'][] = $value['usernum'];

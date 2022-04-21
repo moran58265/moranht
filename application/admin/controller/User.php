@@ -3,11 +3,13 @@
 namespace app\admin\controller;
 
 use app\admin\model\User as UserModel;
+use app\admin\validate\User as UserValidate;
 use app\common\controller\Common;
 use think\Db;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 use think\exception\DbException;
+use think\facade\Request;
 
 class User extends BaseController
 {
@@ -73,14 +75,14 @@ class User extends BaseController
         return Common::ReturnSuccess("修改成功");
     }
 
-    //修改app
+    //修改user
     public function queryuser()
     {
         $id = input('id');
         $user = UserModel::get($id);
         return $this->fetch()->assign('user',$user);
     }
-    //修改app信息
+    //修改user信息
     public function edituser()
     {
         $data = input('post.');
@@ -92,6 +94,33 @@ class User extends BaseController
         } else {
             return Common::ReturnError('修改失败');
         }
+    }
+
+    //添加用户
+    public function adduser()
+    {
+        $data = input('post.');
+        $validate = new UserValidate();
+        if (!$validate->scene('adduser')->check($data)){
+            return Common::ReturnError($validate->getError());
+        }
+        $useremail = UserModel::get(['useremail' => $data['useremail']]);
+        $app = \app\admin\model\App::get($data['appid']);
+        if ($app == null) {
+            return Common::ReturnError('应用不存在');
+        }
+        if ($useremail != null) {
+            return Common::ReturnError('邮箱已存在');
+        }
+        $user = new UserModel();
+        $data['password'] = md5($data['password']);
+        $data['viptime'] = time()+$app->zcvip*24*60*60;
+        $data['money'] = $app->zcmoney;
+        $data['exp'] = $app->zcexp;
+        $data['usertx'] =  Request::scheme() . "://" . Request::host() . "/" . "usertx.png";
+        $data['creattime'] = time();
+        $res = $user->save($data);
+        return Common::ReturnSuccess('添加成功');
     }
 
 }

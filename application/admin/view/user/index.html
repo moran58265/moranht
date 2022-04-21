@@ -33,26 +33,36 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h6 class="modal-title" id="exampleModalLabel">新增app</h6>
+                            <h6 class="modal-title" id="exampleModalLabel">新增用户</h6>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group">
-                                <label for="appname">应用名称</label>
-                                <input type="text" class="form-control" id="appname" placeholder="请输入应用名称">
+                            <div class="form-group" >
+                                <label for="username">用户名</label>
+                                <input type="text" class="form-control" id="username" placeholder="请输入用户名">
+                            </div>
+                            <div class="form-group" >
+                                <label for="password">用户密码</label>
+                                <input type="text" class="form-control" id="password" placeholder="请输入用户密码">
+                            </div>
+                            <div class="form-group" >
+                                <label for="useremail">用户邮箱</label>
+                                <input type="email" class="form-control" id="useremail" placeholder="请输入用户邮箱">
+                            </div>
+                            <div class="form-group" >
+                                <label for="appid">appid</label>
+                                <input type="text" class="form-control" id="appid" placeholder="请输入应用id">
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" id="shutdown"
-                                data-dismiss="modal">关闭</button>
-                            <button type="button" id="addbtn" onclick="addapp()" class="btn btn-primary">保存</button>
+                            <button type="button" class="btn btn-secondary" id="shutdown" data-dismiss="modal">关闭</button>
+                            <button type="button" id="addbtn" onclick="adduser()" class="btn btn-primary">保存</button>
                         </div>
                     </div>
                 </div>
@@ -273,18 +283,24 @@
         return postData;
     }
 
-    function addapp() {
+    function adduser() {
         $("#addbtn").attr('disable', 'true');
         var l = $("#addbtn").lyearloading({
             opacity: 0.2,
             spinnerSize: 'nm'
         });
-        var appname = $.trim($("#appname").val());
+        var username = $.trim($("#username").val());
+        var password = $.trim($("#password").val());
+        var useremail = $.trim($("#useremail").val());
+        var appid = $.trim($("#appid").val());
         $.ajax({
             type: "POST",
-            url: "{:url('app/addapp')}",
+            url: "{:url('user/adduser')}",
             data: {
-                appname: appname,
+                username: username,
+                password: password,
+                useremail: useremail,
+                appid: appid
             },
             dataType: "json",
             success: function (data) {

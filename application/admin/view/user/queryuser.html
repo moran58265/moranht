@@ -1,0 +1,264 @@
+{php}$title= '用户信息';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+
+    <div class="container-fluid p-t-15">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group" >
+                            <label for="username">用户名</label>
+                            <input type="hidden" class="form-control" id="id" value="{$user.id}" disabled>
+                            <input type="text" class="form-control" id="username" value="{$user.username}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="nickname">昵称</label>
+                            <input type="text" class="form-control" id="nickname" value="{$user.nickname}" placeholder="请输入昵称">
+                        </div>
+                        <div class="form-group file-group">
+                            <label for="usertx">用户头像</label>
+                            <div class="input-group">
+                                <input type="text" id="usertx" class="form-control file-value" name="web_site_logo" value="{$user.usertx}" placeholder="用户头像">
+                                <input type="file" accaccept=".png,.jpg,.jpeg,.bmp,.gif" style="display: none">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default file-browser" type="button">上传图片</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qq">qq</label>
+                            <input type="text" class="form-control" id="qq" value="{$user.qq}" placeholder="请输入qq">
+                        </div>
+                        <div class="form-group">
+                            <label for="useremail">邮箱</label>
+                            <input type="text" class="form-control" id="useremail" value="{$user.useremail}" placeholder="请输入邮箱">
+                        </div>
+                        <div class="form-group">
+                            <label for="signature">个性签名</label>
+                            <input type="text" class="form-control" id="signature" value="{$user.signature}" placeholder="请输入个性签名">
+                        </div>
+                        <div class="form-group">
+                            <label for="title">头衔</label>
+                            <input type="text" class="form-control" id="title" value="{$user.title}" placeholder="请输入头衔">
+                        </div>
+                        <div class="form-group">
+                            <label for="viptime">VIP时间</label>
+                            <input class="form-control" id="viptime" type="text" data-provide="datetimepicker" name="datetime" placeholder="请选择具体时间" value="{$user['viptime']|date='Y-m-d H:i:s'}" data-side-by-side="true" data-format="YYYY-MM-DD HH:mm">
+                        </div>
+                        <div class="form-group">
+                            <label for="money">金币</label>
+                            <input type="text" class="form-control" id="money" value="{$user.money}" placeholder="请输入余额">
+                        </div>
+                        <div class="form-group">
+                            <label for="exp">经验</label>
+                            <input type="text" class="form-control" id="exp" value="{$user.exp}" placeholder="请输入经验">
+                        </div>
+                        <div class="form-group">
+                            <label for="banned">是否封禁</label>
+                            <select class="form-control" id="banned" onchange="changenone(this)">
+                                {if $user['banned'] == 'true'} <option value="true" selected>是</option><option value="false">否</option>
+                                {else /}<option value="true" >是</option><option value="false" selected>否</option>
+                                {/if}
+                            </select>
+                        </div>
+                        <div class="form-group" id="select_else">
+                            <label for="banned_reason">封禁理由</label>
+                            <input type="text" class="form-control" id="banned_reason" value="{$user.banned_reason}" placeholder="请输入封禁理由">
+                        </div>
+
+                        <button type="button" onclick="updateapp()" class="btn btn-primary mb-2">提交</button>
+                        <button type="button" class="btn btn-default mb-2" onclick="javascript:history.back(-1);return false;">返 回
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+    var banned = $("#banned").val();
+    //console.log(banned);
+    if (banned == 'false'){
+        document.getElementById("select_else").style.display="none";
+    }
+    <!--  改变select显示-->
+    function changenone(obj)
+    {
+        if(obj.options[obj.selectedIndex].value =="true")
+            document.getElementById("select_else").style.display="";
+        else
+            document.getElementById("select_else").style.display="none";
+    }
+    function updateapp(){
+        var l = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg',
+            spinnerText: '后台处理中，请稍后...',
+            textColorClass: 'text-info',
+            spinnerColorClass: 'text-info'
+        });
+        var id = $.trim($("#id").val());
+        var nickname = $.trim($("#nickname").val());
+        var usertx = $.trim($("#usertx").val());
+        var qq = $.trim($("#qq").val());
+        var useremail = $.trim($("#useremail").val());
+        var signature = $.trim($("#signature").val());
+        var title = $.trim($("#title").val());
+        var viptime = $.trim($("#viptime").val());
+        var money = $.trim($("#money").val());
+        var exp = $.trim($("#exp").val());
+        var banned = $.trim($("#banned").val());
+        var banned_reason = $.trim($("#banned_reason").val());
+        $.ajax({
+            type: "POST",
+            url: "{:url('user/edituser')}",
+            data: {
+                id: id,
+                nickname: nickname,
+                usertx: usertx,
+                qq: qq,
+                useremail: useremail,
+                signature: signature,
+                title:title,
+                viptime:viptime,
+                money: money,
+                exp: exp,
+                banned: banned,
+                banned_reason: banned_reason,
+            },
+            dataType: "json",
+            success: function (data) {
+                setTimeout(function() {
+                    l.destroy();
+                }, 1e3)
+                if (data.code == 200){
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                }else{
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        // settings
+                        type: 'danger'
+                    });
+                }
+            }
+        })
+    }
+
+    $(document).ready(function() {
+        $(document).on('click', '.file-browser', function() {
+            var $browser = $(this);
+            var file = $browser.closest('.file-group').find('[type="file"]');
+            file.on( 'click', function(e) {
+                e.stopPropagation();
+            });
+            file.trigger('click');
+        });
+
+        $(document).on('change', '.file-group [type="file"]', function() {
+            var l = $('body').lyearloading({
+                opacity: 0.2,
+                spinnerSize: 'lg',
+                spinnerText: '后台处理中，请稍后...',
+                textColorClass: 'text-info',
+                spinnerColorClass: 'text-info'
+            });
+            var $this    = $(this);
+            var $input   = $(this)[0];
+            var $len     = $input.files.length;
+            var formFile = new FormData();
+
+            if ($len == 0) {
+                return false;
+            } else {
+                var fileAccaccept = $this.attr('accaccept');
+                var fileType      = $input.files[0].type;
+                var type          = (fileType.substr(fileType.lastIndexOf("/") + 1)).toLowerCase();
+
+                if (!type || fileAccaccept.indexOf(type) == -1) {
+                    $.notify({
+                        message: '您上传图片的类型不符合(.jpg|.jpeg|.gif|.png|.bmp)',
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                    l.destroy();
+                    return false;
+                }
+                formFile.append("file", $input.files[0]);
+            }
+
+            var data = formFile;
+
+            $.ajax({
+                url: "{:url('index/upload')}",
+                data: data,
+                type: "POST",
+                dataType: "json",
+                //上传文件无需缓存
+                cache: false,
+                //用于对data参数进行序列化处理 这里必须false
+                processData: false,
+                //必须
+                contentType: false,
+                success: function (res) {
+                    setTimeout(function() {
+                        l.destroy();
+                    }, 1e3)
+                    if (res.code == 200) {
+                        $.notify({
+                            message: res.msg
+                        },{
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            type: 'success'
+                        });
+                        //console.log(res.data.filePath);
+                        $this.closest('.file-group').find('.file-value').val(res.data.fullPath);
+                    } else {
+                        $.notify({
+                            message: "系统错误"
+                        },{
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            // settings
+                            type: 'danger'
+                        });
+                    }
+                },
+            });
+        });
+    });
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <meta name="author" content="yinq">
+  <title>后台登录</title>
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" type="text/css" href="/static/css/materialdesignicons.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/animate.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/js/jquery-confirm/jquery-confirm.min.css">
+  <style>
+    .login-form .has-feedback {
+      position: relative;
+    }
+
+    .login-form .has-feedback .form-control {
+      padding-left: 36px;
+    }
+
+    .login-form .has-feedback .mdi {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: auto;
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      z-index: 4;
+      color: #dcdcdc;
+      display: block;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .login-form .has-feedback.row .mdi {
+      left: 15px;
+    }
+  </style>
+</head>
+
+<body class="center-vh" style="background-image: url(/static/images/login-bg-2.jpg); background-size: cover;">
+  <div class="card card-shadowed p-5 w-420 mb-0 mr-2 ml-2">
+    <div class="text-center mb-3">
+      <h3>后台登录</h3>
+    </div>
+
+    <form action="{:url('login/doLogin')}" method="post" class="login-form" onsubmit="return login();">
+      <div class="form-group has-feedback">
+        <span class="mdi mdi-account" aria-hidden="true"></span>
+        <input type="text" class="form-control" name="username" id="username" placeholder="用户名">
+      </div>
+
+      <div class="form-group has-feedback">
+        <span class="mdi mdi-lock" aria-hidden="true"></span>
+        <input type="password" class="form-control" name="password" id="password" placeholder="密码">
+      </div>
+
+      <div class="form-group has-feedback row">
+        <div class="col-7">
+          <span class="mdi mdi-check-all form-control-feedback" aria-hidden="true"></span>
+          <input type="text" id="captcha" name="captcha" class="form-control" placeholder="验证码">
+        </div>
+        <div class="col-5 text-right">
+          <img src="{:captcha_src()}" class="pull-right" style="cursor: pointer;"
+            onclick="this.src=this.src+'?d='+Math.random();" id="clickcode" title="点击刷新" alt="captcha">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="rememberme">
+          <label class="custom-control-label not-user-select" for="rememberme">5天内自动登录</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn-block btn-primary" type="submit">立即登录</button>
+      </div>
+    </form>
+
+    <p class="text-center text-muted mb-0">Copyright © 2020 <a href="http://lyear.itshubao.com">IT书包</a>. All right
+      reserved</p>
+  </div>
+
+  <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/static/js/popper.min.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/perfect-scrollbar.min.js"></script>
+  <script type="text/javascript" src="/static/js/jquery.cookie.min.js"></script>
+  <script type="text/javascript" src="/static/js/jquery-confirm/jquery-confirm.min.js"></script>
+  <script type="text/javascript" src="/static/js/lyear-loading.js"></script>
+  <script type="text/javascript" src="/static/js/main.min.js"></script>
+  <script type="text/javascript">
+    //from提交 验证  ajax
+    function login() {
+      var l = $('body').lyearloading({
+        opacity: 0.2,
+        spinnerSize: 'lg'
+      });
+      var username = $('#username').val();
+      var password = $('#password').val();
+      var captcha = $('#captcha').val();
+      if (username == "" || password == "" || captcha == ""){
+        l.destroy();
+        $.alert({
+          title: '错误提示',
+          icon: 'mdi mdi-alert',
+          type: 'red',
+          content: '请输入完整！'
+        });
+        $("#clickcode").click();
+        return false;
+      }
+      $.ajax({
+        url: "{:url('login/doLogin')}",
+        type: 'post',
+        data: {
+          username: username,
+          password: password,
+          captcha: captcha
+        },
+        dataType: 'json',
+        success: function (data) {
+          console.log(data);
+          if (data.code == 200) {
+            //登录成功
+            l.destroy();
+            $.alert({
+              title: '提示',
+              icon: 'mdi mdi-check',
+              type: 'green',
+              content: data.msg,
+              buttons: {
+                ok: {
+                  text: '确定',
+                  action: function () {
+                    window.location.href = "{:url('index/index')}";
+                  }
+                }
+              }
+            });
+          } else {
+            l.destroy();
+            $.alert({
+              title: '错误提示',
+              icon: 'mdi mdi-alert',
+              type: 'red',
+              content: data.msg
+            });
+            $("#clickcode").click();
+          }
+        }
+      });
+      return false;
+    }
+  </script>
+</body>
+
+</html>

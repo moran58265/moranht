@@ -1,0 +1,98 @@
+{php}$title= '添加卡密';{/php}
+{include file="layout/header"}
+<main class="lyear-layout-content">
+
+    <div class="container-fluid p-t-15">
+        <div class="row">
+            <!--多条件搜索-->
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header"><h4>导出卡密条件筛选</h4></div>
+                    <form method="post" action="{:url('km/exportdo')}" onsubmit="return exporttxt();">
+                    <div class="card-body">
+                            <div class="form-group">
+                                <label for="isuse">是否使用</label>
+                                    <select name="isuse" id="isuse" class="form-control">
+                                        <option value="true">是</option>
+                                        <option value="false" selected>否</option>
+                                    </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="appid">appid</label>
+                                <input type="text" class="form-control" id="appid" name="appid"  placeholder="请输入应用id">
+                            </div>
+                            <div class="form-group">
+                                <label for="classification">卡密分类名称</label>
+                                <input type="text" class="form-control" id="classification" name="classification"  placeholder="请输入卡密分类名称">
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" name="submit" class="btn btn-default" value="导出">
+                                </div>
+                            </div>
+                    </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+    function exporttxt() {
+        var isuse = $('#isuse').val();
+        var appid = $('#appid').val();
+        var classification = $('#classification').val();
+        if (isuse == '' || appid == '' || classification == '') {
+            $.notify({
+                message: "请输入完整导出的条件内容"
+            },{
+                placement: {
+                    from: "top",
+                    align: "center"
+                },
+                type: 'success'
+            });
+            return false;
+        }
+        //ajax提交
+        $.ajax({
+            type: "POST",
+            url: "{:url('km/validatekm')}",
+            data: {isuse: isuse, appid: appid, classification: classification},
+            dataType: "json",
+            success: function (data) {
+                if (data.code == 400) {
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'danger'
+                    });
+                    return false;
+                } else {
+                    $.notify({
+                        message: "导出成功"
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                    return true;
+                }
+            }
+        });
+    }
+</script>
+</body>
+
+</html>

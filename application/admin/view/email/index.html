@@ -1,0 +1,165 @@
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+
+  <div class="container-fluid p-t-15">
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="username">邮箱账号</label>
+              <input type="text" class="form-control" id="username" value="{$email.username}" placeholder="请输入邮箱账号">
+            </div>
+            <div class="form-group">
+              <label for="password">账号密码(授权码)</label>
+              <input type="text" class="form-control" id="password" value="{$email.password}" placeholder="请输入账号密码(授权码)">
+            </div>
+            <div class="form-group">
+              <label for="mail_way">发信方式</label>
+              <input type="text" class="form-control" id="mail_way" value="{$email.mail_way}" placeholder="请输入发信方式">
+            </div>
+            <div class="form-group" >
+              <label for="port">发信端口</label>
+              <input type="text" class="form-control" id="port" value="{$email.port}" placeholder="请输入发信端口">
+            </div>
+            <div class="form-group">
+              <label for="email_title">发信标题</label>
+              <input type="text" class="form-control" id="email_title" value="{$email.email_title}" placeholder="请输入发信标题">
+            </div>
+            <div class="form-group">
+              <label for="test_email">测试邮箱</label>
+              <input type="email" class="form-control" id="test_email" placeholder="请输入测试邮箱">
+            </div>
+            <button type="button" onclick="updateemail()" class="btn btn-primary mb-2">保存</button>
+            <button type="button" class="btn btn-primary mb-2" onclick="testemail()">测  试</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+  function updateemail(){
+    var l = $('body').lyearloading({
+      opacity: 0.2,
+      spinnerSize: 'lg',
+      spinnerText: '后台处理中，请稍后...',
+      textColorClass: 'text-info',
+      spinnerColorClass: 'text-info'
+    });
+    var username = $.trim($("#username").val());
+    var port = $.trim($("#port").val());
+    var mail_way = $.trim($("#mail_way").val());
+    var password = $.trim($("#password").val());
+    var email_title = $.trim($("#email_title").val());
+    $.ajax({
+      type: "POST",
+      url: "{:url('email/save')}",
+      data: {
+        username: username,
+        port: port,
+        mail_way: mail_way,
+        password: password,
+        email_title: email_title
+      },
+      dataType: "json",
+      success: function (data) {
+        setTimeout(function() {
+          l.destroy();
+        }, 1e3)
+        if (data.code == 200){
+          $.notify({
+            message: data.msg
+          },{
+            placement: {
+              from: "top",
+              align: "center"
+            },
+            type: 'success'
+          });
+        }else{
+          $.notify({
+            message: data.msg
+          },{
+            placement: {
+              from: "top",
+              align: "center"
+            },
+            // settings
+            type: 'danger'
+          });
+        }
+      }
+    })
+  }
+
+  function testemail(){
+    var test_email = $.trim($("#test_email").val());
+    if (test_email == "" || test_email == null){
+      $.notify({
+        message: "请输入测试邮箱账号"
+      },{
+        placement: {
+          from: "top",
+          align: "center"
+        },
+        // settings
+        type: 'danger'
+      });
+      return false;
+    }
+    var l = $('body').lyearloading({
+      opacity: 0.2,
+      spinnerSize: 'lg',
+      spinnerText: '后台处理中，请稍后...',
+      textColorClass: 'text-info',
+      spinnerColorClass: 'text-info'
+    });
+
+    $.ajax({
+      type: "POST",
+      url: "{:url('email/TestEmail')}",
+      data: {
+        test_email: test_email
+      },
+      dataType: "json",
+      success: function (data) {
+        setTimeout(function() {
+          l.destroy();
+        }, 1e3)
+        if (data.code == 200){
+          $.notify({
+            message: data.msg
+          },{
+            placement: {
+              from: "top",
+              align: "center"
+            },
+            type: 'success'
+          });
+        }else{
+          $.notify({
+            message: data.msg
+          },{
+            placement: {
+              from: "top",
+              align: "center"
+            },
+            // settings
+            type: 'danger'
+          });
+        }
+      }
+    })
+  }
+</script>
+
+</body>
+
+</html>

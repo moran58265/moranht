@@ -1,0 +1,112 @@
+{php}$title= '添加卡密';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+
+    <div class="container-fluid p-t-15">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="exp">经验值</label>
+                            <input type="text" class="form-control" id="exp"  placeholder="请输入经验值">
+                        </div>
+                        <div class="form-group">
+                            <label for="money">金币值</label>
+                            <input type="text" class="form-control" id="money"  placeholder="请输入金币值">
+                        </div>
+                        <div class="form-group">
+                            <label for="vip">vip天数</label>
+                            <input type="text" class="form-control" id="vip" placeholder="请输入vip天数">
+                        </div>
+                        <div class="form-group">
+                            <label for="generatenum">生成数量</label>
+                            <input type="text" class="form-control" id="generatenum" placeholder="请输入生成数量">
+                        </div>
+                        <div class="form-group">
+                            <label for="kmlength">卡密长度</label>
+                            <input type="text" class="form-control" id="kmlength" placeholder="请输入卡密长度">
+                        </div>
+                        <div class="form-group">
+                            <label for="classification">卡密分类</label>
+                            <input type="text" class="form-control" id="classification" placeholder="请输入卡密分类">
+                        </div>
+                        <div class="form-group">
+                            <label for="appid">应用id</label>
+                            <input type="text" class="form-control" id="appid" placeholder="请输入应用id">
+                        </div>
+                        <button type="button" onclick="addkm()" class="btn btn-primary mb-2">提交</button>
+                        <button type="button" class="btn btn-default mb-2" onclick="javascript:history.back(-1);return false;">返 回
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+    function addkm(){
+        $("body").attr('disable', 'true');
+        var l = $("body").lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'nm'
+        });
+        var exp = $.trim($("#exp").val());
+        var money = $.trim($("#money").val());
+        var vip = $.trim($("#vip").val());
+        var generatenum = $.trim($("#generatenum").val());
+        var kmlength = $.trim($("#kmlength").val());
+        var appid = $.trim($("#appid").val());
+        var classification = $.trim($("#classification").val());
+        $.ajax({
+            type: "POST",
+            url: "{:url('km/addkmdo')}",
+            data: {
+                exp: exp,
+                money: money,
+                vip: vip,
+                generatenum: generatenum,
+                kmlength: kmlength,
+                appid: appid,
+                classification: classification
+            },
+            dataType: "json",
+            success: function (data) {
+                setTimeout(function () {
+                    l.destroy();}, 1e3)
+                if (data.code == 200){
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                    setTimeout("location.reload();", 1000);
+                }else{
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        // settings
+                        type: 'danger'
+                    });
+                }
+            }
+        })
+    }
+</script>
+</body>
+
+</html>

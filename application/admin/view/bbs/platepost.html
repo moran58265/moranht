@@ -1,0 +1,355 @@
+{php}$title= '板块信息';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+    <div class="container-fluid p-t-15">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-toolbar d-flex flex-column flex-md-row">
+
+                        <!--                        <div class="search-bar ml-md-auto">-->
+                        <!--                            <input type="hidden" name="search_field" id="search-field" value="title" />-->
+                        <!--                            <div class="input-group ml-md-auto">-->
+                        <!--                                <div class="input-group mb-3">-->
+                        <!--                                    <input type="text" id="searchusername" class="form-control" placeholder="请输入板块名称">-->
+                        <!--                                    <div class="input-group-append">-->
+                        <!--                                        <span class="input-group-text" onclick="searchplate()">搜索</span>-->
+                        <!--                                    </div>-->
+                        <!--                                </div>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                    </div>
+                    <div class="card-body">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="search_result">
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>帖子标题</th>
+                                    <th>用户名</th>
+                                    <th>板块名称</th>
+                                    <th>访问量</th>
+                                    <th>评论量</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {volist name="list" id="post" key="u"}
+                                    <td>{$u}</td>
+                                    <td>{$post.postname}</td>
+                                    <td>{$post.username}</td>
+                                    <td>{$post.platename}</td>
+                                    <td>{$post.view}</td>
+                                    <td>{$post.commentnum}</td>
+                                    <td>{$post.creat_time}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a class="btn btn-xs btn-default" href='/admin/bbs/querypost/id/{$post.id}' title="" data-toggle="tooltip" data-original-title="编辑"><i class="mdi mdi-pencil"></i></a>
+                                            <a class="btn btn-xs btn-default id ajax-get confirm" dataid = "{$post.id}" onclick="deleteplatepost(this)" title="" data-toggle="tooltip" data-original-title="删除"><i class="mdi mdi-window-close"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {/volist}
+                                </tbody>
+                            </table>
+                        </div>
+                        {$page|raw}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+
+    $(document).ready(function() {
+        $(document).on('click', '.file-browser', function() {
+            var $browser = $(this);
+            var file = $browser.closest('.file-group').find('[type="file"]');
+            file.on( 'click', function(e) {
+                e.stopPropagation();
+            });
+            file.trigger('click');
+        });
+
+        $(document).on('change', '.file-group [type="file"]', function() {
+            var l = $('body').lyearloading({
+                opacity: 0.2,
+                spinnerSize: 'lg',
+                spinnerText: '后台处理中，请稍后...',
+                textColorClass: 'text-info',
+                spinnerColorClass: 'text-info'
+            });
+            var $this    = $(this);
+            var $input   = $(this)[0];
+            var $len     = $input.files.length;
+            var formFile = new FormData();
+
+            if ($len == 0) {
+                return false;
+            } else {
+                var fileAccaccept = $this.attr('accaccept');
+                var fileType      = $input.files[0].type;
+                var type          = (fileType.substr(fileType.lastIndexOf("/") + 1)).toLowerCase();
+
+                if (!type || fileAccaccept.indexOf(type) == -1) {
+                    $.notify({
+                        message: '您上传图片的类型不符合(.jpg|.jpeg|.gif|.png|.bmp)',
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                    l.destroy();
+                    return false;
+                }
+                formFile.append("file", $input.files[0]);
+            }
+
+            var data = formFile;
+
+            $.ajax({
+                url: "{:url('/admin/app/upload')}",
+                data: data,
+                type: "POST",
+                dataType: "json",
+                //上传文件无需缓存
+                cache: false,
+                //用于对data参数进行序列化处理 这里必须false
+                processData: false,
+                //必须
+                contentType: false,
+                success: function (res) {
+                    setTimeout(function() {
+                        l.destroy();
+                    }, 1e3)
+                    if (res.code == 200) {
+                        $.notify({
+                            message: res.msg
+                        },{
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            type: 'success'
+                        });
+                        //console.log(res.data[0].filePath);
+                        $this.closest('.file-group').find('.file-value').val(res.data[0].fullPath);
+                    } else {
+                        $.notify({
+                            message: "系统错误"
+                        },{
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            // settings
+                            type: 'danger'
+                        });
+                    }
+                },
+            });
+        });
+    });
+
+    function getnumber() {
+        var date = $("input[name = 'ids[]']");
+        var str = [];
+        for(let i = 0;i < date.length;i++) {
+            if (date[i].checked == true) {
+                str.push(date[i].value);
+            }
+        }
+        return str;
+    }
+
+    function deleteplatepost(obj){
+        var l = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg',
+            spinnerText: '后台处理中，请稍后...',
+            textColorClass: 'text-info',
+            spinnerColorClass: 'text-info'
+        });
+        var id = $(obj).attr("dataid");
+        $.ajax({
+            type: "POST",
+            url: "{:url('/admin/bbs/delplatepost')}",
+            data: {
+                id: id,
+            },
+            //dataType: "json",
+            success: function (data) {
+                setTimeout(function() {
+                    l.destroy();
+                }, 1e3)
+                if (data.code == 200) {
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                    setTimeout("location.reload();", 2000);
+                } else {
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        // settings
+                        type: 'danger'
+                    });
+                }
+            },
+        });
+    }
+
+    function delplateposttotal(){
+        var getnum = getnumber().toString();
+        console.log(getnum);
+        if (getnum.length == 0){
+            $.notify({
+                message: "你还没有选择呢",
+            },{
+                placement: {
+                    from: "top",
+                    align: "center"
+                },
+                type: 'success'
+            });
+        }else{
+            var l = $('body').lyearloading({
+                opacity: 0.2,
+                spinnerSize: 'lg',
+                spinnerText: '后台处理中，请稍后...',
+                textColorClass: 'text-info',
+                spinnerColorClass: 'text-info'
+            });
+            $.ajax({
+                type: "POST",
+                url: "{:url('/admin/bbs/delplatepost')}",
+                data: {
+                    id: getnum
+                },
+                dataType: "json",
+                success: function (data) {
+                    setTimeout(function() {
+                        l.destroy();
+                    }, 1e3)
+                    if (data.code == 200) {
+                        $.notify({
+                            message: data.msg
+                        },{
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            type: 'success'
+                        });
+                        setTimeout("location.reload();", 2000);
+                    } else {
+                        $.notify({
+                            message: data.msg
+                        },{
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            // settings
+                            type: 'danger'
+                        });
+                    }
+                },
+            });
+        }
+    }
+
+    function searchplate(){
+        var searchuserplatename = $.trim($("#searchusername").val());
+        if (searchuserplatename == "" || searchuserplatename == null){
+            $.notify({
+                message: '请输入搜索内容'
+            },{
+                placement: {
+                    from: "top",
+                    align: "center"
+                },
+                // settings
+                type: 'danger'
+            });
+            return false;
+        }
+        var l = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg',
+            spinnerText: '后台处理中，请稍后...',
+            textColorClass: 'text-info',
+            spinnerColorClass: 'text-info'
+        });
+        $.ajax({
+            type: "POST",
+            url: "/admin/plate/searchplate",
+            data: {
+                searchuserplatename: searchuserplatename,
+            },
+            dataType: "json",
+            success: function (json) {
+                setTimeout(function() {
+                    l.destroy();
+                }, 1e3)
+                if (json.code == 200){
+                    var s = "<thead><tr><th>ID</th><th>用户名</th><th>昵称</th><th>应用名称</th><th>创建时间</th><th>操作</th></tr></thead><tbody>";
+                    for (var i = 0;i<json.data.length;i++) {
+                        s += '<tr><td>' +
+                            json.data[i].id +
+                            "</td><td>" +
+                            json.data[i].username +
+                            "</td><td>" +
+                            json.data[i].nickname +
+                            "</td><td>" +
+                            json.data[i].appname +
+                            "</td><td>" +
+                            json.data[i].time +
+                            '</td><td><div class="btn-group"> <a class="btn btn-xs btn-default" href="/admin/user/queryuser/id/'+
+                            json.data[i].id +
+                            '"title="" data-toggle="tooltip" data-original-title="编辑"><i class="mdi mdi-pencil"></i></a><a class="btn btn-xs btn-default id ajax-get confirm" dataid = "'+
+                            json.data[i].id +
+                            '" onclick="deleteuser(this)" title="" data-toggle="tooltip" data-original-title="删除"><i class="mdi mdi-window-close"></i></a></td></tr></tbody>';
+                    }
+                    $("#search_result").html(s);
+                }else{
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        // settings
+                        type: 'danger'
+                    });
+                }
+            }
+        })
+    }
+
+</script>
+
+</body>
+
+</html>

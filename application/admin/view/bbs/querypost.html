@@ -1,0 +1,123 @@
+{php}$title= '帖子信息';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+
+    <div class="container-fluid p-t-15">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group" >
+                            <label for="username">帖子标题</label>
+                            <input type="hidden" class="form-control" id="id" value="{$post.id}" disabled>
+                            <input type="text" class="form-control" id="postname" value="{$post.postname}" placeholder="请输入帖子标题">
+                        </div>
+                        <div class="form-group">
+                            <label for="postcontent">帖子内容</label>
+                            <textarea class="form-control" aria-label="With textarea" id="postcontent" style="height: 200px;">{$post.postcontent}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" class="form-control" id="username" value="{$post.username}" placeholder="" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="platename">板块名称</label>
+                            <input type="text" class="form-control" id="platename" value="{$post.platename}" placeholder="请输入板块名称" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="appname">app名称</label>
+                            <input type="text" class="form-control" id="appname" value="{$post.appname}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="lock">是否锁定</label>
+                            <select class="form-control" id="lock" >
+                                {if $post['lock'] == '1'} <option value="1" selected>未锁定</option><option value="0">锁定</option>
+                                {else /}<option value="1">未锁定</option><option selected value="0">锁定</option>
+                                {/if}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="top">是否置顶</label>
+                            <select class="form-control" id="top">
+                                {if $post['top'] == '1'} <option value="1" selected>不置顶</option><option value="0">置顶</option>
+                                {else /}<option value="1">不置顶</option><option selected value="0">置顶</option>
+                                {/if}
+                            </select>
+                        </div>
+                        <button type="button" onclick="updatepost()" class="btn btn-primary mb-2">提交</button>
+                        <button type="button" class="btn btn-default mb-2" onclick="javascript:history.back(-1);return false;">返 回
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+    function updatepost(){
+        var l = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg',
+            spinnerText: '后台处理中，请稍后...',
+            textColorClass: 'text-info',
+            spinnerColorClass: 'text-info'
+        });
+        var id = $.trim($("#id").val());
+        var postname = $.trim($("#postname").val());
+        var postcontent = $.trim($("#postcontent").val());
+        var lock = $.trim($("#lock").val());
+        var top = $.trim($("#top").val());
+        $.ajax({
+            type: "POST",
+            url: "{:url('/admin/bbs/updatepost')}",
+            data: {
+                id: id,
+                postname: postname,
+                postcontent: postcontent,
+                lock: lock,
+                top: top,
+            },
+            dataType: "json",
+            success: function (data) {
+                setTimeout(function() {
+                    l.destroy();
+                }, 1e3)
+                if (data.code == 200){
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                }else{
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        // settings
+                        type: 'danger'
+                    });
+                }
+            }
+        })
+    }
+
+
+
+</script>
+
+</body>
+
+</html>

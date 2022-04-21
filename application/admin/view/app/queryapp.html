@@ -1,0 +1,331 @@
+{php}$title= 'app信息';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+
+  <div class="container-fluid p-t-15">
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <form action="{:url('/admin/app/queryapp')}" method="post">
+              <div class="form-group" >
+                <label for="appid">应用id</label>
+                <input type="text" class="form-control" id="appid" value="{$app.appid}" disabled>
+              </div>
+              <div class="form-group">
+                <label for="appname">应用名称</label>
+                <input type="text" class="form-control" id="appname" value="{$app.appname}" placeholder="请输入应用名称">
+              </div>
+              <div class="form-group file-group">
+                <label for="appicon">应用图标</label>
+                <div class="input-group">
+                  <input type="text" id="appicon" class="form-control file-value" name="web_site_logo" value="{$app.appicon}" placeholder="应用图标">
+                  <input type="file" accaccept=".png,.jpg,.jpeg,.bmp,.gif" style="display: none">
+                  <div class="input-group-btn">
+                    <button class="btn btn-default file-browser" type="button">上传图片</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="introduction">应用简介</label>
+                <input type="text" class="form-control" id="introduction" value="{$app.introduction}" placeholder="请输入应用简介">
+              </div>
+              <div class="form-group">
+                <label for="author">开发者联系QQ</label>
+                <input type="text" class="form-control" id="author" value="{$app.author}" placeholder="请输入开发者联系QQ">
+              </div>
+              <div class="form-group">
+                <label for="group">官方群组</label>
+                <input type="text" class="form-control" id="group" value="{$app.group}" placeholder="请输入官方群组">
+              </div>
+              <div class="form-group">
+                <label for="title">公告标题</label>
+                <input type="text" class="form-control" id="title" value="{$app.title}" placeholder="请输入公告标题">
+              </div>
+              <div class="form-group">
+                <label for="content">公告内容</label>
+                <input type="text" class="form-control" id="content" value="{$app.content}" placeholder="请输入公告内容">
+              </div>
+              <div class="form-group">
+                <label for="version">版本号</label>
+                <input type="text" class="form-control" id="version" value="{$app.version}" placeholder="请输入版本号">
+              </div>
+              <div class="form-group">
+                <label for="updatecontent">更新内容</label>
+                <input type="text" class="form-control" id="updatecontent" value="{$app.updatecontent}" placeholder="请输入更新内容">
+              </div>
+              <div class="form-group">
+                <label for="download">下载地址</label>
+                <input type="text" class="form-control" id="download" value="{$app.download}" placeholder="请输入下载地址">
+              </div>
+              <div class="form-group" >
+                <label for="hierarchy">等级划分</label>
+                <textarea class="form-control" aria-label="With textarea" id="hierarchy" placeholder="必须按照给的格式输入" style="height: 200px;">{$app.hierarchy}</textarea>
+              </div>
+              <div class="form-group">
+                <label for="zcmoney">注册赠送金币</label>
+                <input type="number" class="form-control" id="zcmoney" value="{$app.zcmoney}" placeholder="请输入注册赠送金币">
+              </div>
+              <div class="form-group">
+                <label for="zcexp">注册赠送经验</label>
+                <input type="number" class="form-control" id="zcexp" value="{$app.zcexp}" placeholder="请输入注册赠送经验">
+              </div>
+              <div class="form-group">
+                <label for="zcvip">注册赠送会员天数</label>
+                <input type="number" class="form-control" id="zcvip" value="{$app.zcvip}" placeholder="请输入注册赠送会员天数">
+              </div>
+              <div class="form-group">
+                <label for="signmoney">签到赠送金币</label>
+                <input type="number" class="form-control" id="signmoney" value="{$app.signmoney}" placeholder="请输入签到赠送金币">
+              </div>
+              <div class="form-group">
+                <label for="signexp">签到赠送经验</label>
+                <input type="number" class="form-control" id="signexp" value="{$app.signexp}" placeholder="请输入签到赠送经验">
+              </div>
+              <div class="form-group">
+                <label for="signvip">签到赠送会员天数</label>
+                <input type="number" class="form-control" id="signvip" value="{$app.signvip}" placeholder="请输入签到赠送会员天数">
+              </div>
+              <div class="form-group">
+                <label for="postmoney">发帖赠送金币</label>
+                <input type="number" class="form-control" id="postmoney" value="{$app.postmoney}" placeholder="请输入发帖赠送金币数量">
+              </div>
+              <div class="form-group">
+                <label for="postexp">发帖赠送经验</label>
+                <input type="number" class="form-control" id="postexp" value="{$app.postexp}" placeholder="请输入发帖赠送经验">
+              </div>
+              <div class="form-group">
+                <label for="commentmoney">评论赠送金币</label>
+                <input type="number" class="form-control" id="commentmoney" value="{$app.commentmoney}" placeholder="请输入评论赠送金币数量">
+              </div>
+              <div class="form-group">
+                <label for="commentexp">评论赠送经验</label>
+                <input type="number" class="form-control" id="commentexp" value="{$app.commentexp}" placeholder="请输入评论赠送经验">
+              </div>
+
+              <div class="form-group">
+                <label>是否开启注册验证码</label>
+                <select class="form-control" id="is_email">
+                  {if $app['is_email'] == 'true'} <option value="true" selected>是</option><option value="false">否</option>
+                  {else /}<option value="true" >是</option><option value="false" selected>否</option>
+                  {/if}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>app开关</label>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="app_site_status" checked="">
+                  <label class="custom-control-label" for="app_site_status"></label>
+                </div>
+                <small class="help-block">app关闭后将不能访问，可正常登录,但不能登录注册</small>
+              </div>
+
+              <button type="button" onclick="updateapp()" class="btn btn-primary mb-2">提交</button>
+              <button type="button" class="btn btn-default mb-2" onclick="javascript:history.back(-1);return false;">返 回
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+  document.getElementById("app_site_status").checked = {$app.app_site_status};
+  function updateapp(){
+    var l = $('body').lyearloading({
+      opacity: 0.2,
+      spinnerSize: 'lg',
+      spinnerText: '后台处理中，请稍后...',
+      textColorClass: 'text-info',
+      spinnerColorClass: 'text-info'
+    });
+    var appid = $.trim($("#appid").val());
+    var appname = $.trim($("#appname").val());
+    var appicon = $.trim($("#appicon").val());
+    var introduction = $.trim($("#introduction").val());
+    var author = $.trim($("#author").val());
+    var group = $.trim($("#group").val());
+    var title = $.trim($("#title").val());
+    var content = $.trim($("#content").val());
+    var version = $.trim($("#version").val());
+    var updatecontent = $.trim($("#updatecontent").val());
+    var download = $.trim($("#download").val());
+    var zcmoney = $.trim($("#zcmoney").val());
+    var zcexp = $.trim($("#zcexp").val());
+    var zcvip = $.trim($("#zcvip").val());
+    var signmoney = $.trim($("#signmoney").val());
+    var signexp = $.trim($("#signexp").val());
+    var signvip = $.trim($("#signvip").val());
+    var postmoney = $.trim($("#postmoney").val());
+    var postexp = $.trim($("#postexp").val());
+    var commentmoney = $.trim($("#commentmoney").val());
+    var commentexp = $.trim($("#commentexp").val());
+    var is_email = $.trim($("#is_email").val());
+    var hierarchy = $.trim($("#hierarchy").val());
+    var app_site_status = document.getElementById("app_site_status").checked
+    $.ajax({
+      type: "POST",
+      url: "{:url('app/editapp')}",
+      data: {
+        appid: appid,
+        appname: appname,
+        appicon: appicon,
+        introduction: introduction,
+        author: author,
+        group: group,
+        title:title,
+        content: content,
+        version: version,
+        updatecontent: updatecontent,
+        download: download,
+        zcmoney: zcmoney,
+        zcexp: zcexp,
+        zcvip: zcvip,
+        signexp: signexp,
+        signvip: signvip,
+        signmoney:signmoney,
+        postmoney:postmoney,
+        postexp:postexp,
+        commentmoney:commentmoney,
+        commentexp:commentexp,
+        is_email:is_email,
+        app_site_status: app_site_status,
+        hierarchy:hierarchy,
+      },
+      dataType: "json",
+      success: function (data) {
+        setTimeout(function() {
+          l.destroy();
+        }, 1e3)
+        if (data.code == 200){
+          $.notify({
+            message: data.msg
+          },{
+            placement: {
+              from: "top",
+              align: "center"
+            },
+            type: 'success'
+          });
+        }else{
+          $.notify({
+            message: data.msg
+          },{
+            placement: {
+              from: "top",
+              align: "center"
+            },
+            // settings
+            type: 'danger'
+          });
+        }
+      }
+    })
+  }
+
+  $(document).ready(function() {
+    $(document).on('click', '.file-browser', function() {
+      var $browser = $(this);
+      var file = $browser.closest('.file-group').find('[type="file"]');
+      file.on( 'click', function(e) {
+        e.stopPropagation();
+      });
+      file.trigger('click');
+    });
+
+    $(document).on('change', '.file-group [type="file"]', function() {
+      var l = $('body').lyearloading({
+        opacity: 0.2,
+        spinnerSize: 'lg',
+        spinnerText: '后台处理中，请稍后...',
+        textColorClass: 'text-info',
+        spinnerColorClass: 'text-info'
+      });
+      var $this    = $(this);
+      var $input   = $(this)[0];
+      var $len     = $input.files.length;
+      var formFile = new FormData();
+
+      if ($len == 0) {
+        return false;
+      } else {
+        var fileAccaccept = $this.attr('accaccept');
+        var fileType      = $input.files[0].type;
+        var type          = (fileType.substr(fileType.lastIndexOf("/") + 1)).toLowerCase();
+
+        if (!type || fileAccaccept.indexOf(type) == -1) {
+          $.notify({
+            message: '您上传图片的类型不符合(.jpg|.jpeg|.gif|.png|.bmp)',
+          },{
+            placement: {
+              from: "top",
+              align: "center"
+            },
+            type: 'success'
+          });
+          l.destroy();
+          return false;
+        }
+        formFile.append("file", $input.files[0]);
+      }
+
+      var data = formFile;
+
+      $.ajax({
+        url: "{:url('index/upload')}",
+        data: data,
+        type: "POST",
+        dataType: "json",
+        //上传文件无需缓存
+        cache: false,
+        //用于对data参数进行序列化处理 这里必须false
+        processData: false,
+        //必须
+        contentType: false,
+        success: function (res) {
+          setTimeout(function() {
+            l.destroy();
+          }, 1e3)
+          if (res.code == 200) {
+            $.notify({
+              message: res.msg
+            },{
+              placement: {
+                from: "top",
+                align: "center"
+              },
+              type: 'success'
+            });
+            //console.log(res.data[0].filePath);
+            $this.closest('.file-group').find('.file-value').val(res.data.fullPath);
+          } else {
+            $.notify({
+              message: "系统错误"
+            },{
+              placement: {
+                from: "top",
+                align: "center"
+              },
+              // settings
+              type: 'danger'
+            });
+          }
+        },
+      });
+    });
+  });
+
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,242 @@
+{php}$title= '商城管理';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+    <div class="container-fluid p-t-15">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="toolbar" class="toolbar-btn-action">
+                            <button id="btn_delete" type="button" class="btn btn-danger">
+                                <span class="mdi mdi-window-close" aria-hidden="true"></span>删除
+                            </button>
+                        </div>
+
+                        <table id="tb_departments"></table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+    $('#tb_departments').bootstrapTable({
+        classes: 'table table-bordered table-hover table-striped',
+        url: "{:url('shop/getshoporderlist')}",
+        method: 'get',
+        dataType : 'json',
+        uniqueId: 'id',
+        idField: 'id',             // 每行的唯一标识字段
+        toolbar: '#toolbar',       // 工具按钮容器
+        clickToSelect: true,     // 是否启用点击选中行
+        showColumns: true,         // 是否显示所有的列
+        showRefresh: true,         // 是否显示刷新按钮
+
+        showToggle: true,        // 是否显示详细视图和列表视图的切换按钮(clickToSelect同时设置为true时点击会报错)
+
+        pagination: true,                    // 是否显示分页
+        sortOrder: "desc",                    // 排序方式
+        queryParams: function(params) {
+            var temp = {
+                limit: params.limit,         // 每页数据量
+                offset: params.offset,       // sql语句起始索引
+                page: (params.offset / params.limit) + 1,
+                sort: params.sort,           // 排序的列名
+                sortOrder: params.order,      // 排序方式'asc' 'desc'
+            };
+            return temp;
+        },                                   // 传递参数
+        sidePagination: "server",            // 分页方式：client客户端分页，server服务端分页
+        pageNumber: 1,                       // 初始化加载第一页，默认第一页
+        pageSize: 10,                        // 每页的记录行数
+        pageList: [10, 25, 50, 100],         // 可供选择的每页的行数
+        //search: true,                      // 是否显示表格搜索，此搜索是客户端搜索
+
+        showExport: true,        // 是否显示导出按钮, 导出功能需要导出插件支持(tableexport.min.js)
+        exportDataType: "basic", // 导出数据类型, 'basic':当前页, 'all':所有数据, 'selected':选中的数据
+
+        columns: [{
+            field: 'example',
+            checkbox: true    // 是否显示复选框
+        }, {
+            field: 'id',
+            title: '序号',
+            sortable: true    // 是否排序
+        }, {
+            field: 'shopname',
+            title: '商品名称',
+        }, {
+            field: 'shoptype',
+            title: '商品类型',
+        },{
+            field: 'username',
+            title: '购买用户',
+        },  {
+            field: 'creat_time',
+            title: '购买时间',
+        },{
+            field: 'appname',
+            title: 'app名称',
+        },  {
+            field: 'operate',
+            title: '操作',
+            formatter: btnGroup,  // 自定义方法
+            events: {
+                // 'click .edit-btn': function (event, value, row, index) {
+                //   window.location.href = "{:url('shop/queryshop')}?id="+row.id;
+                // },
+                'click .del-btn': function (event, value, row, index) {
+                    deleteapp(row.id);
+                }
+            }
+        }],
+        onLoadSuccess: function(data){
+            $("[data-toggle='tooltip']").tooltip();
+        }
+    });
+
+    // 操作按钮
+    function btnGroup ()
+    {
+        let html =
+            // '<a href="#!" class="btn btn-xs btn-default m-r-5 edit-btn" title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>' +
+            '<a href="#!" class="btn btn-xs btn-default del-btn" title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>';
+        return html;
+    }
+
+    //获取选中的id
+    function getnumber() {
+        var selRows = $('#tb_departments').bootstrapTable("getSelections");
+        if(selRows.length == 0){
+            $.notify({
+                message: "请至少选择一行"
+            },{
+                placement: {
+                    from: "top",
+                    align: "center"
+                },
+                // settings
+                type: 'danger'
+            });
+            return false;
+        }
+        var postData = "";
+        $.each(selRows,function(i) {
+            postData +=  this.id;
+            if (i < selRows.length - 1) {
+                postData += ",";
+            }
+        });
+        return postData;
+    }
+
+
+    //删除应用
+    function deleteapp(id){
+        var l = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg',
+            spinnerText: '后台处理中，请稍后...',
+            textColorClass: 'text-info',
+            spinnerColorClass: 'text-info'
+        });
+        $.ajax({
+            type: "POST",
+            url: "{:url('shop/delshoporder')}",
+            data: {
+                id: id,
+            },
+            dataType: "json",
+            success: function (data) {
+                setTimeout(function() {
+                    l.destroy();
+                }, 1e3)
+                if (data.code == 200) {
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                    setTimeout("location.reload();", 2000);
+                } else {
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        // settings
+                        type: 'danger'
+                    });
+                }
+            },
+        });
+    }
+
+
+    $("#btn_delete").click(function () {
+        var getnum = getnumber();
+        //console.log(getnum);
+        if (getnum == false){
+            return false;
+        }
+        var l = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg',
+            spinnerText: '后台处理中，请稍后...',
+            textColorClass: 'text-info',
+            spinnerColorClass: 'text-info'
+        });
+        $.ajax({
+            type: "POST",
+            url: "{:url('shop/delshoporder')}",
+            data: {
+                id: getnum
+            },
+            dataType: "json",
+            success: function (data) {
+                setTimeout(function() {
+                    l.destroy();
+                }, 1e3)
+                if (data.code == 200) {
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                    setTimeout("location.reload();", 2000);
+                } else {
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'danger'
+                    });
+                }
+            },
+        });
+    });
+
+</script>
+
+</body>
+
+</html>

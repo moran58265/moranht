@@ -1,0 +1,175 @@
+{php}$title= '管理员信息';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+
+    <div class="container-fluid p-t-15">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="media">
+                            <img id="adminnewtx1" src="http://q1.qlogo.cn/g?b=qq&nk={$Think.session.admininfo['userqq']}&s=640" width="64px" class="img-avatar mr-3">
+                            <div class="media-body">
+                                <p class="mt-1 mb-0">自动获取QQ头像为此系统的头像</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <form method="" action="" class="site-form">
+                            <div class="form-group">
+                                <label for="username">用户名</label>
+                                <input type="text" class="form-control" name="username" id="username" value="{$Think.session.admininfo['username']}">
+                            </div>
+                            <div class="form-group">
+                                <label for="nickname">昵称</label>
+                                <input type="text" class="form-control" name="nickname" id="nickname" placeholder="输入您的昵称" value="{$Think.session.admininfo['nickname']}">
+                            </div>
+                            <div class="form-group">
+                                <label for="userqq">QQ</label>
+                                <input type="number" class="form-control" name="userqq" id="userqq" aria-describedby="emailHelp" placeholder="请输入正确的qq" value="{$Think.session.admininfo['userqq']}">
+                                <small id="emailHelp" class="form-text text-muted">请保证您填写的qq是正确的。</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="adminkey">管理员密钥(开通用户会员功能,不建议使用)</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="adminkey" value="{$Think.session.admininfo['admintoken']}" placeholder="管理员密钥" disabled>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="geneadmintoken">生成</span>
+                                        <span class="input-group-text" id="downadmintoken">关闭</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" id="admininfobtn" class="btn btn-primary">保存</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+<!--End 页面主要内容-->
+{include file="layout/footer"}
+<script>
+   $("#admininfobtn").click(function (){
+       var l = $('body').lyearloading({
+           opacity: 0.2,
+           spinnerSize: 'lg'
+       });
+       var username = $.trim($('#username').val());
+       var nickname = $.trim($('#nickname').val());
+       var userqq = $.trim($('#userqq').val());
+       if (username == "" || nickname == "" || userqq == ""){
+           l.destroy();
+           $.alert({
+               title: '错误提示',
+               icon: 'mdi mdi-alert',
+               type: 'red',
+               content: '请输入完整！'
+           });
+           return false;
+       }
+       $.ajax({
+           type: 'post',
+           url: "{:url('/admin/admin/admininfo')}",
+           data: {
+               'username': username,
+               'userqq': userqq,
+               'nickname': nickname,
+           },
+           dataType: "json",
+           success:function (data){
+               l.destroy();
+               if (data.code == 200){
+                   $.alert({
+                       title: '成功提示',
+                       icon: 'mdi mdi-alert',
+                       type: 'green',
+                       content: data.msg
+                   });
+                   $("#adminnewname").html(nickname);
+                   $("#adminnewtx").attr('src',"http://q1.qlogo.cn/g?b=qq&nk="+userqq+"&s=640");
+                   $("#adminnewtx1").attr('src',"http://q1.qlogo.cn/g?b=qq&nk="+userqq+"&s=640");
+               }else{
+                   $.alert({
+                       title: '错误提示',
+                       icon: 'mdi mdi-alert',
+                       type: 'red',
+                       content: data.msg
+                   });
+               }
+           }
+       })
+   })
+   
+   $("#geneadmintoken").click(function() {
+       var l = $('body').lyearloading({
+           opacity: 0.2,
+           spinnerSize: 'lg'
+       });
+       $.ajax({
+           type: 'get',
+           url: "{:url('/admin/admin/geneadminkey')}",
+           data: {},
+           dataType: "json",
+           success:function (data){
+               //console.log(data);
+               l.destroy();
+               if (data.code == 200){
+                   $.alert({
+                       title: '成功提示',
+                       icon: 'mdi mdi-alert',
+                       type: 'green',
+                       content: "生成成功！"
+                   });
+                   $("#adminkey").val(data.msg);
+               }else{
+                   $.alert({
+                       title: '错误提示',
+                       icon: 'mdi mdi-alert',
+                       type: 'red',
+                       content: "生成失败！"
+                   });
+               }
+           }
+       })
+   })
+   $("#downadmintoken").click(function() {
+       var l = $('body').lyearloading({
+           opacity: 0.2,
+           spinnerSize: 'lg'
+       });
+       $.ajax({
+           type: 'get',
+           url: "{:url('/admin/admin/downadmintoken')}",
+           data: {},
+           dataType: "json",
+           success:function (data){
+               l.destroy();
+               if (data.code == 200){
+                   $.alert({
+                       title: '成功提示',
+                       icon: 'mdi mdi-alert',
+                       type: 'green',
+                       content: data.msg
+                   });
+                   $("#adminkey").val('');
+               }else{
+                   $.alert({
+                       title: '错误提示',
+                       icon: 'mdi mdi-alert',
+                       type: 'red',
+                       content: "关闭失败！"
+                   });
+               }
+           }
+       })
+   })
+</script>
+</body>
+</html>

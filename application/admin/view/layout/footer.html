@@ -1,0 +1,64 @@
+<div class="imgPreview">
+    <img src="#" alt="" id="imgPreview">
+</div>
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/popper.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/js/perfect-scrollbar.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="/static/js/main.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap-notify.min.js"></script>
+<!--表格插件-->
+<script type="text/javascript" src="/static/js/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<!--图标插件-->
+<script type="text/javascript" src="/static/js/Chart.min.js"></script>
+<!--loding插件-->
+<script type="text/javascript" src="/static/js/lyear-loading.js"></script>
+<!--时间日期选择器-->
+<script type="text/javascript" src="/static/js/momentjs/moment.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="/static/js/momentjs/locale/zh-cn.min.js"></script>
+<script type="text/javascript">
+    //清除所有缓存
+    function Clear_All(obj) {
+        $.ajax({
+            type: 'get',
+            url: "{:url('/admin/admin/clear_all')}",
+            data: {},
+            dataType: "json",
+            success: function (data) {
+                $.alert({
+                    title: '成功提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'green',
+                    content: data.msg
+                });
+            }
+        })
+    }
+
+    function loginout() {
+        $.ajax({
+            type: 'get',
+            url: "{:url('admin/loginout')}",
+            data: {},
+            dataType: "json",
+            success: function (data) {
+                location.reload();
+            }
+        })
+    }
+    $(function () {
+        $('.imgurl').on('click', function () {
+            var src = $(this).attr('src');
+            $('.imgPreview img').attr('src', src);
+            $('.imgPreview').show()
+        });
+        $('.imgPreview').on('click', function () {
+            $('.imgPreview').hide()
+        });
+    })
+
+</script>

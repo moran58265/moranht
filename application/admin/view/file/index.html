@@ -1,0 +1,106 @@
+{php}$title= '附件管理';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+    <div class="container-fluid p-t-15">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-toolbar d-flex flex-column flex-md-row">
+                    </div>
+                    <div class="card-body">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="search_result">
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>文件名称</th>
+                                    <th>文件类型</th>
+                                    <th>文件大小</th>
+                                    <th>文件路径(点路径查看图片)</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody >
+                                {volist name="list" id="file" key="k"}
+                                <tr>
+                                    <td>{$k}</td>
+                                    <td>{$file.name}</td>
+                                    <td>{$file.type}</td>
+                                    <td>{$file.size}</td>
+                                    <td style="cursor: pointer;" class="imgurl" src="{$file.fullPath}">{$file.fullPath}</td>
+                                    <td>{$file['creat_time']|date='Y-m-d H:i:s'}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a class="btn btn-xs btn-default id ajax-get confirm" dataid = "{$file.id}" onclick="deletefile(this)" title="" data-toggle="tooltip" data-original-title="删除"><i class="mdi mdi-window-close"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {/volist}
+                                </tbody>
+                            </table>
+                        </div>
+                        {$page|raw}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+    function deletefile(obj){
+        var l = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg',
+            spinnerText: '后台处理中，请稍后...',
+            textColorClass: 'text-info',
+            spinnerColorClass: 'text-info'
+        });
+        var id = $(obj).attr("dataid");
+        $.ajax({
+            type: "POST",
+            url: "{:url('/admin/file/deletefile')}",
+            data: {
+                id: id,
+            },
+            //dataType: "json",
+            success: function (data) {
+                setTimeout(function() {
+                    l.destroy();
+                }, 1e3)
+                if (data.code == 200) {
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                    setTimeout("location.reload();", 2000);
+                } else {
+                    $.notify({
+                        message: data.msg
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        // settings
+                        type: 'danger'
+                    });
+                }
+            },
+        });
+    }
+</script>
+</body>
+
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="author" content="yinq">
+    <title>{$title}</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/static/css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/js/jquery-confirm/jquery-confirm.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/js/bootstrap-datepicker/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/js/bootstrap-table/bootstrap-table.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/js/bootstrap-clockpicker/bootstrap-clockpicker.min.css">
+    <style>
+        .imgPreview {
+            display: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            /*容器占满整个屏幕*/
+            height: 100%;
+            position: fixed;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .imgPreview img {
+            z-index: 50;
+            width: 40%;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="lyear-layout-web">
+        <div class="lyear-layout-container">
+            <!--左侧导航-->
+            <aside class="lyear-layout-sidebar">
+
+                <!-- logo -->
+                <div id="logo" class="sidebar-header">
+                    <a>
+                        <h1>后台管理</h1>
+                    </a>
+                </div>
+                <div class="lyear-layout-sidebar-info lyear-scroll">
+
+                    <nav class="sidebar-main">
+                        <ul class="nav-drawer">
+                            <li class="nav-item active"> <a href="{:url('index/index')}"><i class="mdi mdi-home"></i>
+                                    <span>后台首页</span></a> </li>
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="mdi mdi-android"></i> <span>应用管理</span></a>
+                                <ul class="nav nav-subnav">
+                                    <li> <a href="{:url('/admin/app/index')}">应用管理</a> </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="mdi mdi-account"></i> <span>用户管理</span></a>
+                                <ul class="nav nav-subnav">
+                                    <li> <a href="{:url('/admin/user/index')}">用户管理</a> </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="mdi mdi-credit-card"></i> <span>卡密管理</span></a>
+                                <ul class="nav nav-subnav">
+                                    <li> <a href="{:url('/admin/km/index')}">卡密管理</a> </li>
+                                    <li> <a href="{:url('/admin/km/addkm')}">添加卡密</a> </li>
+                                    <li> <a href="{:url('/admin/km/export')}">导出卡密</a> </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="mdi mdi-clipboard-text"></i>
+                                    <span>笔记管理</span></a>
+                                <ul class="nav nav-subnav">
+                                    <li> <a href="{:url('/admin/notes/index')}">笔记管理</a> </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="mdi mdi-email"></i> <span>邮箱管理</span></a>
+                                <ul class="nav nav-subnav">
+                                    <li> <a href="{:url('/admin/email/index')}">邮箱配置</a> </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="mdi mdi-shopping"></i> <span>商城管理</span></a>
+                                <ul class="nav nav-subnav">
+                                    <li> <a href="{:url('/admin/shop/index')}">商品管理</a> </li>
+                                    <li> <a href="{:url('/admin/shop/shoporder')}">订单管理</a> </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="mdi mdi-table-large"></i> <span>论坛管理</span></a>
+                                <ul class="nav nav-subnav">
+                                    <li> <a href="{:url('/admin/bbs/plate')}">板块管理</a> </li>
+                                    <li> <a href="{:url('/admin/bbs/platepost')}">帖子管理</a> </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="mdi mdi-file"></i> <span>附件管理</span></a>
+                                <ul class="nav nav-subnav">
+                                    <li> <a href="{:url('/admin/file/index')}">附件管理</a> </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="https://console-docs.apipost.cn/cover.html?url=7266fb844b51c347&salt=084dbf39b3fe620d"
+                                    target="_blank"><i class="mdi mdi-file-document"></i> <span>接口文档</span></a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <div class="sidebar-footer">
+                        <p class="copyright">Copyright &copy; 2022. <a target="_blank"
+                                href="http://www.moranblog.cn">默然iapp后台管理系统</a> All rights reserved.</p>
+                    </div>
+
+                </div>
+            </aside>
+            <!--End 左侧导航-->
+
+            <!--头部信息-->
+            <header class="lyear-layout-header">
+
+                <nav class="navbar">
+
+                    <div class="navbar-left">
+                        <div class="lyear-aside-toggler">
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                        </div>
+                    </div>
+
+
+                    <ul class="navbar-right d-flex align-items-center">
+                        <li class="dropdown dropdown-notice">
+                            <span data-toggle="dropdown" class="icon-item">
+                                <i class="mdi mdi-bell-outline"></i>
+                                <span class="badge badge-danger">10</span>
+                            </span>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <div class="lyear-notifications">
+                                    <div class="lyear-notifications-title clearfix" data-stopPropagation="true"><a
+                                            href="#!" class="float-right">查看全部</a>你有 10 条未读消息</div>
+                                    <div class="lyear-notifications-info lyear-scroll">
+                                        <a href="#!" class="dropdown-item"
+                                            title="树莓派销量猛增，疫情期间居家工作学习、医疗领域都需要它">树莓派销量猛增，疫情期间居家工作学习、医疗领域都需要它</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <!--切换主题配色-->
+                        <li class="dropdown dropdown-skin">
+                            <span data-toggle="dropdown" class="icon-item"><i class="mdi mdi-palette"></i></span>
+                            <ul class="dropdown-menu dropdown-menu-right" data-stopPropagation="true">
+                                <li class="drop-title">
+                                    <p>主题</p>
+                                </li>
+                                <li class="drop-skin-li clearfix">
+                                    <span class="inverse">
+                                        <input type="radio" name="site_theme" value="default" id="site_theme_1" checked>
+                                        <label for="site_theme_1"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="site_theme" value="dark" id="site_theme_2">
+                                        <label for="site_theme_2"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="site_theme" value="translucent" id="site_theme_3">
+                                        <label for="site_theme_3"></label>
+                                    </span>
+                                </li>
+                                <li class="drop-title">
+                                    <p>LOGO</p>
+                                </li>
+                                <li class="drop-skin-li clearfix">
+                                    <span class="inverse">
+                                        <input type="radio" name="logo_bg" value="default" id="logo_bg_1" checked>
+                                        <label for="logo_bg_1"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="logo_bg" value="color_2" id="logo_bg_2">
+                                        <label for="logo_bg_2"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="logo_bg" value="color_3" id="logo_bg_3">
+                                        <label for="logo_bg_3"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="logo_bg" value="color_4" id="logo_bg_4">
+                                        <label for="logo_bg_4"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="logo_bg" value="color_5" id="logo_bg_5">
+                                        <label for="logo_bg_5"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="logo_bg" value="color_6" id="logo_bg_6">
+                                        <label for="logo_bg_6"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="logo_bg" value="color_7" id="logo_bg_7">
+                                        <label for="logo_bg_7"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="logo_bg" value="color_8" id="logo_bg_8">
+                                        <label for="logo_bg_8"></label>
+                                    </span>
+                                </li>
+                                <li class="drop-title">
+                                    <p>头部</p>
+                                </li>
+                                <li class="drop-skin-li clearfix">
+                                    <span class="inverse">
+                                        <input type="radio" name="header_bg" value="default" id="header_bg_1" checked>
+                                        <label for="header_bg_1"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="header_bg" value="color_2" id="header_bg_2">
+                                        <label for="header_bg_2"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="header_bg" value="color_3" id="header_bg_3">
+                                        <label for="header_bg_3"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="header_bg" value="color_4" id="header_bg_4">
+                                        <label for="header_bg_4"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="header_bg" value="color_5" id="header_bg_5">
+                                        <label for="header_bg_5"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="header_bg" value="color_6" id="header_bg_6">
+                                        <label for="header_bg_6"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="header_bg" value="color_7" id="header_bg_7">
+                                        <label for="header_bg_7"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="header_bg" value="color_8" id="header_bg_8">
+                                        <label for="header_bg_8"></label>
+                                    </span>
+                                </li>
+                                <li class="drop-title">
+                                    <p>侧边栏</p>
+                                </li>
+                                <li class="drop-skin-li clearfix">
+                                    <span class="inverse">
+                                        <input type="radio" name="sidebar_bg" value="default" id="sidebar_bg_1" checked>
+                                        <label for="sidebar_bg_1"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="sidebar_bg" value="color_2" id="sidebar_bg_2">
+                                        <label for="sidebar_bg_2"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="sidebar_bg" value="color_3" id="sidebar_bg_3">
+                                        <label for="sidebar_bg_3"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="sidebar_bg" value="color_4" id="sidebar_bg_4">
+                                        <label for="sidebar_bg_4"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="sidebar_bg" value="color_5" id="sidebar_bg_5">
+                                        <label for="sidebar_bg_5"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="sidebar_bg" value="color_6" id="sidebar_bg_6">
+                                        <label for="sidebar_bg_6"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="sidebar_bg" value="color_7" id="sidebar_bg_7">
+                                        <label for="sidebar_bg_7"></label>
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="sidebar_bg" value="color_8" id="sidebar_bg_8">
+                                        <label for="sidebar_bg_8"></label>
+                                    </span>
+                                </li>
+                            </ul>
+                        </li>
+                        <!--切换主题配色-->
+                        <li class="dropdown dropdown-profile">
+                            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
+                                <img id="adminnewtx" class="img-avatar img-avatar-48 m-r-10"
+                                    src="http://q1.qlogo.cn/g?b=qq&nk={$Think.session.admininfo['userqq']}&s=640" />
+                                <span id="adminnewname">{$Think.session.admininfo['nickname']}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a class="dropdown-item" href="{:url('admin/admininfo')}"><i
+                                            class="mdi mdi-account"></i> 个人信息</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{:url('admin/changepwd')}"><i
+                                            class="mdi mdi-lock-outline"></i> 修改密码</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="Clear_All()"><i
+                                            class="mdi mdi-delete"></i> 清空缓存</a>
+                                </li>
+                                <li class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" onclick="loginout()" href="javascript:void(0)"><i
+                                            class="mdi mdi-logout-variant"></i> 退出登录</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </header>
+            <!--End 头部信息-->

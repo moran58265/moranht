@@ -44,4 +44,12 @@ rewrite  ^(.*)$  /index.php?s=$1  last;   break;
 [笔下光年 / Light Year Admin v4](https://gitee.com/yinqi/Light-Year-Admin-Template-v4)
 
 
+#### 其他
+当服务器报这样的错误解决方法：
+```html
+致命错误: Call to undefined function think\response\finfo_open()
+```
+相关文档:[php报think\response\finfo_open()错误解决方法](https://moranblog.cn/45.html)
+
+
 #### 更新介绍

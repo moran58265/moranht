@@ -36,7 +36,7 @@ class Bbs extends Controller
             return Common::return_msg(400,"没有此app");
         }
         try {
-            $result = Db::name('plate')->where('appid', $data['appid'])->find();
+            $result = Db::name('plate')->where('appid', $data['appid'])->select();
         } catch (DataNotFoundException $e) {
             return Common::return_msg(400,$e->getMessage());
         } catch (ModelNotFoundException $e) {

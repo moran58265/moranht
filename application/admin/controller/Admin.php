@@ -68,7 +68,7 @@ class Admin extends BaseController
                 return Common::ReturnError('原密码错误');
             }
             $admintoken = md5($Admininfo['password'].$Admininfo['salt']);
-            if ($admintoken != Session::get('userToken')) {
+            if ($admintoken != Session::get('adminToken')) {
                 return Common::ReturnError('非法操作');
             }
             $AdminModel = new AdminModel();

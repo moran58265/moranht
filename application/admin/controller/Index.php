@@ -50,6 +50,55 @@ class Index extends BaseController
         return Common::ReturnJson('获取成功',$result);
     }
 
+    //请求接口
+    public function getupdate(){
+        $url = 'https://www.moranblog.cn/mrhtupdate.php';
+        $data = file_get_contents($url);
+        $data = json_decode($data,true);
+        return Common::ReturnJson('获取成功',$data);
+    }
+
+    //下载zip文件
+    public function downloadzip(){
+        $downurl = input('post.');
+        $arr=parse_url($downurl['url']);  //获取下载地址
+        $fileName=basename(time());  //获取文件名
+        $file=file_get_contents($downurl['url']); //获取文件内容
+        $file_path = "./update/".$fileName.".zip";  //设置文件路径
+        file_put_contents($file_path,$file);
+        return Common::ReturnJson($file_path);
+    }
+
+
+    //解压文件 覆盖原文件
+    public function unzip(){
+        $file_path = input('post.filepath');
+        $zip = new \ZipArchive();
+        $res = $zip->open($file_path);  //解压文件
+        //解压目录
+        if($res === true){
+            $zip->extractTo('../');
+            $zip->close();
+            return Common::ReturnJson('解压成功');
+        }else{
+            return Common::ReturnJson('解压失败');
+        }
+    }
+
+    //执行sql文件
+public function runsql()
+    {
+        $sql = file_get_contents('../sql.sql');
+        $sql = explode(';', $sql);
+        try {
+            foreach ($sql as $key => $value) {
+                Db::execute($value);
+            }
+            return Common::ReturnJson('执行成功');
+        } catch (\Exception $e) {
+            return Common::ReturnJson('执行成功');
+        }
+    }
 
 
 }

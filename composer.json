@@ -21,7 +21,8 @@
         "topthink/think-captcha": "2.0.*",
         "phpmailer/phpmailer": "^6.6",
       "ext-json": "*",
-        "topthink/think-helper": "1.0.*"
+        "topthink/think-helper": "1.0.*",
+      "ext-zip": "*"
     },
     "autoload": {
         "psr-4": {

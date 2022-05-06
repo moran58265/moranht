@@ -9,6 +9,7 @@ use think\db\exception\ModelNotFoundException;
 use think\Exception;
 use think\exception\DbException;
 use think\exception\PDOException;
+use think\facade\Session;
 use think\facade\Validate;
 use think\helper\Time;
 use think\Request;
@@ -118,7 +119,9 @@ class User extends Controller
                     if ($useremail != null || $useremail != ""){
                         return Common::return_msg(400, "邮箱已存在");
                     }
-                    if ($emailcode['emailcode'] == $data['emailcode']) {
+                    $emailregcode = Session::get('emailcode'); 
+                    //if ($emailcode['emailcode'] == $data['emailcode']) {
+                    if ($emailregcode == $data['emailcode']) {
                         $adddata = [
                             'username' => $data['username'],
                             'password' => md5($data['password']),
@@ -316,6 +319,7 @@ class User extends Controller
                     }
                 } else {
                     $emailcode = Common::getchar(4);
+                    Session::set('emailcode', $emailcode,60);
                     $updataemailcode = [
                         'emailcode' => $emailcode,
                         'creat_time' => time(),

@@ -91,7 +91,7 @@
             <table class="table table-hover">
               <tbody>
               <tr><td>项目名称：默然iApp后台管理系统</td></tr>
-              <tr><td>项目版本：1.0</td></tr>
+              <tr><td>项目版本：<bb id="nowbb">1.1</bb>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="nowupdate()" href="javascript:void(0)">检测更新</a></td></tr>
               <tr><td>项目作者：默然</td></tr>
               <tr><td>项目地址：<a href="https://gitee.com/morannb/moranht" target="_blank">https://gitee.com/morannb/moranht</a></td></tr>
               <tr><td>交&nbsp;&nbsp;流&nbsp;&nbsp;群：<a href="https://jq.qq.com/?_wv=1027&k=KNpWcDmS" target="_blank">219348005</a></td></tr>
@@ -109,6 +109,171 @@
 </div>
 {include file="layout/footer" /}
 <script type="text/javascript">
+  function nowupdate() {
+    var l = $('body').lyearloading({
+      opacity: 0.2,
+      spinnerSize: 'lg'
+    });
+    var bb = $('#nowbb').html();
+    $.ajax({
+      type: "get",
+      url: "{:url('index/getupdate')}",
+      dataType: "json", //返回数据形式为json
+      success: function (data) {
+        console.log(data);
+        if (data.code == 200) {
+          if (bb < data.data.version) {
+            l.destroy();
+            $.alert({
+              title: '更新提示',
+              icon: 'mdi mdi-alert',
+              type: 'orange',
+              content: '发现新版本，是否更新？',
+              buttons: {
+                okay: {
+                  text: '确认',
+                  btnClass: 'btn-orange',
+                  action: function () {
+                    var l = $('body').lyearloading({
+                      opacity: 0.2,
+                      spinnerSize: 'lg',
+                      spinnerText: '正在下载文件，请稍后...',
+                      textColorClass: 'text-info',
+                      spinnerColorClass: 'text-info'
+                    });
+                    $.ajax({
+                      type: "post",
+                      url: "{:url('index/downloadzip')}",
+                      data: {
+                        url: data.data.url
+                      },
+                      dataType: "json", //返回数据形式为json
+                      success: function (res) {
+                        if (data.code == 200) {
+                          l.destroy();
+                          $.alert({
+                            title: '更新提示',
+                            icon: 'mdi mdi-alert',
+                            type: 'green',
+                            content: '下载成功，更新文件已经保存在您的本地，请点击确定按钮进行更新',
+                            buttons: {
+                              okay: {
+                                text: '确认',
+                                btnClass: 'btn-orange',
+                                action: function () {
+                                  var l = $('body').lyearloading({
+                                    opacity: 0.2,
+                                    spinnerSize: 'lg',
+                                    spinnerText: '解压文件中，请稍后...',
+                                    textColorClass: 'text-info',
+                                    spinnerColorClass: 'text-info'
+                                  });
+                                  $.ajax({
+                                    type: "post",
+                                    url: "{:url('index/unzip')}",
+                                    data: {
+                                      filepath: res.msg
+                                    },
+                                    dataType: "json", //返回数据形式为json
+                                    success: function (datares) {
+                                      l.destroy();
+                                      if (datares.code == 200) {
+                                        $.alert({
+                                          title: '更新提示',
+                                          icon: 'mdi mdi-alert',
+                                          type: 'orange',
+                                          content: '文件已解压成功，请点击确定按钮进行数据库更新，建议更新前先备份数据库',
+                                          buttons: {
+                                            okay: {
+                                              text: '确认',
+                                              btnClass: 'btn-orange',
+                                              action: function () {
+                                                var l = $('body').lyearloading({
+                                                  opacity: 0.2,
+                                                  spinnerSize: 'lg',
+                                                  spinnerText: '更新数据库中，请稍后...',
+                                                  textColorClass: 'text-info',
+                                                  spinnerColorClass: 'text-info'
+                                                });
+                                                $.ajax({
+                                                  type: "post",
+                                                  url: "{:url('index/runsql')}",
+                                                  dataType: "json", //返回数据形式为json
+                                                  success: function (dataresq) {
+                                                    if (dataresq.code == 200) {
+                                                      l.destroy();
+                                                      $.alert({
+                                                        title: '更新提示',
+                                                        icon: 'mdi mdi-alert',
+                                                        type: 'green',
+                                                        content: '更新成功！',
+                                                      });
+                                                    }else{
+                                                      l.destroy();
+                                                      $.alert({
+                                                        title: '更新提示',
+                                                        icon: 'mdi mdi-alert',
+                                                        type: 'red',
+                                                        content: '数据库更新失败，请稍后重试',
+                                                      });
+                                                    }
+                                                  }
+                                                });
+                                              }
+                                            }
+                                          }
+                                        });
+                                      } else {
+                                        $.alert({
+                                          title: '更新提示',
+                                          icon: 'mdi mdi-alert',
+                                          type: 'red',
+                                          content: '解压失败，请稍后重试',
+                                        });
+                                      }
+                                    }
+                                  });
+                                }
+                              }
+                            }
+                          });
+                        }else{
+                          l.destroy();
+                          $.alert({
+                            title: '更新提示',
+                            icon: 'mdi mdi-alert',
+                            type: 'red',
+                            content: '下载失败，请稍后重试',
+                          });
+                        }
+                      }
+                    });
+                  }
+                }
+              }
+            });
+          } else {
+            l.destroy();
+            $.alert({
+              title: '成功提示',
+              icon: 'mdi mdi-alert',
+              type: 'green',
+              content: '当前已是最新版本！',
+            });
+          }
+        } else {
+          l.destroy();
+          $.alert({
+            title: '错误提示',
+            icon: 'mdi mdi-alert',
+            type: 'red',
+            content: "检查更新失败，请稍后再试！"
+          });
+        }
+      }
+    });
+  }
+
   function date(){
     $.ajax({
       type : "get",

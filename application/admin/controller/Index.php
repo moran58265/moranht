@@ -79,6 +79,7 @@ class Index extends BaseController
         if($res === true){
             $zip->extractTo('../');
             $zip->close();
+            unlink(input('post.filepath')); //删除源文件
             return Common::ReturnJson('解压成功');
         }else{
             return Common::ReturnJson('解压失败');
@@ -96,6 +97,7 @@ public function runsql()
                 foreach ($sql as $key => $value) {
                     Db::execute($value);
                 }
+                unlink('../sql.sql');
                 return Common::ReturnJson('执行成功');
             } catch (\Exception $e) {
                 return Common::ReturnJson('执行成功');

@@ -120,8 +120,8 @@ class User extends Controller
                         return Common::return_msg(400, "邮箱已存在");
                     }
                     $emailregcode = Session::get('emailcode'); 
-                    //if ($emailcode['emailcode'] == $data['emailcode']) {
-                    if ($emailregcode == $data['emailcode']) {
+                    if ($emailcode['emailcode'] == $data['emailcode']) {
+                    //if ($emailregcode == $data['emailcode']) {
                         $adddata = [
                             'username' => $data['username'],
                             'password' => md5($data['password']),
@@ -203,11 +203,47 @@ class User extends Controller
         if ($user == "" || $user == null) {
             return Common::return_msg(400, "没有该用户");
         }
-        if(Session::get('passcode') != null){
-            return Common::return_msg(400, "60s内只能发送一次");
-        }else{
+        if ($ckcodetime['ip'] == Common::get_user_ip()) {
+            if (time() - $ckcodetime['creattime'] < 60) {
+                return Common::return_msg(400, "60s内只能发送一次");
+            } else {
+                $passcode = Common::getchar(4);
+                $updatapasscode = [
+                    'passcode' => $passcode,
+                    'creattime' => time(),
+                    'ip' => Common::get_user_ip(),
+                ];
+                try {
+                    Db::name('passcode')->where('id', 1)->update($updatapasscode);
+                } catch (PDOException $e) {
+                    return Common::return_msg(400, "请求失败");
+                } catch (Exception $e) {
+                    return Common::return_msg(400, "请求失败");
+                }
+                try {
+                    return Common::send_mail($user['useremail'], "找回密码验证码", "你的找回密码验证码是：" . $passcode);
+                } catch (DataNotFoundException $e) {
+                    return Common::return_msg(400, "请求失败");
+                } catch (ModelNotFoundException $e) {
+                    return Common::return_msg(400, "请求失败");
+                } catch (DbException $e) {
+                    return Common::return_msg(400, "请求失败");
+                }
+            }
+        } else {
             $passcode = Common::getchar(4);
-            Session::set('passcode', $passcode,60);
+            $updatapasscode = [
+                'passcode' => $passcode,
+                'creattime' => time(),
+                'ip' => Common::get_user_ip(),
+            ];
+            try {
+                Db::name('passcode')->where('id', 1)->update($updatapasscode);
+            } catch (PDOException $e) {
+                return Common::return_msg(400, "请求失败");
+            } catch (Exception $e) {
+                return Common::return_msg(400, "请求失败");
+            }
             try {
                 return Common::send_mail($user['useremail'], "找回密码验证码", "你的找回密码验证码是：" . $passcode);
             } catch (DataNotFoundException $e) {
@@ -244,9 +280,57 @@ class User extends Controller
             return Common::return_msg(400, "app不存在");
         } else {
             if ($user == null || $user == "") {
-                $emailcode = Common::getchar(4);
-                if(Session::get('emailcode') == null){
-                    Session::set('emailcode', $emailcode,60);
+                try {
+                    $ckcodetime = Db::name('emailcode')->where('id', 1)->find();
+                } catch (DataNotFoundException $e) {
+                    return Common::return_msg(400, "请求失败");
+                } catch (ModelNotFoundException $e) {
+                    return Common::return_msg(400, "请求失败");
+                } catch (DbException $e) {
+                    return Common::return_msg(400, "请求失败");
+                }
+
+                if ($ckcodetime['ip'] == Common::get_user_ip()) {
+                    if (time() - $ckcodetime['creat_time'] > 60) {
+                        $emailcode = Common::getchar(4);
+                        $updataemailcode = [
+                            'emailcode' => $emailcode,
+                            'creat_time' => time(),
+                            'ip' => Common::get_user_ip(),
+                        ];
+                        try {
+                            Db::name('emailcode')->where('id', 1)->update($updataemailcode);
+                        } catch (PDOException $e) {
+                            return Common::return_msg(400, "请求失败");
+                        } catch (Exception $e) {
+                            return Common::return_msg(400, "请求失败");
+                        }
+                        try {
+                            return Common::send_mail($data['useremail'], "注册验证码", "你的注册验证码是：" . $emailcode);
+                        } catch (DataNotFoundException $e) {
+                            return Common::return_msg(400, "请求失败");
+                        } catch (ModelNotFoundException $e) {
+                            return Common::return_msg(400, "请求失败");
+                        } catch (DbException $e) {
+                            return Common::return_msg(400, "请求失败");
+                        }
+                    } else {
+                        return Common::return_msg(400, "60s内只能发送一次");
+                    }
+                } else {
+                    $emailcode = Common::getchar(4);
+                    $updataemailcode = [
+                        'emailcode' => $emailcode,
+                        'creat_time' => time(),
+                        'ip' => Common::get_user_ip(),
+                    ];
+                    try {
+                        Db::name('emailcode')->where('id', 1)->update($updataemailcode);
+                    } catch (PDOException $e) {
+                        return Common::return_msg(400, "请求失败");
+                    } catch (Exception $e) {
+                        return Common::return_msg(400, "请求失败");
+                    }
                     try {
                         return Common::send_mail($data['useremail'], "注册验证码", "你的注册验证码是：" . $emailcode);
                     } catch (DataNotFoundException $e) {
@@ -256,14 +340,13 @@ class User extends Controller
                     } catch (DbException $e) {
                         return Common::return_msg(400, "请求失败");
                     }
-                }else{
-                    return Common::return_msg(400, "60s内只能发送一次");
                 }
             } else {
                 return Common::return_msg(400, "你注册的邮箱已经存在了");
             }
         }
     }
+
 
     public function GetUserinfo(Request $request)
     {

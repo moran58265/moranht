@@ -26,11 +26,11 @@ class Bbs extends Controller
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -38,11 +38,11 @@ class Bbs extends Controller
         try {
             $result = Db::name('plate')->where('appid', $data['appid'])->select();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         return Common::return_msg(200,"查询成功",$result);
     }
@@ -61,11 +61,11 @@ class Bbs extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $plate = Db::name('plate')->where('id',$data['id'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -85,11 +85,11 @@ class Bbs extends Controller
                 ->order('p.replytime','desc')
                 ->select();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         return Common::return_msg(200,"查询成功",$result);
     }
@@ -108,11 +108,11 @@ class Bbs extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $post = Db::name('post')->where('id',$data['id'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -123,9 +123,9 @@ class Bbs extends Controller
         try {
             Db::name('post')->where('id', $data['id'])->update(['view' => $post['view'] + 1]);
         } catch (PDOException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         try {
             $result = Db::name('post')
@@ -138,11 +138,11 @@ class Bbs extends Controller
                 ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
                 ->select();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         return Common::return_msg(200,"查询成功",$result);
     }
@@ -166,11 +166,11 @@ class Bbs extends Controller
             $plate = Db::name('plate')->where('id',$data['id'])->find();
             $user = Db::name('user')->where('username',$data['username'])->where('appid',$data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -211,9 +211,9 @@ class Bbs extends Controller
             try {
                 Db::name('user')->where('username', $data['username'])->update($updateuser);
             } catch (PDOException $e) {
-                return Common::return_msg(400,$e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (Exception $e) {
-                return Common::return_msg(400,$e->getMessage());
+                return Common::return_msg(400, "请求失败");
             }
             return Common::return_msg(200,"新增成功");
         }else{
@@ -241,11 +241,11 @@ class Bbs extends Controller
             $user = Db::name('user')->where('username',$data['username'])->where('appid',$data['appid'])->find();
             $post = Db::name('post')->where('id', $data['id'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -269,9 +269,9 @@ class Bbs extends Controller
         try {
             $result = Db::name('post')->where('id', $data['id'])->update($updatedata);
         } catch (PDOException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($result > 0){
             return Common::return_msg(200,"修改成功");
@@ -298,11 +298,11 @@ class Bbs extends Controller
             $user = Db::name('user')->where('username',$data['username'])->where('appid',$data['appid'])->find();
             $post = Db::name('post')->where('id', $data['id'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -322,9 +322,9 @@ class Bbs extends Controller
         try {
             $result = Db::name('post')->where('id', $data['id'])->delete();
         } catch (PDOException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($result > 0){
             return Common::return_msg(200,"删除成功");
@@ -347,11 +347,11 @@ class Bbs extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username',$data['username'])->where('appid',$data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -371,11 +371,11 @@ class Bbs extends Controller
                 ->order('p.replytime','desc')
                 ->select();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         return Common::return_msg(200,"查询成功",$result);
     }
@@ -394,11 +394,11 @@ class Bbs extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $post = Db::name('post')->where('id',$data['id'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -418,11 +418,11 @@ class Bbs extends Controller
                 ->order('c.creattime','desc')
                 ->select();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         return Common::return_msg(200,"查询成功",$result);
     }
@@ -441,11 +441,11 @@ class Bbs extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username',$data['username'])->where('appid',$data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -466,11 +466,11 @@ class Bbs extends Controller
                 ->order('c.creattime','desc')
                 ->select();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         return Common::return_msg(200,"查询成功",$result);
     }
@@ -492,11 +492,11 @@ class Bbs extends Controller
             $post = Db::name('post')->where('id',$data['id'])->find();
             $user = Db::name('user')->where('username',$data['username'])->where('appid',$data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -527,9 +527,9 @@ class Bbs extends Controller
             try {
                 Db::name('user')->where('username', $data['username'])->update($updateuser);
             } catch (PDOException $e) {
-                return Common::return_msg(400,$e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (Exception $e) {
-                return Common::return_msg(400,$e->getMessage());
+                return Common::return_msg(400, "请求失败");
             }
             return Common::return_msg(200,"新增成功");
         }else{
@@ -554,11 +554,11 @@ class Bbs extends Controller
             $user = Db::name('user')->where('username',$data['username'])->where('appid',$data['appid'])->find();
             $comment = Db::name('comment')->where('id', $data['id'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -578,9 +578,9 @@ class Bbs extends Controller
         try {
             $result = Db::name('comment')->where('id', $data['id'])->delete();
         } catch (PDOException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($result > 0){
             return Common::return_msg(200,"删除成功");
@@ -601,11 +601,11 @@ class Bbs extends Controller
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -621,11 +621,11 @@ class Bbs extends Controller
                 ->order('p.replytime','desc')
                 ->select();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         return Common::return_msg(200,"查询成功",$result);
     }

@@ -91,7 +91,7 @@
             <table class="table table-hover">
               <tbody>
               <tr><td>项目名称：默然iApp后台管理系统</td></tr>
-              <tr><td>项目版本：<bb id="nowbb">1.1</bb>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="nowupdate()" href="javascript:void(0)">检测更新</a></td></tr>
+              <tr><td>项目版本：<bb id="nowbb">1.2</bb>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="nowupdate()" href="javascript:void(0)">检测更新</a></td></tr>
               <tr><td>项目作者：默然</td></tr>
               <tr><td>项目地址：<a href="https://gitee.com/morannb/moranht" target="_blank">https://gitee.com/morannb/moranht</a></td></tr>
               <tr><td>交&nbsp;&nbsp;流&nbsp;&nbsp;群：<a href="https://jq.qq.com/?_wv=1027&k=KNpWcDmS" target="_blank">219348005</a></td></tr>
@@ -109,6 +109,27 @@
 </div>
 {include file="layout/footer" /}
 <script type="text/javascript">
+  var bb = $('#nowbb').html();
+  $.ajax({
+      type: "get",
+      url: "{:url('index/getupdate')}",
+      dataType: "json", //返回数据形式为json
+      success: function (data) {
+        if (data.code == 200) {
+          if (bb < data.data.version) {
+            $.notify({
+              // options
+              message: '有新版本发布，请及时更新！' 
+            },{
+              // settings
+              type: 'warning',
+            });
+          }
+        }
+      }
+    })
+  
+  
   function nowupdate() {
     var l = $('body').lyearloading({
       opacity: 0.2,
@@ -128,7 +149,7 @@
               title: '更新提示',
               icon: 'mdi mdi-alert',
               type: 'orange',
-              content: '发现新版本，是否更新？',
+              content: '发现新版本，是否更新？'+ '<hr>' + data.data.msg,
               buttons: {
                 okay: {
                   text: '确认',

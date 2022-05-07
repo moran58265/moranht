@@ -88,14 +88,19 @@ class Index extends BaseController
     //执行sql文件
 public function runsql()
     {
-        $sql = file_get_contents('../sql.sql');
-        $sql = explode(';', $sql);
-        try {
-            foreach ($sql as $key => $value) {
-                Db::execute($value);
+        $issql =File_exists('../sql.sql');
+        if($issql){
+            $sql = file_get_contents('../sql.sql');
+            $sql = explode(';', $sql);
+            try {
+                foreach ($sql as $key => $value) {
+                    Db::execute($value);
+                }
+                return Common::ReturnJson('执行成功');
+            } catch (\Exception $e) {
+                return Common::ReturnJson('执行成功');
             }
-            return Common::ReturnJson('执行成功');
-        } catch (\Exception $e) {
+        }else{
             return Common::ReturnJson('执行成功');
         }
     }

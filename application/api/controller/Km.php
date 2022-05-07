@@ -29,11 +29,11 @@ class Km extends Controller
             $user = Db::name('user')->where('username',$data['username'])->where('appid', $data['appid'])->find();
             $km = Db::name('km')->where('km',$data['km'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -60,9 +60,9 @@ class Km extends Controller
         try {
             $updateuser = Db::name('user')->where('username', $data['username'])->update($updateuserdata);
         } catch (PDOException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($updateuser>0){
             $result = array();
@@ -72,9 +72,9 @@ class Km extends Controller
             try {
                 Db::name('km')->where('km', $data['km'])->update($updatekmdata);
             } catch (PDOException $e) {
-                return Common::return_msg(400,$e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (Exception $e) {
-                return Common::return_msg(400,$e->getMessage());
+                return Common::return_msg(400, "请求失败");
             }
             return Common::return_msg(200,"使用成功",$result);
         }else{

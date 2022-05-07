@@ -30,11 +30,11 @@ class Key extends Controller
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
             $admin = Db::name('admin')->where('id',1)->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -49,9 +49,9 @@ class Key extends Controller
         try {
             $result = Db::name('user')->where('username', $data['username'])->update(['viptime' => $viptime]);
         } catch (PDOException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($result>0){
             return Common::return_msg(200, "充值成功");
@@ -76,11 +76,11 @@ class Key extends Controller
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
             $admin = Db::name('admin')->where('id',1)->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -95,9 +95,9 @@ class Key extends Controller
         try {
             $result = Db::name('user')->where('username', $data['username'])->update(['money' => $money]);
         } catch (PDOException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($result>0){
             return Common::return_msg(200, "充值成功");
@@ -123,11 +123,11 @@ class Key extends Controller
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
             $admin = Db::name('admin')->where('id',1)->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -142,9 +142,9 @@ class Key extends Controller
         try {
             $result = Db::name('user')->where('username', $data['username'])->update(['exp' => $exp]);
         } catch (PDOException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($result>0){
             return Common::return_msg(200, "充值成功");
@@ -169,11 +169,11 @@ class Key extends Controller
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
             $admin = Db::name('admin')->where('id',1)->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -187,9 +187,9 @@ class Key extends Controller
         try {
             $result = Db::name('user')->where('username', $data['username'])->update(['viptime' => $data['vipdate']]);
         } catch (PDOException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($result>0){
             return Common::return_msg(200, "充值成功");

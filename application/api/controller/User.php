@@ -38,11 +38,11 @@ class User extends Controller
             try {
                 $UserResult = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             }
             if ($UserResult == "" || $UserResult == null) {
                 return Common::return_msg(400, "没有此账号");
@@ -59,19 +59,19 @@ class User extends Controller
                         try {
                             Common::send_mail($UserResult['useremail'], "异地登录提醒", $emailcontent);
                         } catch (DataNotFoundException $e) {
-                            return Common::return_msg(400, $e->getMessage());
+                            return Common::return_msg(400, "请求失败");
                         } catch (ModelNotFoundException $e) {
-                            return Common::return_msg(400, $e->getMessage());
+                            return Common::return_msg(400, "请求失败");
                         } catch (DbException $e) {
-                            return Common::return_msg(400, $e->getMessage());
+                            return Common::return_msg(400, "请求失败");
                         }
                     }
                     try {
                         Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['user_token' => $UserToken, 'ip' => Common::get_user_ip()]);
                     } catch (PDOException $e) {
-                        return Common::return_msg(400, $e->getMessage());
+                        return Common::return_msg(400, "请求失败");
                     } catch (Exception $e) {
-                        return Common::return_msg(400, $e->getMessage());
+                        return Common::return_msg(400, "请求失败");
                     }
                     return Common::return_msg(200, "登录成功", $result);
                 } else {
@@ -99,11 +99,11 @@ class User extends Controller
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $app['appid'])->find();
             $useremail = Db::name('user')->where('useremail', $data['useremail'])->where('appid', $app['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == null || $app == "") {
             return Common::return_msg(400, "app不存在");
@@ -191,11 +191,11 @@ class User extends Controller
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
             $ckcodetime = Db::name('passcode')->where('id', 1)->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -203,55 +203,19 @@ class User extends Controller
         if ($user == "" || $user == null) {
             return Common::return_msg(400, "没有该用户");
         }
-        if ($ckcodetime['ip'] == Common::get_user_ip()) {
-            if (time() - $ckcodetime['creattime'] < 60) {
-                return Common::return_msg(400, "60s内只能发送一次");
-            } else {
-                $passcode = Common::getchar(4);
-                $updatapasscode = [
-                    'passcode' => $passcode,
-                    'creattime' => time(),
-                    'ip' => Common::get_user_ip(),
-                ];
-                try {
-                    Db::name('passcode')->where('id', 1)->update($updatapasscode);
-                } catch (PDOException $e) {
-                    return Common::return_msg(400, $e->getMessage());
-                } catch (Exception $e) {
-                    return Common::return_msg(400, $e->getMessage());
-                }
-                try {
-                    return Common::send_mail($user['useremail'], "找回密码验证码", "你的找回密码验证码是：" . $passcode);
-                } catch (DataNotFoundException $e) {
-                    return Common::return_msg(400, $e->getMessage());
-                } catch (ModelNotFoundException $e) {
-                    return Common::return_msg(400, $e->getMessage());
-                } catch (DbException $e) {
-                    return Common::return_msg(400, $e->getMessage());
-                }
-            }
-        } else {
+        if(Session::get('passcode') != null){
+            return Common::return_msg(400, "60s内只能发送一次");
+        }else{
             $passcode = Common::getchar(4);
-            $updatapasscode = [
-                'passcode' => $passcode,
-                'creattime' => time(),
-                'ip' => Common::get_user_ip(),
-            ];
-            try {
-                Db::name('passcode')->where('id', 1)->update($updatapasscode);
-            } catch (PDOException $e) {
-                return Common::return_msg(400, $e->getMessage());
-            } catch (Exception $e) {
-                return Common::return_msg(400, $e->getMessage());
-            }
+            Session::set('passcode', $passcode,60);
             try {
                 return Common::send_mail($user['useremail'], "找回密码验证码", "你的找回密码验证码是：" . $passcode);
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             }
         }
     }
@@ -270,77 +234,30 @@ class User extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('useremail', $data['useremail'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == null || $app == "") {
             return Common::return_msg(400, "app不存在");
         } else {
             if ($user == null || $user == "") {
-                try {
-                    $ckcodetime = Db::name('emailcode')->where('id', 1)->find();
-                } catch (DataNotFoundException $e) {
-                    return Common::return_msg(400, $e->getMessage());
-                } catch (ModelNotFoundException $e) {
-                    return Common::return_msg(400, $e->getMessage());
-                } catch (DbException $e) {
-                    return Common::return_msg(400, $e->getMessage());
-                }
-
-                if ($ckcodetime['ip'] == Common::get_user_ip()) {
-                    if (time() - $ckcodetime['creat_time'] > 60) {
-                        $emailcode = Common::getchar(4);
-                        $updataemailcode = [
-                            'emailcode' => $emailcode,
-                            'creat_time' => time(),
-                            'ip' => Common::get_user_ip(),
-                        ];
-                        try {
-                            Db::name('emailcode')->where('id', 1)->update($updataemailcode);
-                        } catch (PDOException $e) {
-                            return Common::return_msg(400, $e->getMessage());
-                        } catch (Exception $e) {
-                            return Common::return_msg(400, $e->getMessage());
-                        }
-                        try {
-                            return Common::send_mail($data['useremail'], "注册验证码", "你的注册验证码是：" . $emailcode);
-                        } catch (DataNotFoundException $e) {
-                            return Common::return_msg(400, $e->getMessage());
-                        } catch (ModelNotFoundException $e) {
-                            return Common::return_msg(400, $e->getMessage());
-                        } catch (DbException $e) {
-                            return Common::return_msg(400, $e->getMessage());
-                        }
-                    } else {
-                        return Common::return_msg(400, "60s内只能发送一次");
-                    }
-                } else {
-                    $emailcode = Common::getchar(4);
+                $emailcode = Common::getchar(4);
+                if(Session::get('emailcode') == null){
                     Session::set('emailcode', $emailcode,60);
-                    $updataemailcode = [
-                        'emailcode' => $emailcode,
-                        'creat_time' => time(),
-                        'ip' => Common::get_user_ip(),
-                    ];
-                    try {
-                        Db::name('emailcode')->where('id', 1)->update($updataemailcode);
-                    } catch (PDOException $e) {
-                        return Common::return_msg(400, $e->getMessage());
-                    } catch (Exception $e) {
-                        return Common::return_msg(400, $e->getMessage());
-                    }
                     try {
                         return Common::send_mail($data['useremail'], "注册验证码", "你的注册验证码是：" . $emailcode);
                     } catch (DataNotFoundException $e) {
-                        return Common::return_msg(400, $e->getMessage());
+                        return Common::return_msg(400, "请求失败");
                     } catch (ModelNotFoundException $e) {
-                        return Common::return_msg(400, $e->getMessage());
+                        return Common::return_msg(400, "请求失败");
                     } catch (DbException $e) {
-                        return Common::return_msg(400, $e->getMessage());
+                        return Common::return_msg(400, "请求失败");
                     }
+                }else{
+                    return Common::return_msg(400, "60s内只能发送一次");
                 }
             } else {
                 return Common::return_msg(400, "你注册的邮箱已经存在了");
@@ -363,11 +280,11 @@ class User extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
 
         if ($app == "" || $app == null) {
@@ -391,11 +308,11 @@ class User extends Controller
                             ->field($need_field)
                             ->find();
                     } catch (DataNotFoundException $e) {
-                        return Common::return_msg(400, $e->getMessage());
+                        return Common::return_msg(400, "请求失败");
                     } catch (ModelNotFoundException $e) {
-                        return Common::return_msg(400, $e->getMessage());
+                        return Common::return_msg(400, "请求失败");
                     } catch (DbException $e) {
-                        return Common::return_msg(400, $e->getMessage());
+                        return Common::return_msg(400, "请求失败");
                     }
                     $arr = $app['hierarchy'];
                     foreach (eval("return $arr;") as $key => $value) {
@@ -448,11 +365,11 @@ class User extends Controller
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
             $ckcode = Db::name('passcode')->where('id', 1)->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -467,20 +384,20 @@ class User extends Controller
         try {
             $updateuser = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['password' => md5($newpassword)]);
         } catch (PDOException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($updateuser > 0) {
             try {
                 Common::send_mail($user['useremail'], "随机密码", "你的随机密码是：" . $newpassword);
                 Db::name('passcode')->where('id', 1)->update(["passcode"=>"","ip"=>"","creattime"=>""]);
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             }
             return Common::return_msg(200, '随机密码已发送到您的邮箱，请注意查看');
         } else {
@@ -507,11 +424,11 @@ class User extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -558,11 +475,11 @@ class User extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -577,9 +494,9 @@ class User extends Controller
         try {
             Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['usertx' => $file["fullPath"]]);
         } catch (PDOException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         return Common::return_msg(200, "上传成功");
     }
@@ -598,11 +515,11 @@ class User extends Controller
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -620,11 +537,11 @@ class User extends Controller
                     ->limit($data['limit'])
                     ->select();
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             }
         } else {
             $need_field = ['id', 'username', 'nickname', 'usertx', 'money', 'title'];
@@ -636,11 +553,11 @@ class User extends Controller
                     ->limit($data['limit'])
                     ->select();
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, $e->getMessage());
+                return Common::return_msg(400, "请求失败");
             }
         }
         return Common::return_msg(200, "查询成功", $userlist);
@@ -661,11 +578,11 @@ class User extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -699,9 +616,9 @@ class User extends Controller
         try {
             $sql = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update($updateuser);
         } catch (PDOException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($sql > 0) {
             return Common::return_msg(200, '签到成功');
@@ -724,11 +641,11 @@ class User extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");
@@ -759,11 +676,11 @@ class User extends Controller
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, $e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null) {
             return Common::return_msg(400, "没有此app");

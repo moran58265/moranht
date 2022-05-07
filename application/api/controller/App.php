@@ -26,11 +26,11 @@ class App extends Controller
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -54,11 +54,11 @@ class App extends Controller
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -82,11 +82,11 @@ class App extends Controller
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -110,11 +110,11 @@ class App extends Controller
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         if ($app == "" || $app == null){
             return Common::return_msg(400,"没有此app");
@@ -124,9 +124,9 @@ class App extends Controller
                 ->where('appid', $data['appid'])
                 ->update(['view' => $app['view'] + 1]);
         } catch (PDOException $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400,$e->getMessage());
+            return Common::return_msg(400, "请求失败");
         }
         return Common::return_msg(200,"成功");
     }

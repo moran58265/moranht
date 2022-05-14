@@ -15,11 +15,13 @@ use think\Request;
 
 class Bbs extends BaseController
 {
-    public function plate(){
+    public function plate()
+    {
         return $this->fetch('/bbs/index');
     }
 
-    public function getplatelist(){
+    public function getplatelist()
+    {
         $limit = input('limit') ?? 10;
         $page = input('page') ?? 1;
         $sort = input('sort') ?? 'appid';
@@ -28,17 +30,24 @@ class Bbs extends BaseController
         $appList = Db::name('plate')
             ->alias('p')
             ->join('app a', 'a.appid=p.appid')
-            ->where('platename',"like",'%'.$platename.'%')
+            ->where('platename', "like", '%' . $platename . '%')
             ->field('p.*,a.appname')
-            ->order($sort,$sortOrder)
+            ->order($sort, $sortOrder)
             ->limit($limit)
             ->page($page)
             ->select();
-        return json(['rows' => $appList,'total' => Plate::count()]);
+        $appListcount = Db::name('plate')
+            ->alias('p')
+            ->join('app a', 'a.appid=p.appid')
+            ->where('platename', "like", '%' . $platename . '%')
+            ->field('p.*,a.appname')
+            ->count();
+        return json(['rows' => $appList, 'total' => $appListcount]);
     }
 
 
-    public function addplate(Request $request){
+    public function addplate(Request $request)
+    {
         $data = $request->param();
         $validate = Validate::make([
             'platename'  => 'require',
@@ -49,37 +58,40 @@ class Bbs extends BaseController
             return Common::ReturnError($validate->getError());
         }
         $app = \app\admin\model\App::get($data['appid']);
-        if ($app == null){
+        if ($app == null) {
             return Common::ReturnError('app不存在');
         }
-        $data['creattime'] = date("Y-m-d H:i:s",time());
+        $data['creattime'] = date("Y-m-d H:i:s", time());
         $plate = new Plate();
         $db = $plate->save($data);
-        if ($db > 0){
+        if ($db > 0) {
             return Common::ReturnSuccess("添加成功");
-        }else{
+        } else {
             return Common::ReturnError("添加失败");
         }
     }
 
-    public function deleteplate(){
+    public function deleteplate()
+    {
         $appid = input('id');
         $app = Plate::destroy($appid);
         return Common::ReturnSuccess("删除成功");
     }
 
-    public function queryplate(){
+    public function queryplate()
+    {
         $id = input('id');
         $listPlate = Db::name('plate')->where('p.id', $id)
             ->alias('p')
             ->join('app a', 'a.appid = p.appid')
             ->field('p.*,a.appname')
             ->find();
-        return $this->fetch('bbs/queryplate')->assign('plate',$listPlate);
+        return $this->fetch('bbs/queryplate')->assign('plate', $listPlate);
     }
 
 
-    public function updateplate(Request $request){
+    public function updateplate(Request $request)
+    {
         $data = $request->post();
         $validate = Validate::make([
             'id' => 'require|number',
@@ -93,16 +105,17 @@ class Bbs extends BaseController
             'platename' => $data['platename'],
             'plateicon' => $data['plateicon'],
         ];
-        $db = Db::name('plate')->where('id',$data['id'])->update($update);
-        if ($db > 0){
+        $db = Db::name('plate')->where('id', $data['id'])->update($update);
+        if ($db > 0) {
             return Common::ReturnSuccess("修改成功");
-        }else{
+        } else {
             return Common::ReturnError("修改失败");
         }
     }
 
 
-    public function platepost(){
+    public function platepost()
+    {
         try {
             $listPost = Db::name('post')
                 ->alias('p')
@@ -111,29 +124,31 @@ class Bbs extends BaseController
                 ->field('p.*,a.appname,q.platename,(SELECT COUNT(*) FROM mr_comment as c WHERE c.postid  = p.id) as commentnum')
                 ->paginate(10);
         } catch (DbException $e) {
-             return Common::ReturnError($e->getMessage());
+            return Common::ReturnError($e->getMessage());
         }
         $page = $listPost->render();
         return $this->fetch('/bbs/platepost', ['list' => $listPost, 'page' => $page]);
     }
 
-    public function delplatepost(Request $request){
+    public function delplatepost(Request $request)
+    {
         $data = $request->post();
         try {
             $user = Db::name('post')->delete($data['id']);
         } catch (PDOException $e) {
-             return Common::ReturnError($e->getMessage());
+            return Common::ReturnError($e->getMessage());
         } catch (Exception $e) {
-             return Common::ReturnError($e->getMessage());
+            return Common::ReturnError($e->getMessage());
         }
-        if ($user>0){
+        if ($user > 0) {
             return Common::ReturnSuccess("删除成功");
-        }else{
+        } else {
             return Common::ReturnError('删除失败');
         }
     }
 
-    public function querypost($id){
+    public function querypost($id)
+    {
         try {
             $listPost = Db::name('post')->where('p.id', $id)
                 ->alias('p')
@@ -141,16 +156,17 @@ class Bbs extends BaseController
                 ->join('plate q', 'q.appid = p.appid')
                 ->field('p.*,a.appname,q.platename')
                 ->find();
-            return $this->fetch('bbs/querypost')->assign('post',$listPost);
+            return $this->fetch('bbs/querypost')->assign('post', $listPost);
         } catch (DataNotFoundException $e) {
-             return Common::ReturnError($e->getMessage());
+            return Common::ReturnError($e->getMessage());
         } catch (ModelNotFoundException $e) {
-             return Common::ReturnError($e->getMessage());
+            return Common::ReturnError($e->getMessage());
         } catch (DbException $e) {
-             return Common::ReturnError($e->getMessage());
+            return Common::ReturnError($e->getMessage());
         }
     }
-    public function updatepost(Request $request){
+    public function updatepost(Request $request)
+    {
         $data = $request->post();
         $validate = Validate::make([
             'id' => 'require|number',
@@ -168,14 +184,11 @@ class Bbs extends BaseController
             'lock' => $data['lock'],
             'top' => $data['top'],
         ];
-        $db = Db::name('post')->where('id',$data['id'])->update($update);
-        if ($db > 0){
+        $db = Db::name('post')->where('id', $data['id'])->update($update);
+        if ($db > 0) {
             return Common::ReturnSuccess("修改成功");
-        }else{
+        } else {
             return Common::ReturnError("修改失败");
         }
     }
-
-
-
 }

@@ -15,17 +15,8 @@ class Shop extends BaseController
 {
     public function index()
     {
-        try {
-            $listShop = Db::name('shop')
-                ->alias('s')
-                ->join('app a', 'a.appid = s.appid')
-                ->field('s.*,a.appname')
-                ->paginate(10);
-        } catch (DbException $e) {
-            return Common::ReturnError($e->getMessage());
-        }
-        $page = $listShop->render();
-        return $this->fetch('/shop/index', ['list' => $listShop, 'page' => $page]);
+        
+        return $this->fetch('/shop/index');
     }
 
     public function getshoplist(){
@@ -44,10 +35,16 @@ class Shop extends BaseController
                 ->limit($limit)
                 ->page($page)
                 ->select();
+            $listShopcount = Db::name('shop')
+                ->alias('s')
+                ->join('app a', 'a.appid = s.appid')
+                ->field('s.*,a.appname')
+                ->where('s.shopname', "like", '%' . $shopname . '%')
+                ->count();
         } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
-        return json(['rows' => $appList,'total' => ShopModel::count()]);
+        return json(['rows' => $appList,'total' => $listShopcount]);
     }
 
     public function addshop(Request  $request){
@@ -70,17 +67,7 @@ class Shop extends BaseController
 
     public function shoporder()
     {
-        try {
-            $listShoporder = Db::name('shoporder')
-                ->alias('s')
-                ->join('app a', 'a.appid = s.appid')
-                ->field('s.*,a.appname')
-                ->paginate(10);
-        } catch (DbException $e) {
-            return Common::ReturnError($e->getMessage());
-        }
-        $page = $listShoporder->render();
-        return $this->fetch('/shop/shoporder', ['list' => $listShoporder, 'page' => $page]);
+        return $this->fetch('/shop/shoporder');
     }
 
     public function getshoporderlist(){
@@ -97,10 +84,15 @@ class Shop extends BaseController
                 ->limit($limit)
                 ->page($page)
                 ->select();
+            $listShopordercount = Db::name('shoporder')
+                ->alias('s')
+                ->join('app a', 'a.appid = s.appid')
+                ->field('s.*,a.appname')
+                ->count();
         } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
-        return json(['rows' => $appList,'total' => Shoporder::count()]);
+        return json(['rows' => $appList,'total' => $listShopordercount]);
     }
 
     public function delshoporder(){

@@ -12,9 +12,18 @@
                                 <span class="mdi mdi-window-close" aria-hidden="true"></span>删除
                             </button>
                         </div>
-                        <div class="input-group mb-3">
-                            <input type="text" id="searchkm" class="form-control" placeholder="卡密">
-                            <div class="input-group-append">
+                        <div class="input-group">
+                            <div class="form-group col-lg-4">
+                                <input type="text" id="searchkm" class="form-control" placeholder="卡密">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <select class="form-control" id="isuse">
+                                    <option value="">请选择</option>
+                                    <option value="true">已使用</option>
+                                    <option value="false">未使用</option>
+                                </select>
+                            </div>
+                            <div class="input-group-append col-lg-4">
                                 <input type="button" id="search_btn" class="input-group-text" value="查询">
                             </div>
                         </div>
@@ -131,6 +140,7 @@
             url: "{:url('km/GetKmlist')}",
             data: {
                 km : $.trim($('#searchkm').val()),
+                isuse : $.trim($('#isuse').val()),
             },
             dataType: "json",
             success: function (data) {

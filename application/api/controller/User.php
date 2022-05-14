@@ -2,6 +2,7 @@
 
 namespace app\api\controller;
 
+use app\common\controller\Common as Commoncode;
 use think\Controller;
 use think\Db;
 use think\db\exception\DataNotFoundException;
@@ -116,12 +117,12 @@ class User extends Controller
                     return Common::return_msg(400, $validate->getError());
                 }
                 if ($user == null || $user == "") {
-                    if ($useremail != null || $useremail != ""){
+                    if ($useremail != null || $useremail != "") {
                         return Common::return_msg(400, "邮箱已存在");
                     }
-                    $emailregcode = Session::get('emailcode'); 
+                    $emailregcode = Session::get('emailcode');
                     if ($emailcode['emailcode'] == $data['emailcode']) {
-                    //if ($emailregcode == $data['emailcode']) {
+                        //if ($emailregcode == $data['emailcode']) {
                         $adddata = [
                             'username' => $data['username'],
                             'password' => md5($data['password']),
@@ -135,7 +136,7 @@ class User extends Controller
                         ];
                         $user = Db::name('user')->data($adddata)->insert();
                         if ($user > 0) {
-                            Db::name('emailcode')->where('id', 1)->update(["emailcode"=>"","ip"=>"","creat_time"=>""]);
+                            Db::name('emailcode')->where('id', 1)->update(["emailcode" => "", "ip" => "", "creat_time" => ""]);
                             return Common::return_msg(200, '注册成功');
                         } else {
                             return Common::return_msg(400, '注册失败');
@@ -148,7 +149,7 @@ class User extends Controller
                 }
             } else {
                 if ($user == null || $user == "") {
-                    if ($useremail != null || $useremail != ""){
+                    if ($useremail != null || $useremail != "") {
                         return Common::return_msg(400, "邮箱已存在");
                     }
                     $adddata = [
@@ -164,6 +165,7 @@ class User extends Controller
                     ];
                     $user = Db::name('user')->data($adddata)->insert();
                     if ($user > 0) {
+
                         return Common::return_msg(200, '注册成功');
                     } else {
                         return Common::return_msg(400, '注册失败');
@@ -172,7 +174,6 @@ class User extends Controller
                     return Common::return_msg(400, "账号已存在");
                 }
             }
-
         }
     }
 
@@ -413,7 +414,7 @@ class User extends Controller
                     $result['useremail'] = $userdata['useremail'];
                     $result['usertx'] = $userdata['usertx'];
                     $result['signature'] = $userdata['signature'];
-                    $result['viptime'] = date("Y-m-d",$userdata['viptime']);
+                    $result['viptime'] = date("Y-m-d", $userdata['viptime']);
                     $result['money'] = $userdata['money'];
                     $result['exp'] = $userdata['exp'];
                     $result['creattime'] = $userdata['creattime'];
@@ -474,7 +475,7 @@ class User extends Controller
         if ($updateuser > 0) {
             try {
                 Common::send_mail($user['useremail'], "随机密码", "你的随机密码是：" . $newpassword);
-                Db::name('passcode')->where('id', 1)->update(["passcode"=>"","ip"=>"","creattime"=>""]);
+                Db::name('passcode')->where('id', 1)->update(["passcode" => "", "ip" => "", "creattime" => ""]);
             } catch (DataNotFoundException $e) {
                 return Common::return_msg(400, "请求失败");
             } catch (ModelNotFoundException $e) {
@@ -743,7 +744,8 @@ class User extends Controller
         }
     }
 
-    public function UpdatePassword(Request $request){
+    public function UpdatePassword(Request $request)
+    {
         $data = $request->param();
         $validate = Validate::make([
             'username' => 'require',
@@ -771,18 +773,104 @@ class User extends Controller
         if ($user == "" || $user == null) {
             return Common::return_msg(400, "没有该用户");
         }
-        if ($user['password'] != md5($data['oldpwd'])){
+        if ($user['password'] != md5($data['oldpwd'])) {
             return Common::return_msg(400, "旧密码错误");
         }
         if ($user['user_token'] != $data['usertoken']) {
             return Common::return_msg(400, "token过期");
         }
         $result = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['password' => md5($data['newpwd'])]);
-        if ($result > 0){
+        if ($result > 0) {
             return Common::return_msg(200, "修改成功");
-        }else{
+        } else {
             return Common::return_msg(400, "修改失败");
         }
     }
 
+    //填写邀请码
+    public function InviteCode(Request $request)
+    {
+        $data = $request->param();
+        $validate = Validate::make([
+            'invitecode' => 'require',   //别人的邀请码
+            'username' => 'require',    //自己的用户名
+            'appid' => 'require|number',
+        ]);
+        if (!$validate->check($data)) {
+            return Common::return_msg(400, $validate->getError());
+        }
+        try {
+            $app = Db::name('app')->where('appid', $data['appid'])->find();
+            $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
+            $invitecode = Db::name('user')->where('invitecode', $data['invitecode'])->find();
+        } catch (DataNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (DbException $e) {
+            return Common::return_msg(400, "请求失败");
+        }
+        if ($user == "" || $user == null) {
+            return Common::return_msg(400, "没有该用户");
+        }
+        if ($user['inviter'] != "") {
+            return Common::return_msg(400, "已经填写过邀请码");
+        }
+        if ($invitecode == "" || $invitecode == null) {
+            return Common::return_msg(400, "没有该邀请码");
+        }
+        //判断用户会员状态
+        if ($user['viptime'] > time()) {
+            $viptime = $user['viptime'];
+        } else {
+            $viptime = time();
+        }
+        if ($invitecode['viptime'] > time()) {
+            $viptime = $invitecode['viptime'];
+        } else {
+            $viptime = time();
+        }
+        //填写邀请码得人
+        Db::name('user')
+            ->where('username', $data['username'])
+            ->update([
+                'inviter' => $invitecode['username'],
+                'money' => $user['money'] + $app['finvitemoney'],
+                'viptime' => $viptime + $app['finvitevip'] * 3600 * 24,
+                'exp' => $user['exp'] + $app['finviteexp'],
+            ]);
+        //拥有邀请码得人
+        Db::name('user')
+            ->where('invitecode', $data['invitecode'])
+            ->update([
+                'invitetotal' => $invitecode['invitetotal'] + 1,
+                'money' => $invitecode['money'] + $app['invitemoney'],
+                'viptime' => $viptime + $app['invitevip'] * 3600 * 24,
+                'exp' => $invitecode['exp'] + $app['inviteexp'],
+            ]);
+        return Common::return_msg(200, "填写成功");
+    }
+
+    public function Getinvitecode(Request $request)
+    {
+        $data = $request->param();
+        $validate = Validate::make([
+            'username' => 'require',
+            'appid' => 'require|number',
+        ]);
+        if (!$validate->check($data)) {
+            return Common::return_msg(400, $validate->getError());
+        }
+        $finvitecode = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
+        if ($finvitecode['invitecode'] == "" || $finvitecode['invitecode'] == null) {
+            $invitecode = Commoncode::getinvitacode($data['username']);
+            Db::name('user')
+                ->where('username', $data['username'])
+                ->where('appid', $data['appid'])
+                ->update(['invitecode' => $invitecode]);
+            return Common::return_msg(200, "生成成功", $invitecode);
+        } else {
+            return Common::return_msg(400, "已经生成过邀请码");
+        }
+    }
 }

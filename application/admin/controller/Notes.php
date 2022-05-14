@@ -33,10 +33,16 @@ class Notes extends BaseController
                 ->limit($limit)
                 ->page($page)
                 ->select();
+            $notecount = Db::name('notes')
+                ->alias('n')
+                ->join('app a', 'a.appid = n.appid')
+                ->field('n.*,a.appname')
+                ->where('n.title', "like", '%' . $title . '%')
+                ->count();
         } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
-        return json(['rows' => $appList,'total' => NotesModel::count()]);
+        return json(['rows' => $appList,'total' => $notecount]);
     }
 
     //删除卡密

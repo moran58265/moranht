@@ -27,6 +27,8 @@ Route::rule('api/UploadHead','api/user/UploadHead');
 Route::rule('api/UserList','api/user/UserList');
 Route::rule('api/isVip','api/User/isVip');
 Route::rule('api/UpdatePassword','api/User/UpdatePassword');
+Route::rule('api/InviteCode','api/User/InviteCode');
+Route::rule('api/Getinvitecode','api/User/Getinvitecode');
 
 /**
  * app

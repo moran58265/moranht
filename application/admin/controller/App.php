@@ -17,13 +17,18 @@ class App extends BaseController
     //获取所有信息
     public function getapplist()
     {
-        $limit = input('limit') ?? 10;
-        $page = input('page') ?? 1;
-        $sort = input('sort') ?? 'appid';
-        $sortOrder = input('sortOrder') ?? 'desc';
-        $appname = input('appname') ?? '';
-        $appList = AppModel::where('appname',"like",'%'.$appname.'%')->order($sort,$sortOrder)->limit($limit)->page($page)->select();
-        return json(['rows' => $appList,'total' => AppModel::count()]);
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        $sort = input('sort')?input('sort'):'appid';
+        $sortOrder = input('sortOrder')?input('sortOrder'):'asc';
+        $appname = input('appname')?input('appname'):'';
+        $appList = AppModel::where('appname',"like",'%'.$appname.'%')
+        ->order($sort,$sortOrder)
+        ->limit($limit)
+        ->page($page)
+        ->select();
+        $count = Db::name('app')->where('appname',"like",'%'.$appname.'%')->count();
+        return json(['rows' => $appList,'total' => $count]);
     }
 
     //删除app

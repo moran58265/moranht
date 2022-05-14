@@ -105,6 +105,30 @@
                 <label for="commentexp">评论赠送经验</label>
                 <input type="number" class="form-control" id="commentexp" value="{$app.commentexp}" placeholder="请输入评论赠送经验">
               </div>
+              <div class="form-group">
+                <label for="commentexp">邀请人获得金币</label>
+                <input type="number" class="form-control" id="invitemoney" value="{$app.invitemoney}" placeholder="请输入邀请者获得金币">
+              </div>
+              <div class="form-group">
+                <label for="commentexp">邀请人获得经验</label>
+                <input type="number" class="form-control" id="inviteexp" value="{$app.inviteexp}" placeholder="请输入邀请者获得经验">
+              </div>
+              <div class="form-group">
+                <label for="commentexp">邀请人获得vip天数</label>
+                <input type="number" class="form-control" id="invitevip" value="{$app.invitevip}" placeholder="请输入邀请者获得vip天数">
+              </div>
+              <div class="form-group">
+                <label for="commentexp">被邀请人获得金币</label>
+                <input type="number" class="form-control" id="finvitemoney" value="{$app.finvitemoney}" placeholder="请输入被邀请人获得金币">
+              </div>
+              <div class="form-group">
+                <label for="commentexp">被邀请人获得经验</label>
+                <input type="number" class="form-control" id="finviteexp" value="{$app.finviteexp}" placeholder="请输入被邀请人获得经验">
+              </div>
+              <div class="form-group">
+                <label for="commentexp">被邀请人获得vip天数</label>
+                <input type="number" class="form-control" id="finvitevip" value="{$app.finvitevip}" placeholder="请输入被邀请人获得vip天数">
+              </div>
 
               <div class="form-group">
                 <label>是否开启注册验证码</label>
@@ -168,6 +192,12 @@
     var postexp = $.trim($("#postexp").val());
     var commentmoney = $.trim($("#commentmoney").val());
     var commentexp = $.trim($("#commentexp").val());
+    var invitemoney = $.trim($("#invitemoney").val());
+    var inviteexp = $.trim($("#inviteexp").val());
+    var invitevip = $.trim($("#invitevip").val());
+    var finvitemoney = $.trim($("#finvitemoney").val());
+    var finviteexp = $.trim($("#finviteexp").val());
+    var finvitevip = $.trim($("#finvitevip").val());
     var is_email = $.trim($("#is_email").val());
     var hierarchy = $.trim($("#hierarchy").val());
     var app_site_status = document.getElementById("app_site_status").checked
@@ -196,6 +226,12 @@
         postexp:postexp,
         commentmoney:commentmoney,
         commentexp:commentexp,
+        invitemoney:invitemoney,
+        inviteexp:inviteexp,
+        invitevip:invitevip,
+        finvitemoney:finvitemoney,
+        finviteexp:finviteexp,
+        finvitevip:finvitevip,
         is_email:is_email,
         app_site_status: app_site_status,
         hierarchy:hierarchy,

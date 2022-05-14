@@ -20,24 +20,29 @@ class User extends BaseController
 //获取所有信息
     public function GetUserlist()
     {
-        $limit = input('limit') ?? 10;
-        $page = input('page') ?? 1;
-        $sort = input('sort') ?? 'id';
-        $sortOrder = input('sortOrder') ?? 'desc';
-        $username = input('username') ?? '';
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        $sort = input('sort')?input('sort'):'id';
+        $sortOrder = input('sortOrder')?input('sortOrder'):'desc';
+        $username = input('username')?input('username'):'';
         try {
             $appList = Db::name('user')->alias('u')
                 ->join('app a', 'a.appid=u.appid')
-                ->field('u.id,u.username,u.usertx,u.nickname,a.appname,u.useremail,FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime,u.banned')
+                ->field('u.id,u.username,u.usertx,u.nickname,a.appname,u.useremail,FROM_UNIXTIME(u.creattime,"%Y-%m-%d %H:%i:%s") as creattime,u.banned')
                 ->where('u.username', "like", '%' . $username . '%')
                 ->order($sort, $sortOrder)
                 ->limit($limit)
                 ->page($page)
                 ->select();
+                $appcount = Db::name('user')
+                ->alias('u')
+                ->join('app a', 'a.appid=u.appid')
+                ->field('u.id,u.username,u.usertx,u.nickname,a.appname,u.useremail,FROM_UNIXTIME(u.creattime,"%Y-%m-%d %H:%i:%s") as creattime,u.banned')
+                ->where('u.username', "like", '%' . $username . '%')->count();
         } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
-        return json(['rows' => $appList,'total' => UserModel::count()]);
+        return json(['rows' => $appList,'total' => $appcount]);
     }
 
 

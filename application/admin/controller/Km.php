@@ -20,25 +20,34 @@ class Km extends BaseController
 
     public function GetKmlist()
     {
-        $limit = input('limit') ?? 10;
-        $page = input('page') ?? 1;
-        $sort = input('sort') ?? 'id';
-        $sortOrder = input('sortOrder') ?? 'desc';
-        $km = input('km') ?? '';
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        $sort = input('sort')?input('sort'):'id';
+        $sortOrder = input('sortOrder') ?input('sortOrder'):'asc';
+        $km = input('km')?input('km'):'';
+        $isuse = input('isuse')?input('isuse'):'';
         try {
             $appList = Db::name('km')
                 ->alias('k')
                 ->join('app a', 'a.appid = k.appid')
                 ->field('k.*,FROM_UNIXTIME(k.creattime,"%Y-%m-%d") as creattime,a.appname')
                 ->where('k.km', "like", '%' . $km . '%')
+                ->where('k.isuse',"like","%". $isuse. '%')
                 ->order($sort, $sortOrder)
                 ->limit($limit)
                 ->page($page)
                 ->select();
+            $appcount = Db::name('km')
+                ->alias('k')
+                ->join('app a', 'a.appid = k.appid')
+                ->field('k.*,FROM_UNIXTIME(k.creattime,"%Y-%m-%d") as creattime,a.appname')
+                ->where('k.km', "like", '%' . $km . '%')
+                ->where('k.isuse',"like","%". $isuse. '%')
+                ->count();
         } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
-        return json(['rows' => $appList,'total' => KmModel::count()]);
+        return json(['rows' => $appList,'total' => $appcount]);
     }
 
     //删除卡密

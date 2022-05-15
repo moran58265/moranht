@@ -829,9 +829,9 @@ class User extends Controller
             $viptime = time();
         }
         if ($invitecode['viptime'] > time()) {
-            $viptime = $invitecode['viptime'];
+            $invitecodeviptime = $invitecode['viptime'];
         } else {
-            $viptime = time();
+            $invitecodeviptime = time();
         }
         if($user['money'] == ""){
             $user['money'] = 0;
@@ -860,7 +860,7 @@ class User extends Controller
             ->update([
                 'invitetotal' => $invitecode['invitetotal'] + 1,
                 'money' => $invitecode['money'] + $app['invitemoney'],
-                'viptime' => $viptime + $app['invitevip'] * 3600 * 24,
+                'viptime' => $invitecodeviptime + $app['invitevip'] * 3600 * 24,
                 'exp' => $invitecode['exp'] + $app['inviteexp'],
             ]);
         return Common::return_msg(200, "填写成功");

@@ -52,9 +52,17 @@ class Index extends BaseController
 
     //请求接口
     public function getupdate(){
-        $url = 'https://www.moranblog.cn/mrhtupdate.php';
-        $data = file_get_contents($url);
-        $data = json_decode($data,true);
+        // $url = 'https://www.moranblog.cn/mrhtupdate.php';
+        // $data = file_get_contents($url);
+        // $data = json_decode($data,true);
+        $stream_opts = [
+            "ssl" => [
+                "verify_peer"=>false,
+                "verify_peer_name"=>false,
+            ]
+        ]; 
+        $response = file_get_contents("https://www.moranblog.cn/mrhtupdate.php",false, stream_context_create($stream_opts));
+        $data = json_decode($response,true);
         return Common::ReturnJson('获取成功',$data);
     }
 

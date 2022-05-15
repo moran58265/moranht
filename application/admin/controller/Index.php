@@ -68,10 +68,16 @@ class Index extends BaseController
 
     //下载zip文件
     public function downloadzip(){
+        $stream_opts = [
+            "ssl" => [
+                "verify_peer"=>false,
+                "verify_peer_name"=>false,
+            ]
+        ]; 
         $downurl = input('post.');
         $arr=parse_url($downurl['url']);  //获取下载地址
         $fileName=basename(time());  //获取文件名
-        $file=file_get_contents($downurl['url']); //获取文件内容
+        $file=file_get_contents($downurl['url'],false, stream_context_create($stream_opts)); //获取文件内容
         $file_path = "./update/".$fileName.".zip";  //设置文件路径
         file_put_contents($file_path,$file);
         return Common::ReturnJson($file_path);

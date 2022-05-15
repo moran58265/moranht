@@ -379,9 +379,9 @@ class User extends Controller
             } else {
                 if ($data['usertoken'] == $user['user_token']) {
                     if ($user['banned'] == 'true') {
-                        $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.banned_reason', 'u.title', 'a.appname'];
+                        $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.banned_reason', 'u.title', 'a.appname','u.invitecode','u.invitetotal','u.inviter'];
                     } else {
-                        $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.title', 'a.appname'];
+                        $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.title', 'a.appname','u.invitecode','u.invitetotal','u.inviter'];
                     }
                     try {
                         $userdata = Db::name('user')
@@ -425,6 +425,9 @@ class User extends Controller
                     $result['title'] = $userdata['title'];
                     $result['appname'] = $userdata['appname'];
                     $result['hierarchy'] = $hierarchy;
+                    $result['invitecode'] = $userdata['invitecode'];
+                    $result['invitetotal'] = $userdata['invitetotal'];
+                    $result['inviter'] = $userdata['inviter'];
                     return Common::return_msg(200, "查询成功", $result);
                 } else {
                     return Common::return_msg(400, "token错误");
@@ -829,6 +832,18 @@ class User extends Controller
             $viptime = $invitecode['viptime'];
         } else {
             $viptime = time();
+        }
+        if($user['money'] == ""){
+            $user['money'] = 0;
+        }
+        if($user['exp'] == ""){
+            $user['exp'] = 0;
+        }
+        if($invitecode['money'] == ""){
+            $invitecode['money'] = 0;
+        }
+        if($invitecode['exp'] == ""){
+            $invitecode['exp'] = 0;
         }
         //填写邀请码得人
         Db::name('user')

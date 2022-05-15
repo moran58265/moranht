@@ -45,11 +45,34 @@ class Notes extends BaseController
         return json(['rows' => $appList,'total' => $notecount]);
     }
 
-    //删除卡密
+    //删除
     public function deletenotes()
     {
         $id = input('id');
         $app = NotesModel::destroy($id);
         return Common::ReturnSuccess("删除成功");
     }
+
+
+    public function querynote()
+    {
+        $id = input('id');
+        $notes = Db::name('notes')->alias('n')->join('app a', 'a.appid = n.appid')->where('n.id', $id)->field('n.*,a.appname')->find();
+        //return json($notes);
+        return $this->fetch()->assign('notes',$notes);
+    }
+
+    public function editnote()
+    {
+        $data = input('post.');
+        $notes = new NotesModel();
+        $res = $notes->save($data, ['id' => $data['id']]);
+        if ($res) {
+            return Common::ReturnSuccess('修改成功');
+        } else {
+            return Common::ReturnError('修改失败');
+        }
+    }
+
+
 }

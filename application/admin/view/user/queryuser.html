@@ -66,6 +66,10 @@
                             <input type="text" class="form-control" id="invitetotal" value="{$user.invitetotal}" disabled>
                         </div>
                         <div class="form-group">
+                            <label for="exp">邀请人</label>
+                            <input type="text" class="form-control" id="inviter" value="{$user.inviter}" disabled>
+                        </div>
+                        <div class="form-group">
                             <label for="banned">是否封禁</label>
                             <select class="form-control" id="banned" onchange="changenone(this)">
                                 {if $user['banned'] == 'true'} <option value="true" selected>是</option><option value="false">否</option>

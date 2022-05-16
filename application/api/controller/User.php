@@ -893,7 +893,8 @@ class User extends Controller
         $data = $request->param();
         $validate = Validate::make([
             'appid' => 'require|number',
-            'limit' => 'require|number',
+            'limit' => 'number',
+            'order' => 'alpha',
         ]);
         if (!$validate->check($data)) {
             return Common::return_msg(400, $validate->getError());
@@ -902,7 +903,9 @@ class User extends Controller
         if($app == ""){
             return Common::return_msg(400, "没有该app");
         }
-        $inviterList = Db::name('user')->field('username,nickname,usertx,signature,invitetotal')->where('appid', $data['appid'])->order('invitetotal desc')->limit($data['limit'])->select();
+        $order = isset($data['order']) ? $data['order'] : "asc";
+        $limit = isset($data['limit']) ? $data['limit'] : "10";
+        $inviterList = Db::name('user')->field('username,nickname,usertx,signature,invitetotal')->where('appid', $data['appid'])->order('invitetotal',$order)->limit($limit)->select();
         return Common::return_msg(200, "获取成功", $inviterList);
     }
 }

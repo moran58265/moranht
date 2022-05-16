@@ -888,4 +888,21 @@ class User extends Controller
             return Common::return_msg(400, "已经生成过邀请码");
         }
     }
+
+    public function GetinviterList(Request $request){
+        $data = $request->param();
+        $validate = Validate::make([
+            'appid' => 'require|number',
+            'limit' => 'require|number',
+        ]);
+        if (!$validate->check($data)) {
+            return Common::return_msg(400, $validate->getError());
+        }
+        $app = Db::name('app')->where('appid', $data['appid'])->find();
+        if($app == ""){
+            return Common::return_msg(400, "没有该app");
+        }
+        $inviterList = Db::name('user')->field('username,nickname,usertx,signature,invitetotal')->where('appid', $data['appid'])->order('invitetotal desc')->limit($data['limit'])->select();
+        return Common::return_msg(200, "获取成功", $inviterList);
+    }
 }

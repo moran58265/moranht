@@ -5,7 +5,7 @@
 
 
 #### 软件架构
-thinkphp5.1+mysql实现
+thinkphp5.1+mysql实现(php>7.1)
 
 
 #### 安装教程

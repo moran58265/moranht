@@ -18,7 +18,8 @@ class Common
      * @param array $data
      * @return Json [json] 返回就是json数据
      */
-    public static function return_msg($code,$msg,$data =[]){
+    public static function return_msg($code, $msg, $data = [])
+    {
         $return_data['code'] = $code;
         $return_data['msg'] = $msg;
         $return_data['data'] = $data;
@@ -51,32 +52,35 @@ class Common
      * @throws ModelNotFoundException
      * @throws DbException
      */
-    public static function send_mail($toEmail,$emailTitle = '',$emailContent = '') {
+    public static function send_mail($toEmail, $emailTitle = '', $emailContent = '')
+    {
         try {
             $result = Db::name('email')->where('id', 1)->find();
-            $mail=new Phpmailer();
-            $mail->isSMTP();// 使用SMTP服务（发送邮件的服务）
-            $mail->CharSet = "utf8";// 编码格式为utf8，不设置编码的话，中文会出现乱码
-            $mail->Host = $result['mail_way'];// 发送方的SMTP服务器地址
-            $mail->SMTPAuth = true;// 是否使用身份验证
-            $mail->Username = $result['username'];// 申请了smtp服务的邮箱名（自己的邮箱名）
-            $mail->Password = $result['password'];// 发送方的邮箱密码，不是登录密码,是qq的第三方授权登录码,要自己去开启（之前叫你保存的那个密码）
-            $mail->SMTPSecure = "ssl";// 使用ssl协议方式,
-            $mail->Port = $result['port'];// QQ邮箱的ssl协议方式端口号是465/587
-            $mail->setFrom($result['username'],$result['email_title']);
+            $mail = new Phpmailer();
+            $mail->isSMTP(); // 使用SMTP服务（发送邮件的服务）
+            $mail->CharSet = "utf8"; // 编码格式为utf8，不设置编码的话，中文会出现乱码
+            $mail->Host = $result['mail_way']; // 发送方的SMTP服务器地址
+            $mail->SMTPAuth = true; // 是否使用身份验证
+            $mail->Username = $result['username']; // 申请了smtp服务的邮箱名（自己的邮箱名）
+            $mail->Password = $result['password']; // 发送方的邮箱密码，不是登录密码,是qq的第三方授权登录码,要自己去开启（之前叫你保存的那个密码）
+            $mail->SMTPSecure = "ssl"; // 使用ssl协议方式,
+            $mail->Port = $result['port']; // QQ邮箱的ssl协议方式端口号是465/587
+            $mail->setFrom($result['username'], $result['email_title']);
             // 设置发件人信息，如邮件格式说明中的发件人,
-            $mail->addAddress($toEmail);// 设置收件人信息，如邮件格式说明中的收件人
+            $mail->addAddress($toEmail); // 设置收件人信息，如邮件格式说明中的收件人
             //$mail->addReplyTo($test_email['email_user'],"Reply");// 设置回复人信息，指的是收件人收到邮件后，如果要回复，回复邮件将发送到的邮箱地址
-            $mail->Subject = $emailTitle;// 邮件标题
-            $mail->Body = $emailContent;// 邮件正文
+            $mail->Subject = $emailTitle; // 邮件标题
+            $mail->Body = $emailContent; // 邮件正文
+            //配置html格式发送
+            $mail->isHTML(true);
             //$mail->AltBody = "This is the plain text纯文本";// 这个是设置纯文本方式显示的正文内容，如果不支持Html方式，就会用到这个，基本无用**
-            if(!$mail->send()){// 发送邮件
-                return Common::return_msg(400,$mail->ErrorInfo);
-            }else {
+            if (!$mail->send()) { // 发送邮件
+                return Common::return_msg(400, $mail->ErrorInfo);
+            } else {
                 return Common::return_msg(200, '发送成功');
             }
-        }catch (Exception $exception){
-            return Common::return_msg(400,$exception);
+        } catch (Exception $exception) {
+            return Common::return_msg(400, $exception);
         }
     }
 
@@ -124,4 +128,40 @@ class Common
     }
 
 
+    //判断ip是否在某个范围内
+    public static function ip_address($nowip, $dbip)
+    {
+        header("Content-type: text/html; charset=utf-8");
+        //访问api接口获取ip地址http://ip-api.com/json/ip地址?lang=zh-CN
+        //获取当前ip所在的省份
+        if ($nowip == '127.0.0.1') {
+            $nowaddres = '内网IP';
+        } else {
+            $nowurl = "http://ip-api.com/json/" . $nowip . "?lang=zh-CN";
+            try{
+                $nowipaddres = file_get_contents($nowurl);
+                $nowipaddresarr = json_decode($nowipaddres, true);
+                $nowaddres = $nowipaddresarr['country'] . $nowipaddresarr['regionName'] . $nowipaddresarr['city'];
+            }catch (\Exception $e){
+                $nowaddres = '未知ip';
+            }
+        }
+        if($dbip == '127.0.0.1'){
+            $dbaddres = '内网IP';
+        }else{
+            try{
+                $dburl = "http://ip-api.com/json/" . $dbip . "?lang=zh-CN";
+                $dbipaddres = file_get_contents($dburl);
+                $dbipaddresarr = json_decode($dbipaddres, true);
+                $dbaddres = $dbipaddresarr['country'] . $dbipaddresarr['regionName'] . $dbipaddresarr['city'];
+            }catch (\Exception $e){
+                $nowaddres = '未知ip';
+            }
+        }
+        if ($nowaddres == $dbaddres) {
+            return ["code" => 200, "msg" => $nowaddres];
+        } else {
+            return ["code" => 400, "msg" => $nowaddres];
+        }
+    }
 }

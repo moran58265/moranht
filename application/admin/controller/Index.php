@@ -17,7 +17,7 @@ class Index extends BaseController
         $data['kmtotal'] = Db::name('km')->count(); #卡密总数
         $data['messagetotal'] = Db::name('notes')->count(); #笔记总数
         $data['todayviptotal'] = Db::name('user')->where('viptime', '>', time())->count(); #今日vip总数
-        $data['todayregtotal'] = Db::name('user')->where('creattime', '>', time())->count(); #今日注册总数
+        $data['todayregtotal'] = Db::name('user')->where('creattime', '>', strtotime(date("Y-m-d"),time()))->count(); #今日注册总数
         $data['isusekmtotal'] = Db::name('km')->where('isuse', '=', 'true')->count(); #已使用卡密总数
         $data['viewtotal'] = Db::name('app')->sum('view'); #访问总数
         $data['signintotal'] = Db::name('user')->where('signtime','>',strtotime(date("Y-m-d"),time()))->count(); #今日签到人数

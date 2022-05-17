@@ -39,7 +39,11 @@ class User extends BaseController
                 ->join('app a', 'a.appid=u.appid')
                 ->field('u.id,u.username,u.usertx,u.nickname,a.appname,u.useremail,FROM_UNIXTIME(u.creattime,"%Y-%m-%d %H:%i:%s") as creattime,u.banned')
                 ->where('u.username', "like", '%' . $username . '%')->count();
-        } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
+        } catch (DataNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (ModelNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
         return json(['rows' => $appList,'total' => $appcount]);

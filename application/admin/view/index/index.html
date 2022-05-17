@@ -54,6 +54,108 @@
         </div>
       </div>
     </div>
+<!-- 第二行 -->
+    <div class="row">
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-primary text-white">
+          <div class="card-body clearfix">
+            <div class="flex-box">
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-android fs-22"></i></span>
+              <span class="fs-22 lh-22">{$data.todayregtotal}</span>
+            </div>
+            <div class="text-right">今日注册</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-danger text-white">
+          <div class="card-body clearfix">
+            <div class="flex-box">
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account fs-22"></i></span>
+              <span class="fs-22 lh-22">{$data.todayviptotal}</span>
+            </div>
+            <div class="text-right">会员数量</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-success text-white">
+          <div class="card-body clearfix">
+            <div class="flex-box">
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-credit-card fs-22"></i></span>
+              <span class="fs-22 lh-22">{$data.isusekmtotal}</span>
+            </div>
+            <div class="text-right">已使用卡密</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-purple text-white">
+          <div class="card-body clearfix">
+            <div class="flex-box">
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-comment-outline fs-22"></i></span>
+              <span class="fs-22 lh-22">{$data.viewtotal} 条</span>
+            </div>
+            <div class="text-right">访问总数</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 第三行 -->
+    <div class="row">
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-primary text-white">
+          <div class="card-body clearfix">
+            <div class="flex-box">
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-android fs-22"></i></span>
+              <span class="fs-22 lh-22">{$data.signintotal}</span>
+            </div>
+            <div class="text-right">今日签到人数</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-danger text-white">
+          <div class="card-body clearfix">
+            <div class="flex-box">
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account fs-22"></i></span>
+              <span class="fs-22 lh-22">{$data.paltetotal}</span>
+            </div>
+            <div class="text-right">板块数量</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-success text-white">
+          <div class="card-body clearfix">
+            <div class="flex-box">
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-credit-card fs-22"></i></span>
+              <span class="fs-22 lh-22">{$data.posttotal}</span>
+            </div>
+            <div class="text-right">帖子数量</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-purple text-white">
+          <div class="card-body clearfix">
+            <div class="flex-box">
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-comment-outline fs-22"></i></span>
+              <span class="fs-22 lh-22">{$data.filetotal} 条</span>
+            </div>
+            <div class="text-right">附件数量</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
 
     <div class="row">
 
@@ -71,7 +173,7 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">
-            <div class="card-title">每天用户总量(统计数据库中最近的7天)</div>
+            <div class="card-title">每月用户总量(统计数据库中最近的7个月)</div>
           </div>
           <div class="card-body">
             <canvas class="js-chartjs-lines"></canvas>
@@ -304,9 +406,9 @@
       dataType : "json", //返回数据形式为json
       async: false, //同步传输，并添加返回值，返回值应为已定义的全局变量 如a
       success : function(data) {
+        //console.log(data);
         a = data.data.date;
       }
-
     });
     return a;
   }
@@ -330,7 +432,7 @@
       dataType : "json", //返回数据形式为json
       async: false, //同步传输，并添加返回值，返回值应为已定义的全局变量 如a
       success : function(data) {
-        a = data.data.month;
+        a = data.data.date;
       }
 
     });
@@ -343,7 +445,7 @@
       dataType : "json", //返回数据形式为json
       async: false, //同步传输，并添加返回值，返回值应为已定义的全局变量 如a
       success : function(data) {
-        a = data.data.usernum;
+        a = data.data.count;
       }
 
     });
@@ -353,7 +455,7 @@ $(document).ready(function(e) {
     var $dashChartBarsCnt  = jQuery( '.js-chartjs-bars' )[0].getContext( '2d' ),
         $dashChartLinesCnt = jQuery( '.js-chartjs-lines' )[0].getContext( '2d' );
     var $dashChartBarsData = {
-		labels: date(),
+		labels: date().reverse(),
 		datasets: [
 			{
 				label: '注册用户',
@@ -362,16 +464,16 @@ $(document).ready(function(e) {
 				backgroundColor: 'rgba(51, 202, 185, 0.5)',
                 hoverBackgroundColor: "rgba(51, 202, 185, 0.7)",
                 hoverBorderColor: "rgba(0, 0, 0, 0)",
-				data: count()
+				data: count().reverse()
 			}
 		]
 	};
     var $dashChartLinesData = {
-		labels: month(),
+		labels: month().reverse(),
 		datasets: [
 			{
 				label: '用户数量',
-				data: usernum(),
+				data: usernum().reverse(),
 				borderColor: '#358ed7',
 				backgroundColor: 'rgba(53, 142, 215, 0.175)',
                 borderWidth: 1,

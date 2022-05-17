@@ -19,12 +19,13 @@ class Shop extends BaseController
         return $this->fetch('/shop/index');
     }
 
-    public function getshoplist(){
-        $limit = input('limit') ?? 10;
-        $page = input('page') ?? 1;
-        $sort = input('sort') ?? 'id';
-        $sortOrder = input('sortOrder') ?? 'desc';
-        $shopname = input('shopname') ?? '';
+    public function getshoplist()
+    {
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        $sort = input('sort')?input('sort'):'id';
+        $sortOrder = input('sortOrder')?input('sortOrder'):'desc';
+        $shopname = input('shopname')?input('shopname'):'';    
         try {
             $appList = Db::name('shop')
                 ->alias('s')
@@ -41,7 +42,11 @@ class Shop extends BaseController
                 ->field('s.*,a.appname')
                 ->where('s.shopname', "like", '%' . $shopname . '%')
                 ->count();
-        } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
+        } catch (DataNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (ModelNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
         return json(['rows' => $appList,'total' => $listShopcount]);
@@ -71,10 +76,10 @@ class Shop extends BaseController
     }
 
     public function getshoporderlist(){
-        $limit = input('limit') ?? 10;
-        $page = input('page') ?? 1;
-        $sort = input('sort') ?? 'id';
-        $sortOrder = input('sortOrder') ?? 'desc';
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        $sort = input('sort')?input('sort'):'id';
+        $sortOrder = input('sortOrder')?input('sortOrder'):'desc';
         try {
             $appList = Db::name('shoporder')
                 ->alias('s')
@@ -89,7 +94,11 @@ class Shop extends BaseController
                 ->join('app a', 'a.appid = s.appid')
                 ->field('s.*,a.appname')
                 ->count();
-        } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
+        } catch (DataNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (ModelNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
         return json(['rows' => $appList,'total' => $listShopordercount]);

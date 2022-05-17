@@ -19,14 +19,14 @@ class Bbs extends BaseController
     {
         return $this->fetch('/bbs/index');
     }
-
+    
     public function getplatelist()
     {
-        $limit = input('limit') ?? 10;
-        $page = input('page') ?? 1;
-        $sort = input('sort') ?? 'appid';
-        $sortOrder = input('sortOrder') ?? 'desc';
-        $platename = input('platename') ?? '';
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        $sort = input('sort')?input('sort'):'appid';
+        $sortOrder = input('sortOrder')?input('sortOrder'):'desc';
+        $platename = input('platename')?input('platename'):'';
         $appList = Db::name('plate')
             ->alias('p')
             ->join('app a', 'a.appid=p.appid')

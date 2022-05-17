@@ -18,11 +18,11 @@ class Notes extends BaseController
 
     public function Getnoteslist()
     {
-        $limit = input('limit') ?? 10;
-        $page = input('page') ?? 1;
-        $sort = input('sort') ?? 'id';
-        $sortOrder = input('sortOrder') ?? 'desc';
-        $title = input('title') ?? '';
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        $sort = input('sort')?input('sort'):'id';
+        $sortOrder = input('sortOrder')?input('sortOrder'):'desc';
+        $title = input('title')?input('title'):'';
         try {
             $appList = Db::name('notes')
                 ->alias('n')
@@ -39,7 +39,11 @@ class Notes extends BaseController
                 ->field('n.*,a.appname')
                 ->where('n.title', "like", '%' . $title . '%')
                 ->count();
-        } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
+        } catch (DataNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (ModelNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
         return json(['rows' => $appList,'total' => $notecount]);

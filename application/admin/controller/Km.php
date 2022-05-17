@@ -44,7 +44,11 @@ class Km extends BaseController
                 ->where('k.km', "like", '%' . $km . '%')
                 ->where('k.isuse',"like","%". $isuse. '%')
                 ->count();
-        } catch (DataNotFoundException | ModelNotFoundException | DbException $e) {
+        } catch (DataNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (ModelNotFoundException $e) {
+            return Common::ReturnError($e->getMessage());
+        }catch (DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
         return json(['rows' => $appList,'total' => $appcount]);

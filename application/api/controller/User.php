@@ -27,28 +27,28 @@ class User extends Controller
             'appid' => 'require|number'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $AppResult = Db::name('app')->where('appid', $data['appid'])->find();
         } catch (Exception $exception) {
-            return Common::return_msg(400, $exception->getMessage());
+            return Common::ReturnError($exception->getMessage());
         }
         if ($AppResult == "" || $AppResult == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         } else {
             try {
                 $UserResult = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
                 $emailresult = Db::name('email')->where('id', 1)->find();
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             }
             if ($UserResult == "" || $UserResult == null) {
-                return Common::return_msg(400, "没有此账号");
+                return Common::ReturnError("没有此账号");
             } else {
                 if ($UserResult['password'] == md5($data['password'])) {
                     $UserToken = md5($data['username'] . time());
@@ -64,23 +64,23 @@ class User extends Controller
                         try {
                             $msg = Common::send_mail($UserResult['useremail'], "异地登录提醒", $emailcontenthtml);
                         } catch (DataNotFoundException $e) {
-                            return Common::return_msg(400, "请求失败");
+                            return Common::ReturnError("请求失败");
                         } catch (ModelNotFoundException $e) {
-                            return Common::return_msg(400, "请求失败");
+                            return Common::ReturnError("请求失败");
                         } catch (DbException $e) {
-                            return Common::return_msg(400, "请求失败");
+                            return Common::ReturnError("请求失败");
                         }
                     }
                     try {
                         Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['user_token' => $UserToken, 'ip' => Common::get_user_ip()]);
                     } catch (PDOException $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     } catch (Exception $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     }
-                    return Common::return_msg(200, "登录成功", $result);
+                    return Common::ReturnJson("登录成功", $result);
                 } else {
-                    return Common::return_msg(400, "密码错误");
+                    return Common::ReturnError("密码错误");
                 }
             }
         }
@@ -96,7 +96,7 @@ class User extends Controller
             'appid' => 'require|number'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
@@ -104,25 +104,25 @@ class User extends Controller
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $app['appid'])->find();
             $useremail = Db::name('user')->where('useremail', $data['useremail'])->where('appid', $app['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == null || $app == "") {
-            return Common::return_msg(400, "app不存在");
+            return Common::ReturnError("app不存在");
         } else {
             if ($app['is_email'] == 'true') {
                 $validate = Validate::make([
                     'emailcode' => 'require',
                 ]);
                 if (!$validate->check($data)) {
-                    return Common::return_msg(400, $validate->getError());
+                    return Common::ReturnError($validate->getError());
                 }
                 if ($user == null || $user == "") {
                     if ($useremail != null || $useremail != "") {
-                        return Common::return_msg(400, "邮箱已存在");
+                        return Common::ReturnError("邮箱已存在");
                     }
                     $emailregcode = Session::get('emailcode');
                     if ($emailcode['emailcode'] == $data['emailcode']) {
@@ -142,20 +142,20 @@ class User extends Controller
                         $user = Db::name('user')->data($adddata)->insert();
                         if ($user > 0) {
                             Db::name('emailcode')->where('id', 1)->update(["emailcode" => "", "ip" => "", "creat_time" => ""]);
-                            return Common::return_msg(200, '注册成功');
+                            return Common::ReturnSuccess('注册成功');
                         } else {
-                            return Common::return_msg(400, '注册失败');
+                            return Common::ReturnError('注册失败');
                         }
                     } else {
-                        return Common::return_msg(400, "验证码错误");
+                        return Common::ReturnError("验证码错误");
                     }
                 } else {
-                    return Common::return_msg(400, "账号已存在");
+                    return Common::ReturnError("账号已存在");
                 }
             } else {
                 if ($user == null || $user == "") {
                     if ($useremail != null || $useremail != "") {
-                        return Common::return_msg(400, "邮箱已存在");
+                        return Common::ReturnError("邮箱已存在");
                     }
                     $adddata = [
                         'username' => $data['username'],
@@ -172,12 +172,12 @@ class User extends Controller
                     $user = Db::name('user')->data($adddata)->insert();
                     if ($user > 0) {
 
-                        return Common::return_msg(200, '注册成功');
+                        return Common::ReturnSuccess('注册成功');
                     } else {
-                        return Common::return_msg(400, '注册失败');
+                        return Common::ReturnError('注册失败');
                     }
                 } else {
-                    return Common::return_msg(400, "账号已存在");
+                    return Common::ReturnError("账号已存在");
                 }
             }
         }
@@ -191,7 +191,7 @@ class User extends Controller
             'appid' => 'require|number'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
@@ -199,21 +199,21 @@ class User extends Controller
             $ckcodetime = Db::name('passcode')->where('id', 1)->find();
             $emailresult = Db::name('email')->where('id', 1)->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == "" || $app == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         }
         if ($user == "" || $user == null) {
-            return Common::return_msg(400, "没有该用户");
+            return Common::ReturnError(400, "没有该用户");
         }
         if ($ckcodetime['ip'] == Common::get_user_ip()) {
             if (time() - $ckcodetime['creattime'] < 60) {
-                return Common::return_msg(400, "60s内只能发送一次");
+                return Common::ReturnError("60s内只能发送一次");
             } else {
                 $passcode = Common::getRandChar(4);
                 $updatapasscode = [
@@ -224,20 +224,21 @@ class User extends Controller
                 try {
                     Db::name('passcode')->where('id', 1)->update($updatapasscode);
                 } catch (PDOException $e) {
-                    return Common::return_msg(400, "请求失败");
+                    return Common::ReturnError("请求失败");
                 } catch (Exception $e) {
-                    return Common::return_msg(400, "请求失败");
+                    return Common::ReturnError("请求失败");
                 }
                 try {
                     $emailcontent = "<h3>您要找回密码的验证码是：" . $passcode .",如是你本人操作，请忽略!</h3>";
                     $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">找回密码验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的'.$data["username"].'用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
-                    return Common::send_mail($user['useremail'], "找回密码验证码", $emailcontenthtml);
+                    Common::send_mail($user['useremail'], "找回密码验证码", $emailcontenthtml);
+                    return Common::ReturnSuccess("发送成功");
                 } catch (DataNotFoundException $e) {
-                    return Common::return_msg(400, "请求失败");
+                    return Common::ReturnError("请求失败");
                 } catch (ModelNotFoundException $e) {
-                    return Common::return_msg(400, "请求失败");
+                    return Common::ReturnError("请求失败");
                 } catch (DbException $e) {
-                    return Common::return_msg(400, "请求失败");
+                    return Common::ReturnError("请求失败");
                 }
             }
         } else {
@@ -250,20 +251,21 @@ class User extends Controller
             try {
                 Db::name('passcode')->where('id', 1)->update($updatapasscode);
             } catch (PDOException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (Exception $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             }
             try {
                 $emailcontent = "<h3>您要找回密码的验证码是：" . $passcode .",如是你本人操作，请忽略!</h3>";
                 $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">找回密码验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的'.$data["username"].'用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
-                return Common::send_mail($user['useremail'], "找回密码验证码", $emailcontenthtml);
+                Common::send_mail($user['useremail'], "找回密码验证码", $emailcontenthtml);
+                return Common::ReturnSuccess("发送成功");
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             }
         }
     }
@@ -276,31 +278,31 @@ class User extends Controller
             'appid' => 'require|number'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('useremail', $data['useremail'])->where('appid', $data['appid'])->find();
             $emailresult = Db::name('email')->where('id', 1)->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == null || $app == "") {
-            return Common::return_msg(400, "app不存在");
+            return Common::ReturnError("app不存在");
         } else {
             if ($user == null || $user == "") {
                 try {
                     $ckcodetime = Db::name('emailcode')->where('id', 1)->find();
                 } catch (DataNotFoundException $e) {
-                    return Common::return_msg(400, "请求失败");
+                    return Common::ReturnError("请求失败");
                 } catch (ModelNotFoundException $e) {
-                    return Common::return_msg(400, "请求失败");
+                    return Common::ReturnError("请求失败");
                 } catch (DbException $e) {
-                    return Common::return_msg(400, "请求失败");
+                    return Common::ReturnError("请求失败");
                 }
 
                 if ($ckcodetime['ip'] == Common::get_user_ip()) {
@@ -314,24 +316,24 @@ class User extends Controller
                         try {
                             Db::name('emailcode')->where('id', 1)->update($updataemailcode);
                         } catch (PDOException $e) {
-                            return Common::return_msg(400, "请求失败");
+                            return Common::ReturnError("请求失败");
                         } catch (Exception $e) {
-                            return Common::return_msg(400, "请求失败");
+                            return Common::ReturnError("请求失败");
                         }
                         try {
                             $emailcontent = "<h3>您的注册验证码是：". $emailcode."</h3>";
                             $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">注册验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
                             Common::send_mail($data['useremail'], "注册验证码", $emailcontenthtml);
-                            return Common::return_msg(200, "发送成功");
+                            return Common::ReturnSuccess("发送成功");
                         } catch (DataNotFoundException $e) {
-                            return Common::return_msg(400, "请求失败");
+                            return Common::ReturnError("请求失败");
                         } catch (ModelNotFoundException $e) {
-                            return Common::return_msg(400, "请求失败");
+                            return Common::ReturnError("请求失败");
                         } catch (DbException $e) {
-                            return Common::return_msg(400, "请求失败");
+                            return Common::ReturnError("请求失败");
                         }
                     } else {
-                        return Common::return_msg(400, "60s内只能发送一次");
+                        return Common::ReturnError("60s内只能发送一次");
                     }
                 } else {
                     $emailcode = Common::getRandChar(4);
@@ -343,25 +345,25 @@ class User extends Controller
                     try {
                         Db::name('emailcode')->where('id', 1)->update($updataemailcode);
                     } catch (PDOException $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     } catch (Exception $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     }
                     try {
                         $emailcontent = "<h3>您的注册验证码是：". $emailcode."</h3>";
                         $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">注册验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
                         Common::send_mail($data['useremail'], "注册验证码", $emailcontenthtml);
-                        return Common::return_msg(200, "发送成功");
+                        return Common::ReturnSuccess("发送成功");
                     } catch (DataNotFoundException $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     } catch (ModelNotFoundException $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     } catch (DbException $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     }
                 }
             } else {
-                return Common::return_msg(400, "你注册的邮箱已经存在了");
+                return Common::ReturnError("你注册的邮箱已经存在了");
             }
         }
     }
@@ -376,24 +378,24 @@ class User extends Controller
             'usertoken' => 'require'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
 
         if ($app == "" || $app == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         } else {
             if ($user == "" || $user == null) {
-                return Common::return_msg(400, "没有此账号");
+                return Common::ReturnError("没有此账号");
             } else {
                 if ($data['usertoken'] == $user['user_token']) {
                     if ($user['banned'] == 'true') {
@@ -410,11 +412,11 @@ class User extends Controller
                             ->field($need_field)
                             ->find();
                     } catch (DataNotFoundException $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     } catch (ModelNotFoundException $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     } catch (DbException $e) {
-                        return Common::return_msg(400, "请求失败");
+                        return Common::ReturnError("请求失败");
                     }
                     $arr = $app['hierarchy'];
                     foreach (eval("return $arr;") as $key => $value) {
@@ -448,7 +450,7 @@ class User extends Controller
                     $result['inviter'] = $userdata['inviter'];
                     return Common::return_msg(200, "查询成功", $result);
                 } else {
-                    return Common::return_msg(400, "token错误");
+                    return Common::ReturnError("token错误");
                 }
             }
         }
@@ -463,35 +465,35 @@ class User extends Controller
             'code' => 'require'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
             $ckcode = Db::name('passcode')->where('id', 1)->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == "" || $app == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         }
         if ($user == "" || $user == null) {
-            return Common::return_msg(400, "没有该用户");
+            return Common::ReturnError("没有该用户");
         }
         if ($ckcode['passcode'] != $data['code']) {
-            return Common::return_msg(400, "验证码错误");
+            return Common::ReturnError("验证码错误");
         }
         $newpassword = Common::getRandChar(6);
         try {
             $updateuser = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['password' => md5($newpassword)]);
         } catch (PDOException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($updateuser > 0) {
             try {
@@ -502,15 +504,15 @@ class User extends Controller
                 //Common::send_mail($user['useremail'], "随机密码", "您的随机密码是：" . $newpassword);
                 Db::name('passcode')->where('id', 1)->update(["passcode" => "", "ip" => "", "creattime" => ""]);
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             }
             return Common::return_msg(200, '随机密码已发送到您的邮箱，请注意查看');
         } else {
-            return Common::return_msg(400, '修改失败');
+            return Common::ReturnError('修改失败');
         }
     }
 
@@ -527,26 +529,26 @@ class User extends Controller
             'signature' => 'require',
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == "" || $app == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         }
         if ($user == "" || $user == null) {
-            return Common::return_msg(400, "没有该用户");
+            return Common::ReturnError("没有该用户");
         }
         if ($user['user_token'] != $data['usertoken']) {
-            return Common::return_msg(400, "token过期");
+            return Common::ReturnError("token过期");
         }
         $update = [
             'nickname' => $data['nickname'],
@@ -557,14 +559,14 @@ class User extends Controller
         try {
             $user = Db::name('user')->where('username', $data['username'])->update($update);
         } catch (PDOException $e) {
-            return Common::return_msg(400, $e);
+            return Common::ReturnError($e);
         } catch (Exception $e) {
-            return Common::return_msg(400, $e);
+            return Common::ReturnError($e);
         }
         if ($user > 0) {
             return Common::return_msg(200, '修改成功');
         } else {
-            return Common::return_msg(400, '你未做任何修改！');
+            return Common::ReturnError('你未做任何修改！');
         }
     }
 
@@ -578,34 +580,34 @@ class User extends Controller
             'usertoken' => 'require'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == "" || $app == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         }
         if ($user == "" || $user == null) {
-            return Common::return_msg(400, "没有该用户");
+            return Common::ReturnError("没有该用户");
         }
         if ($user['user_token'] != $data['usertoken']) {
-            return Common::return_msg(400, "token过期");
+            return Common::ReturnError("token过期");
         }
         $file = $upload->uploadDetail('file');
         try {
             Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['usertx' => $file["fullPath"]]);
         } catch (PDOException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         return Common::return_msg(200, "上传成功");
     }
@@ -619,19 +621,19 @@ class User extends Controller
             'type' => 'require'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == "" || $app == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         }
         if ((new Request)->post('limit') == null) {
             $data['limit'] = 10;
@@ -646,11 +648,11 @@ class User extends Controller
                     ->limit($data['limit'])
                     ->select();
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             }
         } else {
             $need_field = ['id', 'username', 'nickname', 'usertx', 'money', 'title'];
@@ -662,11 +664,11 @@ class User extends Controller
                     ->limit($data['limit'])
                     ->select();
             } catch (DataNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (ModelNotFoundException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             } catch (DbException $e) {
-                return Common::return_msg(400, "请求失败");
+                return Common::ReturnError("请求失败");
             }
         }
         return Common::return_msg(200, "查询成功", $userlist);
@@ -681,30 +683,30 @@ class User extends Controller
             'usertoken' => 'require'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == "" || $app == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         }
         if ($user == "" || $user == null) {
-            return Common::return_msg(400, "没有该用户");
+            return Common::ReturnError("没有该用户");
         }
         if ($user['user_token'] != $data['usertoken']) {
-            return Common::return_msg(400, "token过期");
+            return Common::ReturnError("token过期");
         }
         list($start, $end) = Time::today();
         if ($user['signtime'] > $start) {
-            return Common::return_msg(400, "您今天已经签到过了");
+            return Common::ReturnError("您今天已经签到过了");
         }
         $addviptime = $app['signvip'] * 24 * 60 * 3600;
         if ($user['viptime'] >= time()) {
@@ -725,14 +727,14 @@ class User extends Controller
         try {
             $sql = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update($updateuser);
         } catch (PDOException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (Exception $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($sql > 0) {
             return Common::return_msg(200, '签到成功');
         } else {
-            return Common::return_msg(400, '签到失败');
+            return Common::ReturnError('签到失败');
         }
     }
 
@@ -744,23 +746,23 @@ class User extends Controller
             'appid' => 'require|number',
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == "" || $app == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         }
         if ($user == "" || $user == null) {
-            return Common::return_msg(400, "没有该用户");
+            return Common::ReturnError("没有该用户");
         }
         if ($user['viptime'] > time()) {
             return Common::return_msg(200, "true");
@@ -780,35 +782,35 @@ class User extends Controller
             'newpwd' => 'require'
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($app == "" || $app == null) {
-            return Common::return_msg(400, "没有此app");
+            return Common::ReturnError("没有此app");
         }
         if ($user == "" || $user == null) {
-            return Common::return_msg(400, "没有该用户");
+            return Common::ReturnError("没有该用户");
         }
         if ($user['password'] != md5($data['oldpwd'])) {
-            return Common::return_msg(400, "旧密码错误");
+            return Common::ReturnError("旧密码错误");
         }
         if ($user['user_token'] != $data['usertoken']) {
-            return Common::return_msg(400, "token过期");
+            return Common::ReturnError("token过期");
         }
         $result = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['password' => md5($data['newpwd'])]);
         if ($result > 0) {
             return Common::return_msg(200, "修改成功");
         } else {
-            return Common::return_msg(400, "修改失败");
+            return Common::ReturnError("修改失败");
         }
     }
 
@@ -822,30 +824,30 @@ class User extends Controller
             'appid' => 'require|number',
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         try {
             $app = Db::name('app')->where('appid', $data['appid'])->find();
             $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
             $invitecode = Db::name('user')->where('invitecode', $data['invitecode'])->find();
         } catch (DataNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (ModelNotFoundException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         } catch (DbException $e) {
-            return Common::return_msg(400, "请求失败");
+            return Common::ReturnError("请求失败");
         }
         if ($user == "" || $user == null) {
-            return Common::return_msg(400, "没有该用户");
+            return Common::ReturnError("没有该用户");
         }
         if ($user['inviter'] != "") {
-            return Common::return_msg(400, "已经填写过邀请码");
+            return Common::ReturnError("已经填写过邀请码");
         }
         if ($invitecode == "" || $invitecode == null) {
-            return Common::return_msg(400, "没有该邀请码");
+            return Common::ReturnError("没有该邀请码");
         }
         if($user['invitecode'] == $data['invitecode']){
-            return Common::return_msg(400, "不能填写自己的邀请码");
+            return Common::ReturnError("不能填写自己的邀请码");
         }
         //判断用户会员状态
         if ($user['viptime'] > time()) {
@@ -905,7 +907,7 @@ class User extends Controller
             'appid' => 'require|number',
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         $finvitecode = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
         if ($finvitecode['invitecode'] == "" || $finvitecode['invitecode'] == null) {
@@ -916,7 +918,7 @@ class User extends Controller
                 ->update(['invitecode' => $invitecode]);
             return Common::return_msg(200, "生成成功", $invitecode);
         } else {
-            return Common::return_msg(400, "已经生成过邀请码");
+            return Common::ReturnError("已经生成过邀请码");
         }
     }
 
@@ -934,11 +936,11 @@ class User extends Controller
             'order' => 'alpha',
         ]);
         if (!$validate->check($data)) {
-            return Common::return_msg(400, $validate->getError());
+            return Common::ReturnError($validate->getError());
         }
         $app = Db::name('app')->where('appid', $data['appid'])->find();
         if($app == ""){
-            return Common::return_msg(400, "没有该app");
+            return Common::ReturnError("没有该app");
         }
         $order = isset($data['order']) ? $data['order'] : "asc";
         $limit = isset($data['limit']) ? $data['limit'] : "10";

@@ -33,7 +33,8 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -43,25 +44,26 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group" >
+                            <div class="form-group">
                                 <label for="username">用户名</label>
                                 <input type="text" class="form-control" id="username" placeholder="请输入用户名">
                             </div>
-                            <div class="form-group" >
+                            <div class="form-group">
                                 <label for="password">用户密码</label>
                                 <input type="text" class="form-control" id="password" placeholder="请输入用户密码">
                             </div>
-                            <div class="form-group" >
+                            <div class="form-group">
                                 <label for="useremail">用户邮箱</label>
                                 <input type="email" class="form-control" id="useremail" placeholder="请输入用户邮箱">
                             </div>
-                            <div class="form-group" >
+                            <div class="form-group">
                                 <label for="appid">appid</label>
                                 <input type="text" class="form-control" id="appid" placeholder="请输入应用id">
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" id="shutdown" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-secondary" id="shutdown"
+                                data-dismiss="modal">关闭</button>
                             <button type="button" id="addbtn" onclick="adduser()" class="btn btn-primary">保存</button>
                         </div>
                     </div>
@@ -142,6 +144,10 @@
             title: '创建时间',
             sortable: true,
         }, {
+            field: 'ip',
+            title: '登录ip',
+            sortable: true,
+        }, {
             field: 'banned',
             title: '状态',
             formatter: function (value, row, index) {
@@ -185,7 +191,7 @@
             type: "POST",
             url: "{:url('user/GetUserlist')}",
             data: {
-                username : $.trim($('#searchusername').val()),
+                username: $.trim($('#searchusername').val()),
             },
             dataType: "json",
             success: function (data) {
@@ -336,49 +342,53 @@
     };
 
     function deleteuser(id) {
-        var l = $('body').lyearloading({
-            opacity: 0.2,
-            spinnerSize: 'lg',
-            spinnerText: '后台处理中，请稍后...',
-            textColorClass: 'text-info',
-            spinnerColorClass: 'text-info'
-        });
-        $.ajax({
-            type: "POST",
-            url: "{:url('user/deleteuser')}",
-            data: {
-                id: id,
-            },
-            dataType: "json",
-            success: function (data) {
-                setTimeout(function () {
-                    l.destroy();
-                }, 1e3)
-                if (data.code == 200) {
-                    $.notify({
-                        message: data.msg
-                    }, {
-                        placement: {
-                            from: "top",
-                            align: "center"
-                        },
-                        type: 'success'
-                    });
-                    setTimeout("location.reload();", 2000);
-                } else {
-                    $.notify({
-                        message: data.msg
-                    }, {
-                        placement: {
-                            from: "top",
-                            align: "center"
-                        },
-                        // settings
-                        type: 'danger'
-                    });
-                }
-            },
-        });
+        //防止误删除
+        var r = confirm("确定要删除吗？");
+        if (r == true) {
+            var l = $('body').lyearloading({
+                opacity: 0.2,
+                spinnerSize: 'lg',
+                spinnerText: '后台处理中，请稍后...',
+                textColorClass: 'text-info',
+                spinnerColorClass: 'text-info'
+            });
+            $.ajax({
+                type: "POST",
+                url: "{:url('user/deleteuser')}",
+                data: {
+                    id: id,
+                },
+                dataType: "json",
+                success: function (data) {
+                    setTimeout(function () {
+                        l.destroy();
+                    }, 1e3)
+                    if (data.code == 200) {
+                        $.notify({
+                            message: data.msg
+                        }, {
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            type: 'success'
+                        });
+                        setTimeout("location.reload();", 2000);
+                    } else {
+                        $.notify({
+                            message: data.msg
+                        }, {
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            // settings
+                            type: 'danger'
+                        });
+                    }
+                },
+            });
+        }
     }
 
     $("#btn_delete").click(function () {

@@ -215,7 +215,7 @@ class User extends Controller
             if (time() - $ckcodetime['creattime'] < 60) {
                 return Common::return_msg(400, "60s内只能发送一次");
             } else {
-                $passcode = Common::getchar(4);
+                $passcode = Common::getRandChar(4);
                 $updatapasscode = [
                     'passcode' => $passcode,
                     'creattime' => time(),
@@ -241,7 +241,7 @@ class User extends Controller
                 }
             }
         } else {
-            $passcode = Common::getchar(4);
+            $passcode = Common::getRandChar(4);
             $updatapasscode = [
                 'passcode' => $passcode,
                 'creattime' => time(),
@@ -305,7 +305,7 @@ class User extends Controller
 
                 if ($ckcodetime['ip'] == Common::get_user_ip()) {
                     if (time() - $ckcodetime['creat_time'] > 60) {
-                        $emailcode = Common::getchar(4);
+                        $emailcode = Common::getRandChar(4);
                         $updataemailcode = [
                             'emailcode' => $emailcode,
                             'creat_time' => time(),
@@ -333,7 +333,7 @@ class User extends Controller
                         return Common::return_msg(400, "60s内只能发送一次");
                     }
                 } else {
-                    $emailcode = Common::getchar(4);
+                    $emailcode = Common::getRandChar(4);
                     $updataemailcode = [
                         'emailcode' => $emailcode,
                         'creat_time' => time(),
@@ -483,7 +483,7 @@ class User extends Controller
         if ($ckcode['passcode'] != $data['code']) {
             return Common::return_msg(400, "验证码错误");
         }
-        $newpassword = Common::getchar(6);
+        $newpassword = Common::getRandChar(6);
         try {
             $updateuser = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['password' => md5($newpassword)]);
         } catch (PDOException $e) {

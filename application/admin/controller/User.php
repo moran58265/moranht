@@ -120,7 +120,7 @@ class User extends BaseController
             return Common::ReturnError($validate->getError());
         }
         $useremail = UserModel::get(['useremail' => $data['useremail']]);
-        $username = UserModel::get(['username' => $data['username']]);
+        $username = Db::name('user')->where('username',$data['username'])->where('appid',$data['appid'])->find();
         $app = \app\admin\model\App::get($data['appid']);
         if ($app == null) {
             return Common::ReturnError('应用不存在');

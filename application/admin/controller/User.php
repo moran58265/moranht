@@ -28,13 +28,25 @@ class User extends BaseController
         try {
             $appList = Db::name('user')->alias('u')
                 ->join('app a', 'a.appid=u.appid')
-                ->field('u.id,u.username,u.usertx,u.nickname,a.appname,u.useremail,FROM_UNIXTIME(u.creattime,"%Y-%m-%d %H:%i:%s") as creattime,u.banned')
+                ->field('u.id,u.username,u.usertx,u.nickname,a.appname,u.useremail,FROM_UNIXTIME(u.creattime,"%Y-%m-%d %H:%i:%s") as creattime,u.banned,ip')
                 ->where('u.username', "like", '%' . $username . '%')
                 ->order($sort, $sortOrder)
                 ->limit($limit)
                 ->page($page)
                 ->select();
-                $appcount = Db::name('user')
+            $datauserinfo = array();
+            foreach ($appList as $key => $value) {
+                $datauserinfo[$key]['id'] = $value['id'];
+                $datauserinfo[$key]['username'] = $value['username'];
+                $datauserinfo[$key]['usertx'] = $value['usertx'];
+                $datauserinfo[$key]['nickname'] = $value['nickname'];
+                $datauserinfo[$key]['appname'] = $value['appname'];
+                $datauserinfo[$key]['useremail'] = $value['useremail'];
+                $datauserinfo[$key]['creattime'] = $value['creattime'];
+                $datauserinfo[$key]['banned'] = $value['banned'];
+                $datauserinfo[$key]['ip'] = $value['ip']."(".Common::get_ip_address($value['ip']).")";
+            }
+            $appcount = Db::name('user')
                 ->alias('u')
                 ->join('app a', 'a.appid=u.appid')
                 ->field('u.id,u.username,u.usertx,u.nickname,a.appname,u.useremail,FROM_UNIXTIME(u.creattime,"%Y-%m-%d %H:%i:%s") as creattime,u.banned')
@@ -46,7 +58,7 @@ class User extends BaseController
         }catch (DbException $e) {
             return Common::ReturnError($e->getMessage());
         }
-        return json(['rows' => $appList,'total' => $appcount]);
+        return json(['rows' => $datauserinfo,'total' => $appcount]);
     }
 
 

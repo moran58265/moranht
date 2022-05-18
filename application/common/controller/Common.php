@@ -22,7 +22,7 @@ class Common
         $return_data['data'] = $data;
         return json($return_data);
     }
-    
+
     //封装json返回
     public static function ReturnJson($msg, $data = [])
     {
@@ -128,9 +128,9 @@ class Common
             //查询邀请码是否存在
             $invitacode_info = Db::name('user')->where('invitecode', $invitacode)->find();
             //判断邀请码是否存在
-            if(empty($invitacode_info)){
+            if (empty($invitacode_info)) {
                 break;
-            }else{
+            } else {
                 $invitacode = Common::getRandChar($length);
             }
         }
@@ -138,44 +138,67 @@ class Common
     }
 
 
-        //判断ip是否在某个范围内
-        public static function ip_address($nowip, $dbip)
-        {
-            header("Content-type: text/html; charset=utf-8");
-            //访问api接口获取ip地址http://ip-api.com/json/ip地址?lang=zh-CN
-            //获取当前ip所在的省份
-            if ($nowip == '127.0.0.1') {
-                $nowaddres = '内网IP';
-            } else {
-                $nowurl = "http://ip-api.com/json/" . $nowip . "?lang=zh-CN";
-                try{
-                    $nowipaddres = file_get_contents($nowurl);
-                    $nowipaddresarr = json_decode($nowipaddres, true);
-                    $nowaddres = $nowipaddresarr['country'] . $nowipaddresarr['regionName'] . $nowipaddresarr['city'];
-                }catch (\Exception $e){
-                    $nowaddres = '未知ip';
-                }
-            }
-            if($dbip == '127.0.0.1'){
-                $dbaddres = '内网IP';
-            }else{
-                try{
-                    $dburl = "http://ip-api.com/json/" . $dbip . "?lang=zh-CN";
-                    $dbipaddres = file_get_contents($dburl);
-                    $dbipaddresarr = json_decode($dbipaddres, true);
-                    $dbaddres = $dbipaddresarr['country'] . $dbipaddresarr['regionName'] . $dbipaddresarr['city'];
-                }catch (\Exception $e){
-                    $dbaddres = '未知ip';
-                }
-            }
-            if ($nowaddres == $dbaddres) {
-                return ["code" => 200, "msg" => $nowaddres];
-            } else {
-                return ["code" => 400, "msg" => $nowaddres];
+    //判断ip是否在某个范围内
+    public static function ip_address($nowip, $dbip)
+    {
+        header("Content-type: text/html; charset=utf-8");
+        //访问api接口获取ip地址http://ip-api.com/json/ip地址?lang=zh-CN
+        //获取当前ip所在的省份
+        if ($nowip == '127.0.0.1') {
+            $nowaddres = '内网IP';
+        } else {
+            $nowurl = "http://ip-api.com/json/" . $nowip . "?lang=zh-CN";
+            try {
+                $nowipaddres = file_get_contents($nowurl);
+                $nowipaddresarr = json_decode($nowipaddres, true);
+                $nowaddres = $nowipaddresarr['country'] . $nowipaddresarr['regionName'] . $nowipaddresarr['city'];
+            } catch (\Exception $e) {
+                $nowaddres = '未知ip';
             }
         }
+        if ($dbip == '127.0.0.1' || $dbip == '') {
+            $dbaddres = '内网IP';
+        } else {
+            try {
+                $dburl = "http://ip-api.com/json/" . $dbip . "?lang=zh-CN";
+                $dbipaddres = file_get_contents($dburl);
+                $dbipaddresarr = json_decode($dbipaddres, true);
+                $dbaddres = $dbipaddresarr['country'] . $dbipaddresarr['regionName'] . $dbipaddresarr['city'];
+            } catch (\Exception $e) {
+                $dbaddres = '未知ip';
+            }
+        }
+        if ($nowaddres == $dbaddres) {
+            return ["code" => 200, "msg" => $nowaddres];
+        } else {
+            return ["code" => 400, "msg" => $nowaddres];
+        }
+    }
 
-        /**
+    //获取当个ip所在的省份
+    public static function get_ip_address($ip)
+    {
+        header("Content-type: text/html; charset=utf-8");
+        //访问api接口获取ip地址http://ip-api.com/json/ip地址?lang=zh-CN
+        //获取当前ip所在的省份
+        if ($ip == '127.0.0.1'){
+            return '内网IP';
+        }
+        if ($ip == ''){
+            return '未知ip';
+        }
+        $url = "http://ip-api.com/json/" . $ip . "?lang=zh-CN";
+        try {
+            $ipaddres = file_get_contents($url);
+            $ipaddresarr = json_decode($ipaddres, true);
+            $addres = $ipaddresarr['country'] . $ipaddresarr['regionName'] . $ipaddresarr['city'];
+            return $addres;
+        } catch (\Exception $e) {
+            return '未知ip';
+        }
+    }
+
+    /**
      * 获取用户真实IP
      * @param int $type
      * @param bool $adv
@@ -217,5 +240,4 @@ class Common
         $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
         return $ip[$type];
     }
-    
 }

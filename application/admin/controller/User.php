@@ -96,6 +96,12 @@ class User extends BaseController
     {
         $data = input('post.');
         $user = new UserModel();
+        $userpassword = $user->where('id',$data['id'])->value('password');
+        if(input('post.password') == "" || input('post.password') == null){
+            $data['password'] = $userpassword;
+        }else{
+            $data['password'] = md5(input('post.password'));
+        }
         $data['viptime'] = strtotime($data['viptime']);
         $res = $user->save($data, ['id' => $data['id']]);
         if ($res) {
@@ -114,13 +120,18 @@ class User extends BaseController
             return Common::ReturnError($validate->getError());
         }
         $useremail = UserModel::get(['useremail' => $data['useremail']]);
+        $username = UserModel::get(['username' => $data['username']]);
         $app = \app\admin\model\App::get($data['appid']);
         if ($app == null) {
             return Common::ReturnError('应用不存在');
         }
+        if ($username != null) {
+            return Common::ReturnError('用户名已存在');
+        }
         if ($useremail != null) {
             return Common::ReturnError('邮箱已存在');
         }
+        //截取@qq.com前面的字符串
         $user = new UserModel();
         $data['password'] = md5($data['password']);
         $data['viptime'] = time()+$app->zcvip*24*60*60;
@@ -128,6 +139,7 @@ class User extends BaseController
         $data['exp'] = $app->zcexp;
         $data['usertx'] =  Request::scheme() . "://" . Request::host() . "/" . "usertx.png";
         $data['creattime'] = time();
+        $data['qq'] = substr($data['useremail'], 0, strpos($data['useremail'], '@'));
         $res = $user->save($data);
         return Common::ReturnSuccess('添加成功');
     }

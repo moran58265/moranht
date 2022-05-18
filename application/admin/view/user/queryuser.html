@@ -28,7 +28,10 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="form-group">
+                            <label for="password">用户密码</label>
+                            <input type="text" class="form-control" id="password" placeholder="为空则不修改">
+                        </div>
                         <div class="form-group">
                             <label for="qq">qq</label>
                             <input type="text" class="form-control" id="qq" value="{$user.qq}" placeholder="请输入qq">
@@ -101,7 +104,6 @@
     if (banned == 'false'){
         document.getElementById("select_else").style.display="none";
     }
-    <!--  改变select显示-->
     function changenone(obj)
     {
         if(obj.options[obj.selectedIndex].value =="true")
@@ -129,6 +131,7 @@
         var exp = $.trim($("#exp").val());
         var banned = $.trim($("#banned").val());
         var banned_reason = $.trim($("#banned_reason").val());
+        var password = $.trim($("#password").val());
         $.ajax({
             type: "POST",
             url: "{:url('user/edituser')}",
@@ -145,6 +148,7 @@
                 exp: exp,
                 banned: banned,
                 banned_reason: banned_reason,
+                password: password
             },
             dataType: "json",
             success: function (data) {

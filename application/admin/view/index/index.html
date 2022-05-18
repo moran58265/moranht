@@ -1,9 +1,29 @@
 {php}$title = "后台首页";{/php}
 {include file="layout/header" /}
-    <!--页面主要内容-->
+<!--页面主要内容-->
 <main class="lyear-layout-content">
 
   <div class="container-fluid p-t-15">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h4>选择数据来源（默认全部数据展示）</h4>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <div class="col-md-7">
+                <select class="form-control" id="appselect">
+                  <option value="">全部数据</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <div class="row">
       <div class="col-md-6 col-xl-3">
@@ -11,9 +31,9 @@
           <div class="card-body clearfix">
             <div class="flex-box">
               <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-android fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.apptotal}</span>
+              <span class="fs-22 lh-22" id="apptotal">{$data.apptotal}</span>
             </div>
-            <div class="text-right">app数量</div>
+            <div class="text-right" >app数量</div>
           </div>
         </div>
       </div>
@@ -22,8 +42,8 @@
         <div class="card bg-danger text-white">
           <div class="card-body clearfix">
             <div class="flex-box">
-              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.usertotal}</span>
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account-group fs-22"></i></span>
+              <span class="fs-22 lh-22" id="usertotal">{$data.usertotal}</span>
             </div>
             <div class="text-right">用户总数</div>
           </div>
@@ -35,7 +55,7 @@
           <div class="card-body clearfix">
             <div class="flex-box">
               <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-credit-card fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.kmtotal}</span>
+              <span class="fs-22 lh-22" id="kmtotal">{$data.kmtotal}</span>
             </div>
             <div class="text-right">卡密总数</div>
           </div>
@@ -47,21 +67,21 @@
           <div class="card-body clearfix">
             <div class="flex-box">
               <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-comment-outline fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.messagetotal} 条</span>
+              <span class="fs-22 lh-22" id="messagetotal">{$data.messagetotal}</span>
             </div>
             <div class="text-right">笔记总数</div>
           </div>
         </div>
       </div>
     </div>
-<!-- 第二行 -->
+    <!-- 第二行 -->
     <div class="row">
       <div class="col-md-6 col-xl-3">
         <div class="card bg-primary text-white">
           <div class="card-body clearfix">
             <div class="flex-box">
-              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-android fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.todayregtotal}</span>
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account fs-22"></i></span>
+              <span class="fs-22 lh-22" id="todayregtotal">{$data.todayregtotal}</span>
             </div>
             <div class="text-right">今日注册</div>
           </div>
@@ -72,8 +92,8 @@
         <div class="card bg-danger text-white">
           <div class="card-body clearfix">
             <div class="flex-box">
-              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.todayviptotal}</span>
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account-check fs-22"></i></span>
+              <span class="fs-22 lh-22" id="todayviptotal">{$data.todayviptotal}</span>
             </div>
             <div class="text-right">会员数量</div>
           </div>
@@ -84,8 +104,8 @@
         <div class="card bg-success text-white">
           <div class="card-body clearfix">
             <div class="flex-box">
-              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-credit-card fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.isusekmtotal}</span>
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-credit-card-remove fs-22"></i></span>
+              <span class="fs-22 lh-22" id="isusekmtotal">{$data.isusekmtotal}</span>
             </div>
             <div class="text-right">已使用卡密</div>
           </div>
@@ -96,10 +116,10 @@
         <div class="card bg-purple text-white">
           <div class="card-body clearfix">
             <div class="flex-box">
-              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-comment-outline fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.viewtotal} 条</span>
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-equalizer-outline fs-22"></i></span>
+              <span class="fs-22 lh-22" id="viewtotal">{$data.viewtotal}</span>
             </div>
-            <div class="text-right">访问总数</div>
+            <div class="text-right" >访问总数</div>
           </div>
         </div>
       </div>
@@ -110,8 +130,8 @@
         <div class="card bg-primary text-white">
           <div class="card-body clearfix">
             <div class="flex-box">
-              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-android fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.signintotal}</span>
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account-edit fs-22"></i></span>
+              <span class="fs-22 lh-22" id="signintotal">{$data.signintotal}</span>
             </div>
             <div class="text-right">今日签到人数</div>
           </div>
@@ -122,10 +142,10 @@
         <div class="card bg-danger text-white">
           <div class="card-body clearfix">
             <div class="flex-box">
-              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.paltetotal}</span>
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-message fs-22"></i></span>
+              <span class="fs-22 lh-22" id="paltetotal">{$data.paltetotal}</span>
             </div>
-            <div class="text-right">板块数量</div>
+            <div class="text-right" >板块数量</div>
           </div>
         </div>
       </div>
@@ -134,10 +154,10 @@
         <div class="card bg-success text-white">
           <div class="card-body clearfix">
             <div class="flex-box">
-              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-credit-card fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.posttotal}</span>
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-message-bulleted fs-22"></i></span>
+              <span class="fs-22 lh-22" id="posttotal">{$data.posttotal}</span>
             </div>
-            <div class="text-right">帖子数量</div>
+            <div class="text-right" >帖子数量</div>
           </div>
         </div>
       </div>
@@ -146,16 +166,16 @@
         <div class="card bg-purple text-white">
           <div class="card-body clearfix">
             <div class="flex-box">
-              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-comment-outline fs-22"></i></span>
-              <span class="fs-22 lh-22">{$data.filetotal} 条</span>
+              <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-cloud-upload fs-22"></i></span>
+              <span class="fs-22 lh-22" id="filetotal">{$data.filetotal}</span>
             </div>
             <div class="text-right">附件数量</div>
           </div>
         </div>
       </div>
     </div>
-    
-    
+
+
 
     <div class="row">
 
@@ -192,14 +212,38 @@
           <div class="card-body">
             <table class="table table-hover">
               <tbody>
-              <tr><td>项目名称：默然iApp后台管理系统</td></tr>
-              <tr><td>项目版本：<bb id="nowbb">2.3</bb>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="nowupdate()" href="javascript:void(0)">检测更新</a></td></tr>
-              <tr><td>项目作者：默然</td></tr>
-              <tr><td>项目地址：<a href="https://gitee.com/morannb/moranht" target="_blank">https://gitee.com/morannb/moranht</a></td></tr>
-              <tr><td>交&nbsp;&nbsp;流&nbsp;&nbsp;群：<a href="https://jq.qq.com/?_wv=1027&k=KNpWcDmS" target="_blank">219348005</a></td></tr>
-              <tr><td>鸣&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;谢：<a href="http://lyear.itshubao.com/v4/index.html" target="_blank">光年(Light Year Admin V4)后台管理系统模板</a></td></tr>
-              <tr><td>默然后台管理系统 是非盈利项目，开源不容易，如果该项目对你有用的话，可以打赏我们喝杯 coffee ☕️.<td></tr>
-                <tr><td><img style="height: 300px;" src="https://www.moranblog.cn/zz/1.png" alt="" srcset=""><td><td><img style="height: 300px;" src="https://www.moranblog.cn/zz/2.jpg" alt="" srcset=""><td></td></tr>
+                <tr>
+                  <td>项目名称：默然iApp后台管理系统</td>
+                </tr>
+                <tr>
+                  <td>项目版本：<bb id="nowbb">2.4</bb>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="nowupdate()"
+                      href="javascript:void(0)">检测更新</a></td>
+                </tr>
+                <tr>
+                  <td>项目作者：默然</td>
+                </tr>
+                <tr>
+                  <td>项目地址：<a href="https://gitee.com/morannb/moranht"
+                      target="_blank">https://gitee.com/morannb/moranht</a></td>
+                </tr>
+                <tr>
+                  <td>交&nbsp;&nbsp;流&nbsp;&nbsp;群：<a href="https://jq.qq.com/?_wv=1027&k=KNpWcDmS"
+                      target="_blank">219348005</a></td>
+                </tr>
+                <tr>
+                  <td>鸣&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;谢：<a href="http://lyear.itshubao.com/v4/index.html"
+                      target="_blank">光年(Light Year Admin V4)后台管理系统模板</a></td>
+                </tr>
+                <tr>
+                  <td>默然后台管理系统 是非盈利项目，开源不容易，如果该项目对你有用的话，可以打赏我们喝杯 coffee ☕️.
+                  <td>
+                </tr>
+                <tr>
+                  <td><img style="height: 300px;" src="https://www.moranblog.cn/zz/1.png" alt="" srcset="">
+                  <td>
+                  <td><img style="height: 300px;" src="https://www.moranblog.cn/zz/2.jpg" alt="" srcset="">
+                  <td></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -208,32 +252,32 @@
     </div>
   </div>
 </main>
-    <!--End 页面主要内容-->
-  </div>
+<!--End 页面主要内容-->
+</div>
 </div>
 {include file="layout/footer" /}
 <script type="text/javascript">
   var bb = $('#nowbb').html();
   $.ajax({
-      type: "get",
-      url: "{:url('index/getupdate')}",
-      dataType: "json", //返回数据形式为json
-      success: function (data) {
-        if (data.code == 200) {
-          if (bb < data.data.version) {
-            $.notify({
-              // options
-              message: '有新版本发布，请及时更新！' 
-            },{
-              // settings
-              type: 'warning',
-            });
-          }
+    type: "get",
+    url: "{:url('index/getupdate')}",
+    dataType: "json", //返回数据形式为json
+    success: function (data) {
+      if (data.code == 200) {
+        if (bb < data.data.version) {
+          $.notify({
+            // options
+            message: '有新版本发布，请及时更新！'
+          }, {
+            // settings
+            type: 'warning',
+          });
         }
       }
-    })
-  
-  
+    }
+  })
+
+
   function nowupdate() {
     var l = $('body').lyearloading({
       opacity: 0.2,
@@ -253,7 +297,7 @@
               title: '更新提示',
               icon: 'mdi mdi-alert',
               type: 'orange',
-              content: '发现新版本，是否更新？'+ '<hr>' + data.data.msg,
+              content: '发现新版本，是否更新？' + '<hr>' + data.data.msg,
               buttons: {
                 okay: {
                   text: '确认',
@@ -333,7 +377,7 @@
                                                         type: 'green',
                                                         content: '更新成功！',
                                                       });
-                                                    }else{
+                                                    } else {
                                                       l.destroy();
                                                       $.alert({
                                                         title: '更新提示',
@@ -362,7 +406,7 @@
                               }
                             }
                           });
-                        }else{
+                        } else {
                           l.destroy();
                           $.alert({
                             title: '更新提示',
@@ -399,100 +443,144 @@
     });
   }
 
-  function date(){
+  function date() {
     $.ajax({
-      type : "get",
-      url : "{:url('index/getWeekRegister')}",
-      dataType : "json", //返回数据形式为json
+      type: "get",
+      url: "{:url('index/getWeekRegister')}",
+      dataType: "json", //返回数据形式为json
       async: false, //同步传输，并添加返回值，返回值应为已定义的全局变量 如a
-      success : function(data) {
+      success: function (data) {
         //console.log(data);
         a = data.data.date;
       }
     });
     return a;
   }
-  function count(){
+  function count() {
     $.ajax({
-      type : "get",
-      url : "{:url('index/getWeekRegister')}",
-      dataType : "json", //返回数据形式为json
+      type: "get",
+      url: "{:url('index/getWeekRegister')}",
+      dataType: "json", //返回数据形式为json
       async: false, //同步传输，并添加返回值，返回值应为已定义的全局变量 如a
-      success : function(data) {
+      success: function (data) {
         a = data.data.count;
       }
 
     });
     return a;
   }
-  function month(){
+  function month() {
     $.ajax({
-      type : "get",
-      url : "{:url('index/getmonthusernum')}",
-      dataType : "json", //返回数据形式为json
+      type: "get",
+      url: "{:url('index/getmonthusernum')}",
+      dataType: "json", //返回数据形式为json
       async: false, //同步传输，并添加返回值，返回值应为已定义的全局变量 如a
-      success : function(data) {
+      success: function (data) {
         a = data.data.date;
       }
 
     });
     return a;
   }
-  function usernum(){
+  function usernum() {
     $.ajax({
-      type : "get",
-      url : "{:url('index/getmonthusernum')}",
-      dataType : "json", //返回数据形式为json
+      type: "get",
+      url: "{:url('index/getmonthusernum')}",
+      dataType: "json", //返回数据形式为json
       async: false, //同步传输，并添加返回值，返回值应为已定义的全局变量 如a
-      success : function(data) {
+      success: function (data) {
         a = data.data.count;
       }
 
     });
     return a;
   }
-$(document).ready(function(e) {
-    var $dashChartBarsCnt  = jQuery( '.js-chartjs-bars' )[0].getContext( '2d' ),
-        $dashChartLinesCnt = jQuery( '.js-chartjs-lines' )[0].getContext( '2d' );
+  $(document).ready(function (e) {
+    var $dashChartBarsCnt = jQuery('.js-chartjs-bars')[0].getContext('2d'),
+      $dashChartLinesCnt = jQuery('.js-chartjs-lines')[0].getContext('2d');
     var $dashChartBarsData = {
-		labels: date().reverse(),
-		datasets: [
-			{
-				label: '注册用户',
-                borderWidth: 1,
-                borderColor: 'rgba(0, 0, 0, 0)',
-				backgroundColor: 'rgba(51, 202, 185, 0.5)',
-                hoverBackgroundColor: "rgba(51, 202, 185, 0.7)",
-                hoverBorderColor: "rgba(0, 0, 0, 0)",
-				data: count().reverse()
-			}
-		]
-	};
+      labels: date().reverse(),
+      datasets: [
+        {
+          label: '注册用户',
+          borderWidth: 1,
+          borderColor: 'rgba(0, 0, 0, 0)',
+          backgroundColor: 'rgba(51, 202, 185, 0.5)',
+          hoverBackgroundColor: "rgba(51, 202, 185, 0.7)",
+          hoverBorderColor: "rgba(0, 0, 0, 0)",
+          data: count().reverse()
+        }
+      ]
+    };
     var $dashChartLinesData = {
-		labels: month().reverse(),
-		datasets: [
-			{
-				label: '用户数量',
-				data: usernum().reverse(),
-				borderColor: '#358ed7',
-				backgroundColor: 'rgba(53, 142, 215, 0.175)',
-                borderWidth: 1,
-                fill: false,
-                lineTension: 0.5
-			}
-		]
-	};
-    
+      labels: month().reverse(),
+      datasets: [
+        {
+          label: '用户数量',
+          data: usernum().reverse(),
+          borderColor: '#358ed7',
+          backgroundColor: 'rgba(53, 142, 215, 0.175)',
+          borderWidth: 1,
+          fill: false,
+          lineTension: 0.5
+        }
+      ]
+    };
+
     new Chart($dashChartBarsCnt, {
-        type: 'bar',
-        data: $dashChartBarsData
+      type: 'bar',
+      data: $dashChartBarsData
     });
 
     var myLineChart = new Chart($dashChartLinesCnt, {
-        type: 'line',
-        data: $dashChartLinesData,
+      type: 'line',
+      data: $dashChartLinesData,
     });
-});
+  });
+
+  //获取所有app
+  $.ajax({
+    type: "get",
+    url: "{:url('index/getAllApp')}",
+    dataType: "json", //返回数据形式为json
+    async: false, //同步传输，并添加返回值，返回值应为已定义的全局变量 如a
+    success: function (data) {
+      //遍历到select中
+      $.each(data.data, function (i, item) {
+        $("#appselect").append("<option value='" + item.appid + "'>" + item.appname + "</option>");
+      });
+    }
+  });
+
+  $("#appselect").change(function () {
+    var appid = $(this).val();
+    console.log(appid);
+    //ajax获取所有
+    $.ajax({
+      type: "post",
+      url: "{:url('index/getAllChannel')}",
+      data: {
+        appid: appid
+      },
+      dataType: "json", //返回数据形式为json
+      async: false, //同步传输，并添加返回值，返回值应为已定义的全局变量 如a
+      success: function (data) {
+        //console.log(data);
+        $('#usertotal').html(data.data.usertotal);
+        $('#kmtotal').html(data.data.kmtotal);
+        $('#messagetotal').html(data.data.messagetotal);
+        $('#todayviptotal').html(data.data.todayviptotal);
+        $('#todayregtotal').html(data.data.todayregtotal);
+        $('#isusekmtotal').html(data.data.isusekmtotal);
+        $('#viewtotal').html(data.data.viewtotal);
+        $('#signintotal').html(data.data.signintotal);
+        $('#viewtotal').html(data.data.viewtotal);
+        $('#paltetotal').html(data.data.paltetotal);
+        $('#posttotal').html(data.data.posttotal);
+      }
+    });
+  });
 </script>
 </body>
+
 </html>

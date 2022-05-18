@@ -175,4 +175,30 @@ class Index extends BaseController
             return Common::ReturnJson('执行成功');
         }
     }
+
+
+    //首页获取app信息
+    public function getAllApp(){
+        $data = Db::query("select * from mr_app");
+        return Common::ReturnJson('获取成功',$data);
+    }
+
+    //重新获取与此APP相关的信息
+    public function getAllChannel(){
+        $appid = input('post.appid');
+        $data = array();
+        $data['usertotal'] = Db::name('user')->where('appid',$appid)->count(); #用户总数
+        $data['apptotal'] = Db::name('app')->where('appid',$appid)->count(); #应用总数
+        $data['kmtotal'] = Db::name('km')->where('appid',$appid)->count(); #卡密总数
+        $data['messagetotal'] = Db::name('notes')->where('appid',$appid)->count(); #笔记总数
+        $data['todayviptotal'] = Db::name('user')->where('appid',$appid)->where('viptime', '>', time())->count(); #今日vip总数
+        $data['todayregtotal'] = Db::name('user')->where('appid',$appid)->where('creattime', '>', strtotime(date("Y-m-d"),time()))->count(); #今日注册总数
+        $data['isusekmtotal'] = Db::name('km')->where('appid',$appid)->where('isuse', '=', 'true')->count(); #已使用卡密总数
+        $data['viewtotal'] = Db::name('app')->where('appid',$appid)->sum('view'); #访问总数
+        $data['signintotal'] = Db::name('user')->where('appid',$appid)->where('signtime','>',strtotime(date("Y-m-d"),time()))->count(); #今日签到人数
+        $data['paltetotal'] = Db::name('plate')->where('appid',$appid)->count(); #板块数量
+        $data['posttotal'] = Db::name('post')->where('appid',$appid)->count(); #帖子数量
+        $data['filetotal'] = Db::name('upload')->count(); #文件数量
+        return Common::ReturnJson('获取成功',$data);
+    }
 }

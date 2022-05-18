@@ -9,6 +9,7 @@ use think\db\exception\ModelNotFoundException;
 use think\exception\DbException;
 use think\facade\Validate;
 use think\Request;
+use app\common\controller\Common;
 
 class Shop extends Controller
 {

@@ -5,6 +5,7 @@ namespace app\api\controller;
 use think\Db;
 use think\Exception;
 use think\facade\Request;
+use app\common\controller\Common;
 
 class Upload
 {

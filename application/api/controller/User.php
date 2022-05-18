@@ -14,6 +14,7 @@ use think\facade\Session;
 use think\facade\Validate;
 use think\helper\Time;
 use think\Request;
+use app\common\controller\Common;
 
 class User extends Controller
 {

@@ -838,6 +838,9 @@ class User extends Controller
         if ($invitecode == "" || $invitecode == null) {
             return Common::return_msg(400, "没有该邀请码");
         }
+        if($user['invitecode'] == $data['invitecode']){
+            return Common::return_msg(400, "不能填写自己的邀请码");
+        }
         //判断用户会员状态
         if ($user['viptime'] > time()) {
             $viptime = $user['viptime'];
@@ -882,6 +885,12 @@ class User extends Controller
         return Common::return_msg(200, "填写成功");
     }
 
+    /**
+     * 生成邀请码
+     *
+     * @param Request $request
+     * @return void
+     */
     public function Getinvitecode(Request $request)
     {
         $data = $request->param();
@@ -905,6 +914,12 @@ class User extends Controller
         }
     }
 
+    /**
+     * 获取邀请码
+     *
+     * @param Request $request
+     * @return void
+     */
     public function GetinviterList(Request $request){
         $data = $request->param();
         $validate = Validate::make([

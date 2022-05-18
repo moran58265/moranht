@@ -155,7 +155,7 @@ class Common
                 $dbipaddresarr = json_decode($dbipaddres, true);
                 $dbaddres = $dbipaddresarr['country'] . $dbipaddresarr['regionName'] . $dbipaddresarr['city'];
             }catch (\Exception $e){
-                $nowaddres = '未知ip';
+                $dbaddres = '未知ip';
             }
         }
         if ($nowaddres == $dbaddres) {

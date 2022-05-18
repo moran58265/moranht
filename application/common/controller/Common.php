@@ -148,24 +148,24 @@ class Common
             $nowaddres = '内网IP';
         } else {
             $nowurl = "http://ip-api.com/json/" . $nowip . "?lang=zh-CN";
-            try {
-                $nowipaddres = file_get_contents($nowurl);
-                $nowipaddresarr = json_decode($nowipaddres, true);
+            $nowipaddres = file_get_contents($nowurl);
+            $nowipaddresarr = json_decode($nowipaddres, true);
+            if ($nowipaddresarr['status'] == 'fail') {
+                $nowaddres = '未知IP';
+            } else {
                 $nowaddres = $nowipaddresarr['country'] . $nowipaddresarr['regionName'] . $nowipaddresarr['city'];
-            } catch (\Exception $e) {
-                $nowaddres = '未知ip';
             }
         }
-        if ($dbip == '127.0.0.1' || $dbip == '') {
+        if ($dbip == '127.0.0.1') {
             $dbaddres = '内网IP';
         } else {
-            try {
-                $dburl = "http://ip-api.com/json/" . $dbip . "?lang=zh-CN";
-                $dbipaddres = file_get_contents($dburl);
-                $dbipaddresarr = json_decode($dbipaddres, true);
-                $dbaddres = $dbipaddresarr['country'] . $dbipaddresarr['regionName'] . $dbipaddresarr['city'];
-            } catch (\Exception $e) {
+            $dburl = "http://ip-api.com/json/" . $dbip . "?lang=zh-CN";
+            $dbipaddres = file_get_contents($dburl);
+            $dbipaddresarr = json_decode($dbipaddres, true);
+            if ($dbipaddresarr['status'] == 'fail') {
                 $dbaddres = '未知ip';
+            } else {
+                $dbaddres = $dbipaddresarr['country'] . $dbipaddresarr['regionName'] . $dbipaddresarr['city'];
             }
         }
         if ($nowaddres == $dbaddres) {

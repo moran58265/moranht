@@ -128,13 +128,18 @@ class Index extends BaseController
                 "verify_peer_name" => false,
             ]
         ];
-        $downurl = input('post.');
-        $arr = parse_url($downurl['url']);  //获取下载地址
-        $fileName = basename(time());  //获取文件名
-        $file = file_get_contents($downurl['url'], false, stream_context_create($stream_opts)); //获取文件内容
-        $file_path = "./update/" . $fileName . ".zip";  //设置文件路径
-        file_put_contents($file_path, $file);
-        return Common::ReturnJson($file_path);
+        try{
+            $downurl = input('post.');
+            $arr = parse_url($downurl['url']);  //获取下载地址
+            $fileName = basename(time());  //获取文件名
+            $file = file_get_contents($downurl['url'], false, stream_context_create($stream_opts)); //获取文件内容
+            $file_path = "./update/" . $fileName . ".zip";  //设置文件路径
+            file_put_contents($file_path, $file);
+            return Common::ReturnJson($file_path);
+        }catch(\Exception $e){
+            return Common::ReturnError('下载失败');
+        }
+        
     }
 
 
@@ -145,13 +150,17 @@ class Index extends BaseController
         $zip = new \ZipArchive();
         $res = $zip->open($file_path);  //解压文件
         //解压目录
-        if ($res === true) {
-            $zip->extractTo('../');
-            $zip->close();
-            unlink(input('post.filepath')); //删除源文件
-            return Common::ReturnJson('解压成功');
-        } else {
-            return Common::ReturnJson('解压失败');
+        try{
+            if ($res === true) {
+                $zip->extractTo('../');
+                $zip->close();
+                unlink(input('post.filepath')); //删除源文件
+                return Common::ReturnJson('解压成功');
+            } else {
+                return Common::ReturnJson('解压失败');
+            }
+        }catch(\Exception $e){
+            return Common::ReturnError('请设置文件权限为755(www)');
         }
     }
 
@@ -185,7 +194,7 @@ class Index extends BaseController
 
     //重新获取与此APP相关的信息
     public function getAllChannel(){
-        $appid = input('post.appid');
+        $appid = input('post.appid')?input('post.appid'):'';
         $data = array();
         $data['usertotal'] = Db::name('user')->where('appid',$appid)->count(); #用户总数
         $data['apptotal'] = Db::name('app')->where('appid',$appid)->count(); #应用总数

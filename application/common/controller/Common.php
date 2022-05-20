@@ -144,54 +144,40 @@ class Common
         header("Content-type: text/html; charset=utf-8");
         //访问api接口获取ip地址http://ip-api.com/json/ip地址?lang=zh-CN
         //获取当前ip所在的省份
-        if ($nowip == '127.0.0.1') {
-            $nowaddres = '内网IP';
-        } else {
-            $nowurl = "http://ip-api.com/json/" . $nowip . "?lang=zh-CN";
+        // $nowurl = "http://ip-api.com/json/" . $nowip . "?lang=zh-CN";
+        // $nowurl = "http://whois.pconline.com.cn/ipJson.jsp?callback=testJson&ip=".$nowip;
+        // $nowipaddres = file_get_contents($nowurl);
+        // $nowipaddresarr = json_decode($nowipaddres, true);
+        try{
+            $nowurl = "http://whois.pconline.com.cn/jsAlert.jsp?callback=testJson&ip=" . $nowip;
             $nowipaddres = file_get_contents($nowurl);
-            $nowipaddresarr = json_decode($nowipaddres, true);
-            if ($nowipaddresarr['status'] == 'fail') {
-                $nowaddres = '未知IP';
-            } else {
-                $nowaddres = $nowipaddresarr['country'] . $nowipaddresarr['regionName'] . $nowipaddresarr['city'];
-            }
-        }
-        if ($dbip == '127.0.0.1') {
-            $dbaddres = '内网IP';
-        } else {
-            $dburl = "http://ip-api.com/json/" . $dbip . "?lang=zh-CN";
+            $nowhtml = iconv("gb2312", "utf-8//IGNORE", $nowipaddres);
+            $nowaddres = mb_substr($nowhtml, 9, -4);
+            $dburl = "http://whois.pconline.com.cn/jsAlert.jsp?callback=testJson&ip=" . $nowip;
             $dbipaddres = file_get_contents($dburl);
-            $dbipaddresarr = json_decode($dbipaddres, true);
-            if ($dbipaddresarr['status'] == 'fail') {
-                $dbaddres = '未知ip';
+            $dbhtml = iconv("gb2312", "utf-8//IGNORE", $dbipaddres);
+            $dbaddres = mb_substr($dbhtml, 9, -4);
+            if ($nowaddres == $dbaddres) {
+                return ["code" => 200, "msg" => $nowaddres];
             } else {
-                $dbaddres = $dbipaddresarr['country'] . $dbipaddresarr['regionName'] . $dbipaddresarr['city'];
+                return ["code" => 400, "msg" => $nowaddres];
             }
+        }catch (\Exception $exception){
+            return ["code" => 400, "msg" => "未知ip"];
         }
-        if ($nowaddres == $dbaddres) {
-            return ["code" => 200, "msg" => $nowaddres];
-        } else {
-            return ["code" => 400, "msg" => $nowaddres];
-        }
+        
     }
 
     //获取当个ip所在的省份
     public static function get_ip_address($ip)
     {
-        header("Content-type: text/html; charset=utf-8");
         //访问api接口获取ip地址http://ip-api.com/json/ip地址?lang=zh-CN
         //获取当前ip所在的省份
-        if ($ip == '127.0.0.1'){
-            return '内网IP';
-        }
-        if ($ip == ''){
-            return '未知ip';
-        }
-        $url = "http://ip-api.com/json/" . $ip . "?lang=zh-CN";
+        $url = "http://whois.pconline.com.cn/jsAlert.jsp?callback=testJson&ip=" . $ip;
         try {
             $ipaddres = file_get_contents($url);
-            $ipaddresarr = json_decode($ipaddres, true);
-            $addres = $ipaddresarr['country'] . $ipaddresarr['regionName'] . $ipaddresarr['city'];
+            $iphtml = iconv("gb2312", "utf-8//IGNORE", $ipaddres);
+            $addres = mb_substr($iphtml, 9, -4);
             return $addres;
         } catch (\Exception $e) {
             return '未知ip';

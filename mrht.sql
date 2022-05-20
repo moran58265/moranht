@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 19/05/2022 12:08:31
+ Date: 20/05/2022 09:40:21
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,7 @@ CREATE TABLE `mr_admin`  (
 -- ----------------------------
 -- Records of mr_admin
 -- ----------------------------
-INSERT INTO `mr_admin` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '2659917175', '默然', '1', '8xrBWq', '');
+INSERT INTO `mr_admin` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '2659917175', '默然', '1', 'zITy5F', '');
 
 -- ----------------------------
 -- Table structure for mr_app
@@ -66,22 +66,23 @@ CREATE TABLE `mr_app`  (
   `postexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '发帖经验',
   `commentmoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '评论获得money',
   `commentexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '评论获得经验',
-  `invitemoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
-  `inviteexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
-  `invitevip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
-  `finvitemoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
-  `finviteexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
-  `finvitevip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
+  `invitemoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
+  `inviteexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
+  `invitevip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
+  `finvitemoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
+  `finviteexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
+  `finvitevip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
   `app_site_status` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'true' COMMENT 'true/false',
   `is_email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'false' COMMENT '注册是否要验证码true/false',
   `hierarchy` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '[0 => \'名称1\',100=>\'名称2\',200=>\'名称3\',300=>\'名称4\',400=>\'名称5\']' COMMENT '经验等级划分',
   `view` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '访问量',
   PRIMARY KEY (`appid`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 10000 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'app列表' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 10001 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'app列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mr_app
 -- ----------------------------
+INSERT INTO `mr_app` VALUES (10000, '默然博客', 'http://local.mrht.cn/static/images/app.png', NULL, NULL, NULL, NULL, '暂无', '暂无', '1.0', '暂无', '暂无', '2022-05-20 09:37:16', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, 'true', 'false', '[0 => \'名称1\',100=>\'名称2\',200=>\'名称3\',300=>\'名称4\',400=>\'名称5\']', '0');
 
 -- ----------------------------
 -- Table structure for mr_comment

@@ -25,6 +25,7 @@ class User extends BaseController
         $sort = input('sort')?input('sort'):'id';
         $sortOrder = input('sortOrder')?input('sortOrder'):'desc';
         $username = input('username')?input('username'):'';
+        $ipaddress = input('ipaddress')?input('ipaddress'):2;
         try {
             $appList = Db::name('user')->alias('u')
                 ->join('app a', 'a.appid=u.appid')
@@ -44,7 +45,11 @@ class User extends BaseController
                 $datauserinfo[$key]['useremail'] = $value['useremail'];
                 $datauserinfo[$key]['creattime'] = $value['creattime'];
                 $datauserinfo[$key]['banned'] = $value['banned'];
-                $datauserinfo[$key]['ip'] = $value['ip']."(".Common::get_ip_address($value['ip']).")";
+                if($ipaddress == 2){
+                    $datauserinfo[$key]['ip'] = $value['ip'];
+                }else{
+                    $datauserinfo[$key]['ip'] = $value['ip']."(".Common::get_ip_address($value['ip']).")";
+                }   
             }
             $appcount = Db::name('user')
                 ->alias('u')

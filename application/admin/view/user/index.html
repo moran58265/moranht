@@ -22,11 +22,20 @@
                                 <label><i class="mdi mdi-window-close" aria-hidden="true"></i></label>删除
                             </button>
                         </div>
-                        <div class="input-group mb-3">
-                            <input type="text" id="searchusername" class="form-control" placeholder="用户账号">
-                            <div class="input-group-append">
-                                <input type="button" id="search_btn" class="input-group-text" value="查询">
+
+                        <div class="input-group">
+                            <div class="form-group col-lg-4">
+                                <input type="text" id="searchusername" class="form-control" placeholder="用户账号">
                             </div>
+                            
+                            <div class="form-group col-lg-4">
+                                <select class="form-control" id="ipaddress">
+                                    <option value="">是否显示ip位置(默认不显示)</option>
+                                    <option value="1">显示</option>
+                                    <option value="2">不显示</option>
+                                </select>
+                            </div>
+                                <input type="button" id="search_btn" class="input-group-text" value="查询">
                         </div>
 
                         <table id="tb_departments"></table>
@@ -64,7 +73,8 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" id="shutdown"
                                 data-dismiss="modal">关闭</button>
-                            <button type="button" id="addbtn" onclick="adduser()" class="btn btn-w-sm btn-primary">保存</button>
+                            <button type="button" id="addbtn" onclick="adduser()"
+                                class="btn btn-w-sm btn-primary">保存</button>
                         </div>
                     </div>
                 </div>
@@ -191,6 +201,7 @@
             url: "{:url('user/GetUserlist')}",
             data: {
                 username: $.trim($('#searchusername').val()),
+                ipaddress : $.trim($('#ipaddress').val()),
             },
             dataType: "json",
             success: function (data) {

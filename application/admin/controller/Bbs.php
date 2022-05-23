@@ -120,8 +120,9 @@ class Bbs extends BaseController
             $listPost = Db::name('post')
                 ->alias('p')
                 ->join('app a', 'a.appid = p.appid')
-                ->join('plate q', 'q.appid = p.appid')
+                ->join('plate q', 'q.id = p.plateid')
                 ->field('p.*,a.appname,q.platename,(SELECT COUNT(*) FROM mr_comment as c WHERE c.postid  = p.id) as commentnum')
+                ->distinct(true)
                 ->paginate(10);
         } catch (DbException $e) {
             return Common::ReturnError($e->getMessage());

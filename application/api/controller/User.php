@@ -635,7 +635,7 @@ class User extends Controller
         if ($app == "" || $app == null) {
             return Common::ReturnError("没有此app");
         }
-        if ((new Request)->post('limit') == null) {
+        if (empty($data['limit'])) {
             $data['limit'] = 10;
         }
         if ($data['type'] == 'exp') {

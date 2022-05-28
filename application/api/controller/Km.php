@@ -58,6 +58,10 @@ class Km extends Controller
             'username' => $data['username'],
             'usetime' => date("Y-m-d H:i:s",time()),
         ];
+        if($km['vip'] == 0 && $km['money'] == 0 && $km['exp'] == 0) {
+            Db::name('km')->where('km', $data['km'])->update($updatekmdata);
+            return Common::return_msg(400,"使用成功");
+        }
         try {
             $updateuser = Db::name('user')->where('username', $data['username'])->update($updateuserdata);
         } catch (PDOException $e) {

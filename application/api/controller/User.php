@@ -909,7 +909,14 @@ class User extends Controller
         if (!$validate->check($data)) {
             return Common::ReturnError($validate->getError());
         }
+        $app = Db::name('app')->where('appid', $data['appid'])->find();
+        if($app == "" || $app == null){
+            return Common::ReturnError("app不存在");
+        }
         $finvitecode = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
+        if($finvitecode == null || $finvitecode == ""){
+            return Common::ReturnError("没有该用户");
+        }
         if ($finvitecode['invitecode'] == "" || $finvitecode['invitecode'] == null) {
             $invitecode = Commoncode::getinvitacode($data['username']);
             Db::name('user')
@@ -923,7 +930,7 @@ class User extends Controller
     }
 
     /**
-     * 获取邀请码
+     * 邀请排行榜
      *
      * @param Request $request
      * @return void

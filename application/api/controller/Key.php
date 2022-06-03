@@ -46,7 +46,12 @@ class Key extends Controller
         if ($admin['admintoken'] != $data['adminkey']) {
             return Common::return_msg(400, "key不正确");
         }
-        $viptime = $user['viptime']+$data['vipday']*24*3600;
+        if($user['viptime'] > time()){
+            $userviptime = $user['viptime'];
+        }else{
+            $userviptime = time();
+        }
+        $viptime = $userviptime+$data['vipday']*24*3600;
         try {
             $result = Db::name('user')->where('username', $data['username'])->update(['viptime' => $viptime]);
         } catch (PDOException $e) {

@@ -48,11 +48,20 @@ class Km extends Controller
         if ($km['isuse'] == 'true'){
             return Common::return_msg(400,"此卡密已被使用");
         }
-        $updateuserdata = [
-            'viptime' => $user['viptime'] + $km['vip']*24*3600,
-            'money' => $user['money'] + $km['money'],
-            'exp' => $user['exp'] + $km['exp']
-        ];
+        $addviptime = $km['vip'] * 24 * 60 * 60;
+        if ($user['viptime'] >= time()) {
+            $updateuserdata = [
+                'viptime' => $user['viptime'] + $addviptime,
+                'money' => $user['money'] + $app['signmoney'],
+                'exp' => $user['exp'] + $app['signexp'],
+            ];
+        } else {
+            $updateuserdata = [
+                'viptime' => time() + $addviptime,
+                'money' => $user['money'] + $app['signmoney'],
+                'exp' => $user['exp'] + $app['signexp'],
+            ];
+        }
         $updatekmdata = [
             'isuse' => 'true',
             'username' => $data['username'],

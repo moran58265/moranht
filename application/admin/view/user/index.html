@@ -30,12 +30,22 @@
                             
                             <div class="form-group col-lg-4">
                                 <select class="form-control" id="ipaddress">
-                                    <option value="">是否显示ip位置(默认不显示)</option>
+                                    <option value="0">是否显示ip位置(默认不显示)</option>
                                     <option value="1">显示</option>
                                     <option value="2">不显示</option>
                                 </select>
                             </div>
-                                <input type="button" id="search_btn" class="input-group-text" value="查询">
+                            <div class="custom-control custom-checkbox custom-control-inline">
+                                <input type="checkbox" id="fvip" class="custom-control-input">
+                                <label class="custom-control-label" for="fvip">会员</label>
+                            </div>
+                            <div class="custom-control custom-checkbox custom-control-inline">
+                                <input type="checkbox" id="fsign" class="custom-control-input">
+                                <label class="custom-control-label" for="fsign">已签到</label>
+                            </div>
+                            <div class="custom-control">
+                                <input type="button" id="search_btn" class="btn btn-primary" value="查询">
+                            </div>
                         </div>
 
                         <table id="tb_departments"></table>
@@ -111,6 +121,9 @@
                 sort: params.sort,           // 排序的列名
                 sortOrder: params.order,      // 排序方式'asc' 'desc'
                 username: $.trim($('#searchusername').val()),
+                ipaddress: $.trim($("#ipaddress").val()),
+                fvip: $("#fvip").is(":checked"),
+                fsign: $("#fsign").is(":checked"),
             };
             return temp;
         },                                   // 传递参数
@@ -195,6 +208,8 @@
     }
 
     $('#search_btn').click(function () {
+        var fvip = $("#fvip").is(":checked");
+        var fsign = $("#fsign").is(":checked");
         //ajax查询
         $.ajax({
             type: "POST",
@@ -202,6 +217,8 @@
             data: {
                 username: $.trim($('#searchusername').val()),
                 ipaddress : $.trim($('#ipaddress').val()),
+                fvip: fvip,
+                fsign: fsign,
             },
             dataType: "json",
             success: function (data) {

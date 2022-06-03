@@ -20,17 +20,22 @@ class User extends BaseController
 //获取所有信息
     public function GetUserlist()
     {
+        $nowdaytime = strtotime(date('Y-m-d'));
         $limit = input('limit')?input('limit'):10;
         $page = input('page')?input('page'):1;
         $sort = input('sort')?input('sort'):'id';
         $sortOrder = input('sortOrder')?input('sortOrder'):'desc';
         $username = input('username')?input('username'):'';
-        $ipaddress = input('ipaddress')?input('ipaddress'):2;
+        $ipaddress = input('ipaddress') == 0?2:input('ipaddress');
+        $fvip = input('fvip') == 'true'?time():1;
+        $fsign = input('fsign') == 'true'?$nowdaytime:0;
         try {
             $appList = Db::name('user')->alias('u')
                 ->join('app a', 'a.appid=u.appid')
                 ->field('u.id,u.username,u.usertx,u.nickname,a.appname,u.useremail,FROM_UNIXTIME(u.creattime,"%Y-%m-%d %H:%i:%s") as creattime,u.banned,ip')
                 ->where('u.username', "like", '%' . $username . '%')
+                ->where('u.viptime', ">=",$fvip)
+                ->where('u.signtime', ">=",$fsign)
                 ->order($sort, $sortOrder)
                 ->limit($limit)
                 ->page($page)
@@ -55,7 +60,10 @@ class User extends BaseController
                 ->alias('u')
                 ->join('app a', 'a.appid=u.appid')
                 ->field('u.id,u.username,u.usertx,u.nickname,a.appname,u.useremail,FROM_UNIXTIME(u.creattime,"%Y-%m-%d %H:%i:%s") as creattime,u.banned')
-                ->where('u.username', "like", '%' . $username . '%')->count();
+                ->where('u.username', "like", '%' . $username . '%')
+                ->where('u.viptime', ">=",$fvip)
+                ->where('u.signtime', ">=",$fsign)
+                ->count();
         } catch (DataNotFoundException $e) {
             return Common::ReturnError($e->getMessage());
         }catch (ModelNotFoundException $e) {

@@ -712,7 +712,7 @@ class User extends Controller
         if ($user['signtime'] > $start) {
             return Common::ReturnError("您今天已经签到过了");
         }
-        $addviptime = $app['signvip'] * 24 * 60 * 3600;
+        $addviptime = $app['signvip'] * 24 * 60 * 60;
         if ($user['viptime'] >= time()) {
             $updateuser = [
                 'viptime' => $user['viptime'] + $addviptime,

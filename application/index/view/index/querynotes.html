@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="author" content="yinq">
+    <title>{$notes.title}</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" type="text/css" href="/static/css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.min.css">
+    <style>
+        .nav-tabs .nav-link:hover,
+        .nav-tabs .nav-link:focus {
+            border-color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lyear-layout-web">
+        <div class="lyear-layout-container">
+            <!--页面主要内容-->
+            <main class="lyear-layout">
+                <div class="container-fluid p-t-15">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <header class="card-header">
+                                    <div class="card-title">{$notes.title}</div>
+                                </header>
+                                <div class="card-body">
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-left" data-toggle="tab"
+                                                aria-selected="true"><img
+                                                    style="width: 50px; height: 50px; border-radius: 50px;"
+                                                    src="{$notes.usertx}" alt=""></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" style="padding-top: 13px;"
+                                                aria-selected="false">作者:{$notes.username}</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade show active" id="jinyong">
+                                            <p>{$notes.content}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <!--End 页面主要内容-->
+        </div>
+    </div>
+</body>
+
+</html>

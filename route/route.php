@@ -84,3 +84,9 @@ Route::rule('api/KeyVip','api/key/KeyVip');
 Route::rule('api/KeyMoney','api/key/KeyMoney');
 Route::rule('api/KeyExp','api/key/KeyExp');
 Route::rule('api/vipPermanent','api/key/vipPermanent');
+
+
+/**
+ * 外链笔记 
+ */
+Route::rule('notes/:id','index/index/querynotes/');

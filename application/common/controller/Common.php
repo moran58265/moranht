@@ -148,7 +148,7 @@ class Common
         // $nowurl = "http://whois.pconline.com.cn/ipJson.jsp?callback=testJson&ip=".$nowip;
         // $nowipaddres = file_get_contents($nowurl);
         // $nowipaddresarr = json_decode($nowipaddres, true);
-        try{
+        try {
             $nowurl = "http://whois.pconline.com.cn/jsAlert.jsp?callback=testJson&ip=" . $nowip;
             $nowipaddres = file_get_contents($nowurl);
             $nowhtml = iconv("gb2312", "utf-8//IGNORE", $nowipaddres);
@@ -162,10 +162,9 @@ class Common
             } else {
                 return ["code" => 400, "msg" => $nowaddres];
             }
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return ["code" => 400, "msg" => "未知ip"];
         }
-        
     }
 
     //获取当个ip所在的省份
@@ -225,5 +224,49 @@ class Common
         $long = sprintf("%u", ip2long($ip));
         $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
         return $ip[$type];
+    }
+
+    //加密函数  
+    public static function lock_url($txt, $key = 'morannn')
+    {
+        $txt = $txt . $key;
+        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=+";
+        $nh = rand(0, 64);
+        $ch = $chars[$nh];
+        $mdKey = md5($key . $ch);
+        $mdKey = substr($mdKey, $nh % 8, $nh % 8 + 7);
+        $txt = base64_encode($txt);
+        $tmp = '';
+        $i = 0;
+        $j = 0;
+        $k = 0;
+        for ($i = 0; $i < strlen($txt); $i++) {
+            $k = $k == strlen($mdKey) ? 0 : $k;
+            $j = ($nh + strpos($chars, $txt[$i]) + ord($mdKey[$k++])) % 64;
+            $tmp .= $chars[$j];
+        }
+        return urlencode(base64_encode($ch . $tmp));
+    }
+    //解密函数  
+    public static function unlock_url($txt, $key = 'morannn')
+    {
+        $txt = base64_decode(urldecode($txt));
+        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=+";
+        $ch = $txt[0];
+        $nh = strpos($chars, $ch);
+        $mdKey = md5($key . $ch);
+        $mdKey = substr($mdKey, $nh % 8, $nh % 8 + 7);
+        $txt = substr($txt, 1);
+        $tmp = '';
+        $i = 0;
+        $j = 0;
+        $k = 0;
+        for ($i = 0; $i < strlen($txt); $i++) {
+            $k = $k == strlen($mdKey) ? 0 : $k;
+            $j = strpos($chars, $txt[$i]) - $nh - ord($mdKey[$k++]);
+            while ($j < 0) $j += 64;
+            $tmp .= $chars[$j];
+        }
+        return trim(base64_decode($tmp), $key);
     }
 }

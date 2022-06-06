@@ -250,6 +250,7 @@ class Notes extends Controller
                 ->join('app a', 'a.appid = n.appid')
                 ->field('n.*,a.appname')
                 ->find();
+            $getnotes['notesurl'] = "http://".$_SERVER['HTTP_HOST']."/notes/". Common::lock_url($getnotes['id']);
         } catch (DataNotFoundException $e) {
             return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {

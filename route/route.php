@@ -150,3 +150,11 @@ Route::rule('apiv2/GetUserCommentList','apiv2/bbs/GetUserCommentList');
 Route::rule('apiv2/AddComment','apiv2/bbs/AddComment');
 Route::rule('apiv2/GetUserCommentList','apiv2/bbs/GetUserCommentList');
 Route::rule('apiv2/DeleteComment','apiv2/bbs/DeleteComment');
+
+/**
+ * 密钥开通
+ */
+Route::rule('apiv2/KeyVip','apiv2/key/KeyVip');
+Route::rule('apiv2/KeyMoney','apiv2/key/KeyMoney');
+Route::rule('apiv2/KeyExp','apiv2/key/KeyExp');
+Route::rule('apiv2/vipPermanent','apiv2/key/vipPermanent');

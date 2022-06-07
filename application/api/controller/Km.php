@@ -52,14 +52,14 @@ class Km extends Controller
         if ($user['viptime'] >= time()) {
             $updateuserdata = [
                 'viptime' => $user['viptime'] + $addviptime,
-                'money' => $user['money'] + $app['signmoney'],
-                'exp' => $user['exp'] + $app['signexp'],
+                'money' => $user['money'] + $km['money'],
+                'exp' => $user['exp'] + $km['exp'],
             ];
         } else {
             $updateuserdata = [
                 'viptime' => time() + $addviptime,
-                'money' => $user['money'] + $app['signmoney'],
-                'exp' => $user['exp'] + $app['signexp'],
+                'money' => $user['money'] + $km['money'],
+                'exp' => $user['exp'] + $km['exp'],
             ];
         }
         $updatekmdata = [

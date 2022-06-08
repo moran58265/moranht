@@ -5,6 +5,7 @@ namespace app\apiv2\controller;
 use app\apiv2\controller\Base;
 use app\admin\model\App as ModelApp;
 use app\admin\model\Comment;
+use app\admin\model\Likepost as ModelLikePost;
 use app\admin\model\Plate as ModelPlate;
 use app\admin\model\User as ModelUser;
 use app\admin\model\PlatePost as ModelPost;
@@ -98,6 +99,8 @@ class Bbs extends Base
         if (!$post) {
             return $this->returnError('没有此帖子');
         }
+        $plate = ModelPlate::get($post->plateid);
+        $commentnum = Comment::where('postid', $data['id'])->count();
         ModelPost::where('id', $data['id'])->update(['view' => $post['view'] + 1]);
         $result = Db::name('post')
             ->alias('p')
@@ -108,6 +111,8 @@ class Bbs extends Base
             ->where('p.id', $data['id'])
             ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
             ->find();
+            $result['commentnum'] = $commentnum;
+            $result['platename'] = $plate->platename;
             $result['posturl'] = "http://".$_SERVER['HTTP_HOST']."/bbs/". $this->lock_url($data['id']);
         return $this->returnSuccess("查询成功", $result);
     }
@@ -663,5 +668,174 @@ class Bbs extends Base
             return $this->returnError("没有查询到相关帖子");
         }
         return $this->returnSuccess("查询成功", $result);
+    }
+
+    /**
+     * 点赞帖子
+     */
+    public function LikePost(Request $request){
+        if (Cookie::has('usertoken')) {
+            $cookiedata = [
+                'username' => Cookie::get('username'),
+                'usertoken' => Cookie::get('usertoken'),
+                'appid' => Cookie::get('appid'),
+            ];
+            $data = $request->param();
+            $validate = Validate::make([
+                'postid' => 'require|number',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->returnError($validate->getError());
+            }
+        } else {
+            $data = $request->param();
+            $validate = Validate::make([
+                'postid' => 'require|number',
+                'username' => 'require',
+                'appid' => 'require|number',
+                'usertoken' => 'require',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->returnError($validate->getError());
+            }
+            $cookiedata = [
+                'username' => $data['username'],
+                'usertoken' => $data['usertoken'],
+                'appid' => $data['appid'],
+            ];
+        }
+        $app = ModelApp::get($cookiedata['appid']);
+        if (!$app) {
+            return $this->returnError('没有此app');
+        }
+        $user = ModelUser::where('username', $cookiedata['username'])->where('appid', $cookiedata['appid'])->find();
+        if (!$user) {
+            return $this->returnError('没有此用户');
+        }
+        if ($user->user_token != $cookiedata['usertoken']) {
+            return $this->returnError('用户token错误');
+        }
+        $post = ModelPost::get($data['postid']);
+        if (!$post) {
+            return $this->returnError('没有此帖子');
+        }
+        $like = ModelLikePost::where('postid', $data['postid'])->where('username', $cookiedata['username'])->find();
+        if ($like) {
+            return $this->returnError('已点赞');
+        }
+        $like = new ModelLikePost();
+        $like->postid = $data['postid'];
+        $like->appid = $cookiedata['appid'];
+        $like->username = $cookiedata['username'];
+        $like->plateid = $post->plateid;
+        $like->creattime = date('Y-m-d H:i:s');
+        $like->save();
+        return $this->returnJson("点赞成功");
+    }
+
+    /**
+     * 取消点赞帖子
+     */
+    public function CancelLikePost(Request $request){
+        if (Cookie::has('usertoken')) {
+            $cookiedata = [
+                'username' => Cookie::get('username'),
+                'usertoken' => Cookie::get('usertoken'),
+                'appid' => Cookie::get('appid'),
+            ];
+            $data = $request->param();
+            $validate = Validate::make([
+                'postid' => 'require|number',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->returnError($validate->getError());
+            }
+        } else {
+            $data = $request->param();
+            $validate = Validate::make([
+                'id' => 'require|number',
+                'username' => 'require',
+                'appid' => 'require|number',
+                'usertoken' => 'require',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->returnError($validate->getError());
+            }
+            $cookiedata = [
+                'username' => $data['username'],
+                'usertoken' => $data['usertoken'],
+                'appid' => $data['appid'],
+            ];
+        }
+        $app = ModelApp::get($cookiedata['appid']);
+        if (!$app) {
+            return $this->returnError('没有此app');
+        }
+        $user = ModelUser::where('username', $cookiedata['username'])->where('appid', $cookiedata['appid'])->find();
+        if (!$user) {
+            return $this->returnError('没有此用户');
+        }
+        if ($user->user_token != $cookiedata['usertoken']) {
+            return $this->returnError('用户token错误');
+        }
+        $post = ModelPost::get($data['postid']);
+        if (!$post) {
+            return $this->returnError('没有此帖子');
+        }
+        $like = ModelLikePost::where('postid', $data['postid'])->where('username', $cookiedata['username'])->find();
+        if (!$like) {
+            return $this->returnError('没有点赞');
+        }
+        $like->delete();
+        return $this->returnJson("取消点赞成功");
+    }
+
+    /**
+     * 获取用户点赞的帖子
+     */
+    public function GetLikePost(Request $request){
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        if (Cookie::has('usertoken')) {
+            $data = [
+                'username' => Cookie::get('username'),
+                'usertoken' => Cookie::get('usertoken'),
+                'appid' => Cookie::get('appid'),
+            ];
+        } else {
+            $data = $request->param();
+            $validate = Validate::make([
+                'username' => 'require',
+                'appid' => 'require|number',
+                'usertoken' => 'require',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->returnError($validate->getError());
+            }
+        }
+        $app = ModelApp::get($data['appid']);
+        if (!$app) {
+            return $this->returnError('没有此app');
+        }
+        $user = ModelUser::where('username', $data['username'])->where('appid', $data['appid'])->find();
+        if (!$user) {
+            return $this->returnError('没有此用户');
+        }
+        if ($user->user_token != $data['usertoken']) {
+            return $this->returnError('用户token错误');
+        }
+            $result = Db::name('likepost')
+            ->alias('l')
+            ->join('plate b', 'l.plateid = b.id')
+            ->join('post p', 'l.postid = p.id')
+            ->join('app a', 'l.appid = a.appid')
+            ->join('user u', 'l.username = u.username')
+            ->where('l.appid', $data['appid'])
+            ->where('l.username', $data['username'])
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
+            ->limit($limit)
+            ->page($page)
+            ->select();
+        return $this->returnSuccess("获取成功", $result);
     }
 }

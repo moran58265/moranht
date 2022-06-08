@@ -123,6 +123,7 @@ class Bbs extends Controller
         }
         try {
             Db::name('post')->where('id', $data['id'])->update(['view' => $post['view'] + 1]);
+            $plate = Db::name('plate')->where('id', $post['plateid'])->find();
         } catch (PDOException $e) {
             return Common::return_msg(400, "请求失败");
         } catch (Exception $e) {
@@ -138,6 +139,8 @@ class Bbs extends Controller
                 ->where('p.id', $data['id'])
                 ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
                 ->find();
+            $result['platename'] = $plate['platename'];
+            $result['commentnum'] = Db::name('comment')->where('postid', $data['id'])->count();
             $result['posturl'] = "http://" . $_SERVER['HTTP_HOST'] . "/bbs/" . Common::lock_url($data['id']);
         } catch (DataNotFoundException $e) {
             return Common::return_msg(400, "请求失败");
@@ -679,5 +682,176 @@ class Bbs extends Controller
             return Common::return_msg(400, "没有搜索到结果");
         }
         return Common::return_msg(200, "查询成功", $result);
+    }
+
+    /**
+     * 点赞帖子
+     */
+    public function LikePost(Request $request){
+        $data = $request->param();
+        $validate = Validate::make([
+            'appid' => 'require|number',
+            'postid' => 'require|number',
+            'username' => 'require',
+            'usertoken' => 'require',
+        ]);
+        if (!$validate->check($data)) {
+            return Common::return_msg(400, $validate->getError());
+        }
+        try {
+            $app = Db::name('app')->where('appid', $data['appid'])->find();
+            $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
+            $post = Db::name('post')->where('id', $data['postid'])->find();
+            $like = Db::name('likepost')->where('postid', $data['postid'])->where('username', $data['username'])->find();
+        } catch (DataNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (DbException $e) {
+            return Common::return_msg(400, "请求失败");
+        }
+        if ($app == "" || $app == null) {
+            return Common::return_msg(400, "没有此app");
+        }
+        if ($user == "" || $user == null) {
+            return Common::return_msg(400, "没有此用户");
+        }
+        if($user['user_token'] != $data['usertoken']){
+            return Common::return_msg(400, "用户token错误");
+        }
+        if ($post == "" || $post == null) {
+            return Common::return_msg(400, "没有此帖子");
+        }
+        if($like != "" && $like != null){
+            return Common::return_msg(400, "已点赞");
+        }
+        $intodata = [
+            'appid' => $data['appid'],
+            'postid' => $data['postid'],
+            'username' => $data['username'],
+            'creattime' => date('Y-m-d H:i:s'),
+            'plateid' => $post['plateid'],
+        ];
+        try {
+            $result = Db::name('likepost')->insert($intodata);
+        } catch (DataNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (DbException $e) {
+            return Common::return_msg(400, "请求失败");
+        }
+        if ($result == 0) {
+            return Common::return_msg(400, "点赞失败");
+        }
+        return Common::return_msg(200, "点赞成功");
+    }
+
+    /**
+     * 取消点赞帖子
+     */
+    public function CancelLikePost(Request $request){
+        $data = $request->param();
+        $validate = Validate::make([
+            'appid' => 'require|number',
+            'postid' => 'require|number',
+            'username' => 'require',
+            'usertoken' => 'require',
+        ]);
+        if (!$validate->check($data)) {
+            return Common::return_msg(400, $validate->getError());
+        }
+        try {
+            $app = Db::name('app')->where('appid', $data['appid'])->find();
+            $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
+            $post = Db::name('post')->where('id', $data['postid'])->find();
+        } catch (DataNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (DbException $e) {
+            return Common::return_msg(400, "请求失败");
+        }
+        if ($app == "" || $app == null) {
+            return Common::return_msg(400, "没有此app");
+        }
+        if ($user == "" || $user == null) {
+            return Common::return_msg(400, "没有此用户");
+        }
+        if($user['user_token'] != $data['usertoken']){
+            return Common::return_msg(400, "用户token错误");
+        }
+        if ($post == "" || $post == null) {
+            return Common::return_msg(400, "没有此帖子");
+        }
+        try {
+            $result = Db::name('likepost')->where('appid', $data['appid'])->where('postid', $data['postid'])->where('username', $data['username'])->delete();
+        } catch (DataNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (DbException $e) {
+            return Common::return_msg(400, "请求失败");
+        }
+        if ($result == 0) {
+            return Common::return_msg(400, "取消点赞失败");
+        }  
+        return Common::return_msg(200, "取消点赞成功");
+    }
+
+    /**
+     * 获取用户的点赞帖子
+     * @param Request $request
+     */
+    public function GetLikePost(Request $request){
+        $data = $request->param();
+        $validate = Validate::make([
+            'appid' => 'require|number',
+            'username' => 'require',
+            'usertoken' => 'require',
+        ]);
+        if (!$validate->check($data)) {
+            return Common::return_msg(400, $validate->getError());
+        }
+        try {
+            $app = Db::name('app')->where('appid', $data['appid'])->find();
+            $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
+        } catch (DataNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (DbException $e) {
+            return Common::return_msg(400, "请求失败");
+        }
+        if ($app == "" || $app == null) {
+            return Common::return_msg(400, "没有此app");
+        }
+        if ($user == "" || $user == null) {
+            return Common::return_msg(400, "没有此用户");
+        }
+        if($user['user_token'] != $data['usertoken']){
+            return Common::return_msg(400, "用户token错误");
+        }
+        try{
+            $result = Db::name('likepost')
+            ->alias('l')
+            ->join('plate b', 'b.id = l.plateid')
+            ->join('post p', 'p.id = l.postid')
+            ->join('app a', 'a.appid = l.appid')
+            ->join('user u', 'u.username = l.username')
+            ->where('l.appid', $data['appid'])
+            ->where('l.username', $data['username'])
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename')
+            ->select();
+        } catch (DataNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (DbException $e) {
+            return Common::return_msg(400, "请求失败");
+        }
+            
+        
+        return Common::return_msg(200, "获取成功", $result);
     }
 }

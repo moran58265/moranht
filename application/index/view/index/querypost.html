@@ -110,8 +110,16 @@
         .message-btn-close {
             display: none;
         }
-        ul li{
+
+        ul li {
             list-style: none;
+        }
+
+        .nav-link {
+            padding: 2px 1rem;
+        }
+        p{
+            margin-bottom: 1px;
         }
     </style>
 </head>
@@ -126,7 +134,9 @@
                         <div class="col-lg-12">
                             <div class="card">
                                 <header class="card-header">
-                                    <div class="card-title">{$postdata.postname}</div>
+                                    <div class="card-title">
+                                        {$postdata.postname}
+                                    </div>
                                 </header>
                                 <div class="card-body">
                                     <ul class="nav nav-tabs" style="padding-bottom: 15px;">
@@ -136,10 +146,15 @@
                                                     src="{$postdata.usertx}" alt=""></a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" style="padding-top: 13px;"
-                                                aria-selected="false">作者:{$postdata.nickname}</a>
+                                            <a class="nav-link" style=""
+                                                aria-selected="false">作者：{$postdata.nickname}  
+                                                {if $postdata.title == "暂无称号"}
+                                                {else /}<span class="btn btn-xs btn-primary" style="margin: 0 10px;padding: 0px 3px;">{$postdata.title}</span>
+                                                {/if}</a>
+                                            <a class="nav-link">发布时间：{$postdata.creat_time}</a>
                                         </li>
                                     </ul>
+
                                     <div class="tab-content">
                                         <div class="tab-pane fade show active" id="jinyong">
                                             <p>{$postdata.postcontent}
@@ -170,26 +185,26 @@
                                 <div class="card-body" style="padding:10px;">
                                     <ul class="media-list">
                                         {volist name="comment" id="comment" key="k"}
-                                        <li style="margin-left: -30px;">
+                                        <li style="margin-left: -30px;border-bottom: 1px solid #e7e7e7;padding-top: 8px; ">
                                             <div class="media">
-                                                <a href="#!" style="padding: 0 7px;"><img
-                                                        src="{$comment.usertx}"
+                                                <a href="#!" style="padding: 0 7px;"><img src="{$comment.usertx}"
                                                         class="img-avatar img-avatar-30" alt="{$comment.nickname}"></a>
                                                 <div class="media-body">
                                                     <p>
                                                         <a href="#!"><strong>{$comment.nickname}</strong></a>
-                                                        <time class="pull-right text-fade" datetime="{$comment.creattime}">{$comment.creattime}
-                                                            </time>
+                                                        <time class="pull-right text-fade"
+                                                            datetime="{$comment.creattime}">{$comment.creattime}
+                                                        </time>
                                                     </p>
                                                     <p>{$comment.comment}</p>
                                                 </div>
                                             </div>
                                         </li>
                                         {/volist}
-                                        <div class="text-center">
-                                            <h4>更多评论内容请前往App查看</h4>
-                                          </div>
                                     </ul>
+                                </div>
+                                <div class="text-center" style="padding-top: 10px;">
+                                    <a href="{$app.download}"><h4>更多评论内容请下载App查看</h4></a>
                                 </div>
                             </div>
                         </div>

@@ -33,15 +33,8 @@ class Index extends Controller
             ->join('user u', 'u.username = p.username')
             ->where('p.id', Common::unlock_url($id))
             ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
-            ->select();
-            $postdata = [];
-            $postdata['postname'] = $result[0]['postname'];
-            $postdata['postcontent'] = $result[0]['postcontent'];
-            $postdata['username'] = $result[0]['username'];
-            $postdata['nickname'] = $result[0]['nickname'];
-            $postdata['usertx'] = $result[0]['usertx'];
-            $postdata['title'] = $result[0]['title'];
-            $file = explode(',', $result[0]['file']);
+            ->find();
+            $file = explode(',', $result['file']);
             //去除空数组
             $file = array_filter($file);
             $comment = Db::name('comment')
@@ -57,7 +50,9 @@ class Index extends Controller
             ->page(1)
             ->select();
             // return json_encode($comment);
-        return $this->fetch()->assign('postdata', $postdata)->assign('file', $file)->assign('comment', $comment);
+            $app = Db::name('app')->where('appid', $result['appid'])->find();
+            // return json_encode($app);
+        return $this->fetch()->assign('postdata', $result)->assign('file', $file)->assign('comment', $comment)->assign('app', $app);
     }
 
 }

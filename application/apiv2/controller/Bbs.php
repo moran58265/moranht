@@ -107,7 +107,8 @@ class Bbs extends Base
             ->where('p.appid', $data['appid'])
             ->where('p.id', $data['id'])
             ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
-            ->select();
+            ->find();
+            $result['posturl'] = "http://".$_SERVER['HTTP_HOST']."/bbs/". $this->lock_url($data['id']);
         return $this->returnSuccess("查询成功", $result);
     }
 

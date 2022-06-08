@@ -137,7 +137,8 @@ class Bbs extends Controller
                 ->where('p.appid', $data['appid'])
                 ->where('p.id', $data['id'])
                 ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
-                ->select();
+                ->find();
+                $result['posturl'] = "http://".$_SERVER['HTTP_HOST']."/bbs/". Common::lock_url($data['id']);
         } catch (DataNotFoundException $e) {
             return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {

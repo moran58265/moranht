@@ -57,10 +57,10 @@ class User extends Controller
                         'UserToken' => $UserToken,
                         'ip' => Common::get_user_ip(),
                     ];
-                    $ipaddress = Common::ip_address(Common::get_user_ip(),$UserResult['ip']);
+                    $ipaddress = Common::ip_address(Common::get_user_ip(), $UserResult['ip']);
                     if ($ipaddress['code'] == 400) {
-                        $emailcontent = "<h3>您的账号在异地登录,登录IP为" . Common::get_user_ip(). "(" .$ipaddress['msg'] . ")<br>若是你本人登录，请忽略<br>若不是请及时修改密码</h3>";
-                        $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">异地登录提醒</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的'.$data["username"].'用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">若是本人操作可忽略。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
+                        $emailcontent = "<h3>您的账号在异地登录,登录IP为" . Common::get_user_ip() . "(" . $ipaddress['msg'] . ")<br>若是你本人登录，请忽略<br>若不是请及时修改密码</h3>";
+                        $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>' . $emailresult["email_title"] . '</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">异地登录提醒</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的' . $data["username"] . '用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">' . $emailcontent . '</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">若是本人操作可忽略。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>' . $emailresult["email_title"] . '</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
                         try {
                             $msg = Common::send_mail($UserResult['useremail'], "异地登录提醒", $emailcontenthtml);
                         } catch (DataNotFoundException $e) {
@@ -229,8 +229,8 @@ class User extends Controller
                     return Common::ReturnError("请求失败");
                 }
                 try {
-                    $emailcontent = "<h3>您要找回密码的验证码是：" . $passcode ."<br>若不是本人操作请警觉</h3>";
-                    $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">找回密码验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的'.$data["username"].'用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
+                    $emailcontent = "<h3>您要找回密码的验证码是：" . $passcode . "<br>若不是本人操作请警觉</h3>";
+                    $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>' . $emailresult["email_title"] . '</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">找回密码验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的' . $data["username"] . '用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">' . $emailcontent . '</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>' . $emailresult["email_title"] . '</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
                     Common::send_mail($user['useremail'], "找回密码验证码", $emailcontenthtml);
                     return Common::ReturnSuccess("发送成功");
                 } catch (DataNotFoundException $e) {
@@ -256,8 +256,8 @@ class User extends Controller
                 return Common::ReturnError("请求失败");
             }
             try {
-                $emailcontent = "<h3>您要找回密码的验证码是：" . $passcode ."<br>若不是本人操作请警觉</h3>";
-                $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">找回密码验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的'.$data["username"].'用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
+                $emailcontent = "<h3>您要找回密码的验证码是：" . $passcode . "<br>若不是本人操作请警觉</h3>";
+                $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>' . $emailresult["email_title"] . '</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">找回密码验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的' . $data["username"] . '用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">' . $emailcontent . '</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>' . $emailresult["email_title"] . '</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
                 Common::send_mail($user['useremail'], "找回密码验证码", $emailcontenthtml);
                 return Common::ReturnSuccess("发送成功");
             } catch (DataNotFoundException $e) {
@@ -321,8 +321,8 @@ class User extends Controller
                             return Common::ReturnError("请求失败");
                         }
                         try {
-                            $emailcontent = "<h3>您的注册验证码是：". $emailcode."</h3>";
-                            $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">注册验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
+                            $emailcontent = "<h3>您的注册验证码是：" . $emailcode . "</h3>";
+                            $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>' . $emailresult["email_title"] . '</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">注册验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">' . $emailcontent . '</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>' . $emailresult["email_title"] . '</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
                             Common::send_mail($data['useremail'], "注册验证码", $emailcontenthtml);
                             return Common::ReturnSuccess("发送成功");
                         } catch (DataNotFoundException $e) {
@@ -350,8 +350,8 @@ class User extends Controller
                         return Common::ReturnError("请求失败");
                     }
                     try {
-                        $emailcontent = "<h3>您的注册验证码是：". $emailcode."</h3>";
-                        $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">注册验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
+                        $emailcontent = "<h3>您的注册验证码是：" . $emailcode . "</h3>";
+                        $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>' . $emailresult["email_title"] . '</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">注册验证码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">' . $emailcontent . '</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意验证码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>' . $emailresult["email_title"] . '</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
                         Common::send_mail($data['useremail'], "注册验证码", $emailcontenthtml);
                         return Common::ReturnSuccess("发送成功");
                     } catch (DataNotFoundException $e) {
@@ -399,9 +399,9 @@ class User extends Controller
             } else {
                 if ($data['usertoken'] == $user['user_token']) {
                     if ($user['banned'] == 'true') {
-                        $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.banned_reason', 'u.title', 'a.appname','u.invitecode','u.invitetotal','u.inviter'];
+                        $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.banned_reason', 'u.title', 'a.appname', 'u.invitecode', 'u.invitetotal', 'u.inviter'];
                     } else {
-                        $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.title', 'a.appname','u.invitecode','u.invitetotal','u.inviter'];
+                        $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.title', 'a.appname', 'u.invitecode', 'u.invitetotal', 'u.inviter'];
                     }
                     try {
                         $userdata = Db::name('user')
@@ -502,8 +502,8 @@ class User extends Controller
         if ($updateuser > 0) {
             try {
                 $emailresult = Db::name('email')->where('id', 1)->find();
-                $emailcontent = "<h3>您的随机密码是：". $newpassword."<br>请及时修改为您易记的密码</h3>";
-                $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>'.$emailresult["email_title"].'</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">找回密码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的'.$data["username"].'用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">'.$emailcontent.'</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意密码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>'.$emailresult["email_title"].'</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
+                $emailcontent = "<h3>您的随机密码是：" . $newpassword . "<br>请及时修改为您易记的密码</h3>";
+                $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>' . $emailresult["email_title"] . '</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">找回密码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的' . $data["username"] . '用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">' . $emailcontent . '</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意密码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>' . $emailresult["email_title"] . '</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
                 Common::send_mail($user['useremail'], "重置密码", $emailcontenthtml);
                 //Common::send_mail($user['useremail'], "随机密码", "您的随机密码是：" . $newpassword);
                 Db::name('passcode')->where('id', 1)->update(["passcode" => "", "ip" => "", "creattime" => ""]);
@@ -810,7 +810,7 @@ class User extends Controller
         if ($user['user_token'] != $data['usertoken']) {
             return Common::ReturnError("token过期");
         }
-        if($user['password'] == md5($data['newpwd'])){
+        if ($user['password'] == md5($data['newpwd'])) {
             return Common::ReturnError("修改成功");
         }
         $result = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->update(['password' => md5($data['newpwd'])]);
@@ -853,7 +853,7 @@ class User extends Controller
         if ($invitecode == "" || $invitecode == null) {
             return Common::ReturnError("没有该邀请码");
         }
-        if($user['invitecode'] == $data['invitecode']){
+        if ($user['invitecode'] == $data['invitecode']) {
             return Common::ReturnError("不能填写自己的邀请码");
         }
         //判断用户会员状态
@@ -867,16 +867,16 @@ class User extends Controller
         } else {
             $invitecodeviptime = time();
         }
-        if($user['money'] == ""){
+        if ($user['money'] == "") {
             $user['money'] = 0;
         }
-        if($user['exp'] == ""){
+        if ($user['exp'] == "") {
             $user['exp'] = 0;
         }
-        if($invitecode['money'] == ""){
+        if ($invitecode['money'] == "") {
             $invitecode['money'] = 0;
         }
-        if($invitecode['exp'] == ""){
+        if ($invitecode['exp'] == "") {
             $invitecode['exp'] = 0;
         }
         //填写邀请码得人
@@ -917,11 +917,11 @@ class User extends Controller
             return Common::ReturnError($validate->getError());
         }
         $app = Db::name('app')->where('appid', $data['appid'])->find();
-        if($app == "" || $app == null){
+        if ($app == "" || $app == null) {
             return Common::ReturnError("app不存在");
         }
         $finvitecode = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
-        if($finvitecode == null || $finvitecode == ""){
+        if ($finvitecode == null || $finvitecode == "") {
             return Common::ReturnError("没有该用户");
         }
         if ($finvitecode['invitecode'] == "" || $finvitecode['invitecode'] == null) {
@@ -942,7 +942,8 @@ class User extends Controller
      * @param Request $request
      * @return void
      */
-    public function GetinviterList(Request $request){
+    public function GetinviterList(Request $request)
+    {
         $data = $request->param();
         $validate = Validate::make([
             'appid' => 'require|number',
@@ -953,12 +954,101 @@ class User extends Controller
             return Common::ReturnError($validate->getError());
         }
         $app = Db::name('app')->where('appid', $data['appid'])->find();
-        if($app == ""){
+        if ($app == "") {
             return Common::ReturnError("没有该app");
         }
         $order = isset($data['order']) ? $data['order'] : "asc";
         $limit = isset($data['limit']) ? $data['limit'] : "10";
-        $inviterList = Db::name('user')->field('username,nickname,usertx,signature,invitetotal')->where('appid', $data['appid'])->order('invitetotal',$order)->limit($limit)->select();
+        $inviterList = Db::name('user')->field('username,nickname,usertx,signature,invitetotal')->where('appid', $data['appid'])->order('invitetotal', $order)->limit($limit)->select();
         return Common::return_msg(200, "获取成功", $inviterList);
+    }
+
+    /**
+     * 获取其他用户信息
+     */
+    public function GetOtherUserInfo(Request $request)
+    {
+        $data = $request->param();
+        $validate = Validate::make([
+            'username' => 'require',
+            'appid' => 'require|number',
+        ]);
+        if (!$validate->check($data)) {
+            return Common::ReturnError($validate->getError());
+        }
+        try {
+            $app = Db::name('app')->where('appid', $data['appid'])->find();
+            $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
+        } catch (DataNotFoundException $e) {
+            return Common::ReturnError("请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::ReturnError("请求失败");
+        } catch (DbException $e) {
+            return Common::ReturnError("请求失败");
+        }
+
+        if ($app == "" || $app == null) {
+            return Common::ReturnError("没有此app");
+        } else {
+            if ($user == "" || $user == null) {
+                return Common::ReturnError("没有此账号");
+            } else {
+                if ($user['banned'] == 'true') {
+                    $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.banned_reason', 'u.title', 'a.appname', 'u.invitecode', 'u.invitetotal', 'u.inviter'];
+                } else {
+                    $need_field = ['u.id', 'u.username', 'u.nickname', 'u.qq', 'u.useremail', 'u.usertx', 'u.signature', 'u.viptime', 'u.money', 'u.exp', 'FROM_UNIXTIME(u.creattime,"%Y-%m-%d") as creattime', 'u.banned', 'u.title', 'a.appname', 'u.invitecode', 'u.invitetotal', 'u.inviter'];
+                }
+                try {
+                    $userdata = Db::name('user')
+                        ->alias('u')
+                        ->join('app a', 'a.appid=u.appid')
+                        ->where('u.username', $data['username'])
+                        ->where('u.appid', $app['appid'])
+                        ->field($need_field)
+                        ->find();
+                } catch (DataNotFoundException $e) {
+                    return Common::ReturnError("请求失败");
+                } catch (ModelNotFoundException $e) {
+                    return Common::ReturnError("请求失败");
+                } catch (DbException $e) {
+                    return Common::ReturnError("请求失败");
+                }
+                $arr = $app['hierarchy'];
+                foreach (eval("return $arr;") as $key => $value) {
+                    if ($userdata['exp'] >= $key) {
+                        $hierarchy = $value;
+                    } else {
+                        break;
+                    }
+                }
+                $result = array();
+                $result['id'] = $userdata['id'];
+                $result['username'] = $userdata['username'];
+                $result['nickname'] = $userdata['nickname'];
+                $result['qq'] = $userdata['qq'];
+                $result['useremail'] = $userdata['useremail'];
+                $result['usertx'] = $userdata['usertx'];
+                $result['signature'] = $userdata['signature'];
+                $result['viptime'] = date("Y-m-d", $userdata['viptime']);
+                $result['money'] = $userdata['money'];
+                $result['exp'] = $userdata['exp'];
+                $result['creattime'] = $userdata['creattime'];
+                $result['banned'] = $userdata['banned'];
+                if ($userdata['banned'] == 'true') {
+                    $result['banned_reason'] = $userdata['banned_reason'];
+                }
+                $result['title'] = $userdata['title'];
+                $result['appname'] = $userdata['appname'];
+                $result['hierarchy'] = $hierarchy;
+                $result['invitecode'] = $userdata['invitecode'];
+                $result['invitetotal'] = $userdata['invitetotal'];
+                $result['inviter'] = $userdata['inviter'];
+                //评论数
+                $result['commentnum'] = Db::name('comment')->where('username', $data['username'])->count();
+                //帖子数量
+                $result['postnum'] = Db::name('post')->where('username', $data['username'])->count();
+                return Common::return_msg(200, "查询成功", $result);
+            }
+        }
     }
 }

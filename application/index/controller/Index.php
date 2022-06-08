@@ -24,4 +24,40 @@ class Index extends Controller
         return $this->fetch()->assign('notes', $notes);
     }
 
+    public function querypost($id)
+    {
+        $result = Db::name('post')
+            ->alias('p')
+            ->join('plate b', 'b.id = p.plateid')
+            ->join('app a', 'a.appid = p.appid')
+            ->join('user u', 'u.username = p.username')
+            ->where('p.id', Common::unlock_url($id))
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
+            ->select();
+            $postdata = [];
+            $postdata['postname'] = $result[0]['postname'];
+            $postdata['postcontent'] = $result[0]['postcontent'];
+            $postdata['username'] = $result[0]['username'];
+            $postdata['nickname'] = $result[0]['nickname'];
+            $postdata['usertx'] = $result[0]['usertx'];
+            $postdata['title'] = $result[0]['title'];
+            $file = explode(',', $result[0]['file']);
+            //去除空数组
+            $file = array_filter($file);
+            $comment = Db::name('comment')
+            ->alias('c')
+            ->join('plate b', 'b.id = c.plateid')
+            ->join('post p', 'p.id = c.postid')
+            ->join('app a', 'a.appid = c.appid')
+            ->join('user u', 'u.username = c.username')
+            ->where('c.postid', Common::unlock_url($id))
+            ->field('c.*,a.appname,u.nickname,u.usertx,u.title,p.postname,b.platename')
+            ->order('c.creattime', 'desc')
+            ->limit(10)
+            ->page(1)
+            ->select();
+            // return json_encode($comment);
+        return $this->fetch()->assign('postdata', $postdata)->assign('file', $file)->assign('comment', $comment);
+    }
+
 }

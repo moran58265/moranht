@@ -886,4 +886,63 @@ class User extends Base
         Cookie::delete('appid');
         return $this->returnJson('退出成功');
     }
+
+    /**
+     * 获取其他用户信息
+     * @param Request $request
+     */
+    public function GetOtherUserInfo(Request $request)
+    {
+        $data = $request->param();
+        $validate = Validate::make([
+            'username' => 'require',
+            'appid' => 'require|number'
+        ]);
+        if (!$validate->check($data)) {
+            return $this->returnError($validate->getError());
+        }
+        $app = ModelApp::where('appid', $data['appid'])->find();
+        if (!$app) {
+            return $this->returnError('应用不存在');
+        }
+        $user = ModelUser::where('username', $data['username'])->find();
+        if (!$user) {
+            return $this->returnError('用户不存在');
+        }
+        $arr = $app['hierarchy'];
+        foreach (eval("return $arr;") as $key => $value) {
+            if ($user['exp'] >= $key) {
+                $hierarchy = $value;
+            } else {
+                break;
+            }
+        }
+        $result = array();
+        $result['id'] = $user['id'];
+        $result['username'] = $user['username'];
+        $result['nickname'] = $user['nickname'];
+        $result['qq'] = $user['qq'];
+        $result['useremail'] = $user['useremail'];
+        $result['usertx'] = $user['usertx'];
+        $result['signature'] = $user['signature'];
+        $result['viptime'] = date("Y-m-d", $user['viptime']);
+        $result['money'] = $user['money'];
+        $result['exp'] = $user['exp'];
+        $result['creattime'] = $user['creattime'];
+        $result['banned'] = $user['banned'];
+        if ($user['banned'] == 'true') {
+            $result['banned_reason'] = $user['banned_reason'];
+        }
+        $result['title'] = $user['title'];
+        $result['appname'] = $app['appname'];
+        $result['hierarchy'] = $hierarchy;
+        $result['invitecode'] = $user['invitecode'];
+        $result['invitetotal'] = $user['invitetotal'];
+        $result['inviter'] = $user['inviter'];
+        //评论数
+        $result['commentnum'] = Db::name('comment')->where('username', $data['username'])->count();
+        //帖子数量
+        $result['postnum'] = Db::name('post')->where('username', $data['username'])->count();
+        return $this->returnSuccess('获取成功', $result);
+    }
 }

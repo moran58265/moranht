@@ -30,6 +30,7 @@ Route::rule('api/UpdatePassword','api/User/UpdatePassword');
 Route::rule('api/InviteCode','api/User/InviteCode');
 Route::rule('api/Getinvitecode','api/User/Getinvitecode');
 Route::rule('api/GetinviterList','api/User/GetinviterList');
+Route::rule('api/GetOtherUserInfo','api/user/GetOtherUserInfo');
 /**
  * app
  */
@@ -85,6 +86,11 @@ Route::rule('api/KeyExp','api/key/KeyExp');
 Route::rule('api/vipPermanent','api/key/vipPermanent');
 
 
+/**
+ * 外链
+ */
+Route::rule('notes/:id','index/index/querynotes/');
+Route::rule('bbs/:id','index/index/querypost/');
 
 //v2版本
 /**
@@ -107,6 +113,7 @@ Route::rule('apiv2/InviteCode','apiv2/User/InviteCode');
 Route::rule('apiv2/Getinvitecode','apiv2/User/Getinvitecode');
 Route::rule('apiv2/GetinviterList','apiv2/User/GetinviterList');
 Route::rule('apiv2/LoginOut','apiv2/User/LoginOut');
+Route::rule('apiv2/GetOtherUserInfo','apiv2/user/GetOtherUserInfo');
 /**
  * app
  */

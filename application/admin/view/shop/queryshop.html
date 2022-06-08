@@ -10,67 +10,45 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form-group" >
-                            <label for="username">商品名称</label>
-                            <input type="hidden" class="form-control" id="id" value="{$shop.id}" disabled>
-                            <input type="text" class="form-control" id="username" value="{$shop.shopname}" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="nickname">昵称</label>
-                            <input type="text" class="form-control" id="nickname" value="{$user.nickname}" placeholder="请输入昵称">
-                        </div>
-                        <div class="form-group file-group">
-                            <label for="usertx">用户头像</label>
+                            <label for="shopname">商品名称</label>
+                            <input type="hidden" class="form-control" id="id" value="{$shop.id}" placeholder="">
+                            <input type="text" class="form-control" id="shopname" value="{$shop.shopname}" placeholder="请输入商品名称">
+                          </div>
+                          <div class="form-group file-group">
+                            <label for="shopimg">商品图片</label>
                             <div class="input-group">
-                                <input type="text" id="usertx" class="form-control file-value" name="web_site_logo" value="{$user.usertx}" placeholder="用户头像">
-                                <input type="file" accaccept=".png,.jpg,.jpeg,.bmp,.gif" style="display: none">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-default file-browser" type="button">上传图片</button>
-                                </div>
+                              <input type="text" id="shopimg" class="form-control file-value" name="shopimg" value="{$shop.shopimg}" placeholder="商品图片">
+                              <input type="file" accaccept=".png,.jpg,.jpeg,.bmp,.gif" style="display: none">
+                              <div class="input-group-btn">
+                                <button class="btn btn-default file-browser" type="button">上传图片</button>
+                              </div>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="qq">qq</label>
-                            <input type="text" class="form-control" id="qq" value="{$user.qq}" placeholder="请输入qq">
-                        </div>
-                        <div class="form-group">
-                            <label for="useremail">邮箱</label>
-                            <input type="text" class="form-control" id="useremail" value="{$user.useremail}" placeholder="请输入邮箱">
-                        </div>
-                        <div class="form-group">
-                            <label for="signature">个性签名</label>
-                            <input type="text" class="form-control" id="signature" value="{$user.signature}" placeholder="请输入个性签名">
-                        </div>
-                        <div class="form-group">
-                            <label for="title">头衔</label>
-                            <input type="text" class="form-control" id="title" value="{$user.title}" placeholder="请输入头衔">
-                        </div>
-                        <div class="form-group">
-                            <label for="viptime">VIP时间</label>
-                            <input class="form-control" id="viptime" type="text" data-provide="datetimepicker" name="datetime" placeholder="请选择具体时间" value="{$user['viptime']|date='Y-m-d H:i:s'}" data-side-by-side="true" data-format="YYYY-MM-DD HH:mm">
-                        </div>
-                        <div class="form-group">
-                            <label for="money">金币</label>
-                            <input type="text" class="form-control" id="money" value="{$user.money}" placeholder="请输入余额">
-                        </div>
-                        <div class="form-group">
-                            <label for="exp">经验</label>
-                            <input type="text" class="form-control" id="exp" value="{$user.exp}" placeholder="请输入经验">
-                        </div>
-                        <div class="form-group">
-                            <label for="banned">是否封禁</label>
-                            <select class="form-control" id="banned" onchange="changenone(this)">
-                                {if $user['banned'] == 'true'} <option value="true" selected>是</option><option value="false">否</option>
-                                {else /}<option value="true" >是</option><option value="false" selected>否</option>
-                                {/if}
+                          </div>
+                          <div class="form-group">
+                            <label for="shoptype">商品类型</label>
+                            <select id="shoptype" class="form-control">
+                              <option value="1">兑换会员</option>
+                              <option value="2">其他类型</option>
                             </select>
-                        </div>
-                        <div class="form-group" id="select_else">
-                            <label for="banned_reason">封禁理由</label>
-                            <input type="text" class="form-control" id="banned_reason" value="{$user.banned_reason}" placeholder="请输入封禁理由">
-                        </div>
+                          </div>
+                          <div class="form-group" >
+                            <label for="money">消耗金币数</label>
+                            <input type="email" class="form-control" id="money" value="{$shop.money}" placeholder="请输入消耗金币数">
+                          </div>
+                          <div class="form-group" >
+                            <label for="vipnum">会员天数</label>
+                            <input type="email" class="form-control" id="vipnum" value="{$shop.vipnum}" placeholder="请输入会员天数(其他类型可不填)">
+                          </div>
+                          <div class="form-group" >
+                            <label for="inventory">库存数量</label>
+                            <input type="email" class="form-control" id="inventory" value="{$shop.inventory}" placeholder="请输入库存数量">
+                          </div>
+                          <div class="form-group" >
+                            <label for="appid">appid</label>
+                            <input type="text" class="form-control" id="appid" value="{$shop.appid}" placeholder="请输入应用id" disabled>
+                          </div>
 
-                        <button type="button" onclick="updateapp()" class="btn btn-primary mb-2">提交</button>
+                        <button type="button" onclick="updateshop()" class="btn btn-primary mb-2">提交</button>
                         <button type="button" class="btn btn-default mb-2" onclick="javascript:history.back(-1);return false;">返 回
                         </button>
                     </div>
@@ -84,20 +62,8 @@
 </div>
 {include file="layout/footer"}
 <script>
-    var banned = $("#banned").val();
-    //console.log(banned);
-    if (banned == 'false'){
-        document.getElementById("select_else").style.display="none";
-    }
-    <!--  改变select显示-->
-    function changenone(obj)
-    {
-        if(obj.options[obj.selectedIndex].value =="true")
-            document.getElementById("select_else").style.display="";
-        else
-            document.getElementById("select_else").style.display="none";
-    }
-    function updateapp(){
+    $("#shoptype").val("{$shop.shoptype}");
+    function updateshop(){
         var l = $('body').lyearloading({
             opacity: 0.2,
             spinnerSize: 'lg',
@@ -106,33 +72,23 @@
             spinnerColorClass: 'text-info'
         });
         var id = $.trim($("#id").val());
-        var nickname = $.trim($("#nickname").val());
-        var usertx = $.trim($("#usertx").val());
-        var qq = $.trim($("#qq").val());
-        var useremail = $.trim($("#useremail").val());
-        var signature = $.trim($("#signature").val());
-        var title = $.trim($("#title").val());
-        var viptime = $.trim($("#viptime").val());
+        var shopname = $.trim($("#shopname").val());
+        var shopimg = $.trim($("#shopimg").val());
+        var shoptype = $.trim($("#shoptype").val());
         var money = $.trim($("#money").val());
-        var exp = $.trim($("#exp").val());
-        var banned = $.trim($("#banned").val());
-        var banned_reason = $.trim($("#banned_reason").val());
+        var vipnum = $.trim($("#vipnum").val());
+        var inventory = $.trim($("#inventory").val());
         $.ajax({
             type: "POST",
-            url: "{:url('user/edituser')}",
+            url: "{:url('shop/updateshop')}",
             data: {
                 id: id,
-                nickname: nickname,
-                usertx: usertx,
-                qq: qq,
-                useremail: useremail,
-                signature: signature,
-                title:title,
-                viptime:viptime,
+                shopname: shopname,
+                shopimg: shopimg,
+                shoptype: shoptype,
                 money: money,
-                exp: exp,
-                banned: banned,
-                banned_reason: banned_reason,
+                vipnum: vipnum,
+                inventory:inventory,
             },
             dataType: "json",
             success: function (data) {

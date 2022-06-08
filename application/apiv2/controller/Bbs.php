@@ -627,4 +627,41 @@ class Bbs extends Base
             ->select();
         return $this->returnSuccess("查询成功", $result);
     }
+
+    /**
+     * 搜索帖子
+     */
+    public function SearchPost(Request $request)
+    {
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        $data = $request->param();
+        $validate = Validate::make([
+            'appid' => 'require|number',
+            'keyword' => 'require',
+        ]);
+        if (!$validate->check($data)) {
+            return $this->returnError($validate->getError());
+        }
+        $app = ModelApp::get($data['appid']);
+        if (!$app) {
+            return $this->returnError('没有此app');
+        }
+        $result = Db::name('post')
+            ->alias('p')
+            ->join('plate b', 'b.id = p.plateid')
+            ->join('app a', 'a.appid = p.appid')
+            ->join('user u', 'u.username = p.username')
+            ->where('p.appid', $data['appid'])
+            ->where('p.title', 'like', '%' . $data['keyword'] . '%')
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename')
+            ->order('p.replytime', 'desc')
+            ->limit($limit)
+            ->page($page)
+            ->select();
+        if($result == null){
+            return $this->returnError("没有查询到相关帖子");
+        }
+        return $this->returnSuccess("查询成功", $result);
+    }
 }

@@ -64,6 +64,21 @@ class Shop extends BaseController
         return Common::ReturnSuccess('添加成功');
     }
 
+    public function queryshop(Request $request){
+        $id = $request->get('id');
+        $shop = new ShopModel();
+        $shop = $shop->where('id',$id)->find();
+        // return json($shop);
+        return $this->fetch('/shop/queryshop',['shop'=>$shop]); 
+    }
+
+    public function updateshop(Request $request)
+    {
+        $data = $request->param();
+        $shop = ShopModel::where('id',$data['id'])->update($data);
+        return Common::ReturnSuccess('修改成功');
+    }
+
     public function delshop(){
         $id = input('id');
         $app = ShopModel::destroy($id);

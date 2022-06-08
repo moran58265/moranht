@@ -76,6 +76,7 @@ Route::rule('api/GetUserCommentList','api/bbs/GetUserCommentList');
 Route::rule('api/AddComment','api/bbs/AddComment');
 Route::rule('api/GetUserCommentList','api/bbs/GetUserCommentList');
 Route::rule('api/DeleteComment','api/bbs/DeleteComment');
+Route::rule('api/SearchPost','api/bbs/SearchPost');
 
 /**
  * 密钥开通
@@ -157,6 +158,7 @@ Route::rule('apiv2/GetUserCommentList','apiv2/bbs/GetUserCommentList');
 Route::rule('apiv2/AddComment','apiv2/bbs/AddComment');
 Route::rule('apiv2/GetUserCommentList','apiv2/bbs/GetUserCommentList');
 Route::rule('apiv2/DeleteComment','apiv2/bbs/DeleteComment');
+Route::rule('apiv2/SearchPost','apiv2/bbs/SearchPost');
 
 /**
  * 密钥开通

@@ -585,7 +585,7 @@ class User extends Base
         if (!$app) {
             return $this->returnError('应用不存在');
         }
-        $user = ModelUser::where('username', $datacookie['username'])->where('appid', $data['appid'])->find();
+        $user = ModelUser::where('username', $datacookie['username'])->where('appid', $datacookie['appid'])->find();
         if (!$user) {
             return $this->returnError('用户不存在');
         }

@@ -23,4 +23,6 @@ return [
     'type'           => '',
     // 是否自动开启 SESSION
     'auto_start'     => true,
+    //配置过期时间
+    'expire'         => 60*60*24*3,  //代表7天不过期
 ];

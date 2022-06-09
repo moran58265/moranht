@@ -191,7 +191,7 @@ class User extends Base
         if ($user) {
             return $this->returnError('邮箱已存在');
         }
-        $userdevicenum = ModelUser::where('device', $data['device'])->count();
+        $userdevicenum = ModelUser::where('zcdevice', $data['device'])->count();
         if ($userdevicenum != 0) {
             if ($app->devicenum != 0) {
                 if ($app->devicenum < $userdevicenum) {
@@ -239,6 +239,7 @@ class User extends Base
                 'exp' => $app->zcexp,
                 'creattime' => time(),
                 'driver' => $data['device'],
+                'zcdriver' => $data['zcdevice'],
             ];
         }
         $user = ModelUser::create($adddata);

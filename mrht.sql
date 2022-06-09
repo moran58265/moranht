@@ -288,6 +288,7 @@ CREATE TABLE `mr_user`  (
   `invitetotal` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
   `inviter` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `device` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  `zcdevice` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '用户账号' ROW_FORMAT = DYNAMIC;
 

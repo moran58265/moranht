@@ -681,8 +681,9 @@ class Bbs extends Controller
                 ->join('app a', 'a.appid = p.appid')
                 ->join('user u', 'u.username = p.username')
                 ->where('p.appid', $data['appid'])
-                ->where('p.title', 'like', '%' . $data['keyword'] . '%')
+                ->where('p.postname', 'like', '%' . $data['keyword'] . '%')
                 ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+                ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
                 ->order('p.replytime', 'desc')
                 ->select();
         } catch (DataNotFoundException $e) {

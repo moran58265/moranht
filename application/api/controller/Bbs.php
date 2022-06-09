@@ -82,7 +82,8 @@ class Bbs extends Controller
                 ->join('user u', 'u.username = p.username')
                 ->where('p.appid', $data['appid'])
                 ->where('p.plateid', $data['id'])
-                ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
+                ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+                ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
                 ->order('p.replytime', 'desc')
                 ->select();
         } catch (DataNotFoundException $e) {
@@ -137,10 +138,9 @@ class Bbs extends Controller
                 ->join('user u', 'u.username = p.username')
                 ->where('p.appid', $data['appid'])
                 ->where('p.id', $data['id'])
-                ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
+                ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+                ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
                 ->find();
-            $result['platename'] = $plate['platename'];
-            $result['commentnum'] = Db::name('comment')->where('postid', $data['id'])->count();
             $result['posturl'] = "http://" . $_SERVER['HTTP_HOST'] . "/bbs/" . Common::lock_url($data['id']);
         } catch (DataNotFoundException $e) {
             return Common::return_msg(400, "请求失败");
@@ -263,12 +263,24 @@ class Bbs extends Controller
         if ($post == "" || $post == null) {
             return Common::return_msg(400, "不存在此帖子");
         }
+        if ($post['lock'] == 0) {
+            return Common::return_msg(400,'此贴子已被锁定，无法修改');
+        }
         if ($post['username'] != $data['username']) {
             return Common::return_msg(400, "此帖子不是你发表的,无法修改");
+        }
+        $upload = new Upload();
+        $file = $upload->uploadDetail('file');
+        $a = json_encode($file);
+        $b = json_decode($a);
+        $imgurl = '';
+        foreach ($b as $v) {
+            $imgurl .= $v->fullPath . ",";
         }
         $updatedata = [
             'postname' => $data['postname'],
             'postcontent' => $data['postcontent'],
+            'file' => $imgurl,
         ];
         try {
             $result = Db::name('post')->where('id', $data['id'])->update($updatedata);
@@ -371,7 +383,8 @@ class Bbs extends Controller
                 ->join('user u', 'u.username = p.username')
                 ->where('p.appid', $data['appid'])
                 ->where('p.username', $data['username'])
-                ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
+                ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+                ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
                 ->order('p.replytime', 'desc')
                 ->select();
         } catch (DataNotFoundException $e) {
@@ -622,7 +635,7 @@ class Bbs extends Controller
                 ->join('app a', 'a.appid = p.appid')
                 ->join('user u', 'u.username = p.username')
                 ->where('p.appid', $data['appid'])
-                ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename')
+                ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
                 ->order('p.replytime', 'desc')
                 ->select();
         } catch (DataNotFoundException $e) {
@@ -668,7 +681,7 @@ class Bbs extends Controller
                 ->join('user u', 'u.username = p.username')
                 ->where('p.appid', $data['appid'])
                 ->where('p.title', 'like', '%' . $data['keyword'] . '%')
-                ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename')
+                ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
                 ->order('p.replytime', 'desc')
                 ->select();
         } catch (DataNotFoundException $e) {
@@ -841,8 +854,9 @@ class Bbs extends Controller
             ->join('user u', 'u.username = l.username')
             ->where('l.appid', $data['appid'])
             ->where('l.username', $data['username'])
-            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename')
-            ->select();
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = l.postid) as commentnum')
+            ->find();
+            $result['likenum'] = Db::name('likepost')->where('appid', $data['appid'])->where('postid', $result['id'])->count();
         } catch (DataNotFoundException $e) {
             return Common::return_msg(400, "请求失败");
         } catch (ModelNotFoundException $e) {
@@ -850,8 +864,56 @@ class Bbs extends Controller
         } catch (DbException $e) {
             return Common::return_msg(400, "请求失败");
         }
-            
-        
         return Common::return_msg(200, "获取成功", $result);
     }
+
+    /**
+     * 判断用户是否点赞帖子
+     * @param Request $request
+     */
+    public function IsLikePost(Request $request){
+        $data = $request->param();
+        $validate = Validate::make([
+            'appid' => 'require|number',
+            'postid' => 'require|number',
+            'username' => 'require',
+        ]);
+        if (!$validate->check($data)) {
+            return Common::return_msg(400, $validate->getError());
+        }
+        try {
+            $app = Db::name('app')->where('appid', $data['appid'])->find();
+            $user = Db::name('user')->where('username', $data['username'])->where('appid', $data['appid'])->find();
+            $post = Db::name('post')->where('id', $data['postid'])->find();
+        } catch (DataNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (DbException $e) {
+            return Common::return_msg(400, "请求失败");
+        }
+        if ($app == "" || $app == null) {
+            return Common::return_msg(400, "没有此app");
+        }
+        if ($user == "" || $user == null) {
+            return Common::return_msg(400, "没有此用户");
+        }
+        if ($post == "" || $post == null) {
+            return Common::return_msg(400, "没有此帖子");
+        }
+        try {
+            $result = Db::name('likepost')->where('appid', $data['appid'])->where('postid', $data['postid'])->where('username', $data['username'])->find();
+        } catch (DataNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (ModelNotFoundException $e) {
+            return Common::return_msg(400, "请求失败");
+        } catch (DbException $e) {
+            return Common::return_msg(400, "请求失败");
+        }
+        if ($result == "" || $result == null) {
+            return Common::return_msg(400, "false");
+        }
+        return Common::return_msg(200, "true");
+    }
+
 }

@@ -80,6 +80,7 @@ Route::rule('api/SearchPost','api/bbs/SearchPost');
 Route::rule('api/LikePost','api/bbs/LikePost');
 Route::rule('api/CancelLikePost','api/bbs/CancelLikePost');
 Route::rule('api/GetLikePost','api/bbs/GetLikePost');
+Route::rule('api/IsLikePost','api/bbs/IsLikePost');
 
 /**
  * 密钥开通
@@ -165,6 +166,7 @@ Route::rule('apiv2/SearchPost','apiv2/bbs/SearchPost');
 Route::rule('apiv2/LikePost','apiv2/bbs/LikePost');
 Route::rule('apiv2/CancelLikePost','apiv2/bbs/CancelLikePost');
 Route::rule('apiv2/GetLikePost','apiv2/bbs/GetLikePost');
+Route::rule('apiv2/IsLikePost','apiv2/bbs/IsLikePost');
 
 /**
  * 密钥开通

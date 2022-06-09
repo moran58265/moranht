@@ -129,6 +129,11 @@
                 <label for="commentexp">被邀请人获得vip天数</label>
                 <input type="number" class="form-control" id="finvitevip" value="{$app.finvitevip}" placeholder="请输入被邀请人获得vip天数">
               </div>
+              <div class="form-group">
+                <label for="devicenum">每个设备限制几个用户注册0代表无限</label>
+                <input type="devicenum" class="form-control" id="devicenum" value="{$app.devicenum}" placeholder="限制数量">
+                <small class="help-block">考虑到许多用户还在使用v1版本接口，因此此功能只在v2版本接口使用</small>
+              </div>
 
               <div class="form-group">
                 <label>是否开启注册验证码</label>
@@ -200,6 +205,7 @@
     var finvitevip = $.trim($("#finvitevip").val());
     var is_email = $.trim($("#is_email").val());
     var hierarchy = $.trim($("#hierarchy").val());
+    var devicenum = $.trim($("#devicenum").val());
     var app_site_status = document.getElementById("app_site_status").checked
     $.ajax({
       type: "POST",
@@ -235,6 +241,7 @@
         is_email:is_email,
         app_site_status: app_site_status,
         hierarchy:hierarchy,
+        devicenum:devicenum
       },
       dataType: "json",
       success: function (data) {

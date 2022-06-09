@@ -70,7 +70,8 @@ class Bbs extends Base
             ->join('user u', 'u.username = p.username')
             ->where('p.appid', $data['appid'])
             ->where('p.plateid', $data['id'])
-            ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+            ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
             ->order('p.replytime', 'desc')
             ->limit($limit)
             ->page($page)
@@ -99,8 +100,6 @@ class Bbs extends Base
         if (!$post) {
             return $this->returnError('没有此帖子');
         }
-        $plate = ModelPlate::get($post->plateid);
-        $commentnum = Comment::where('postid', $data['id'])->count();
         ModelPost::where('id', $data['id'])->update(['view' => $post['view'] + 1]);
         $result = Db::name('post')
             ->alias('p')
@@ -109,11 +108,10 @@ class Bbs extends Base
             ->join('user u', 'u.username = p.username')
             ->where('p.appid', $data['appid'])
             ->where('p.id', $data['id'])
-            ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+            ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
             ->find();
-            $result['commentnum'] = $commentnum;
-            $result['platename'] = $plate->platename;
-            $result['posturl'] = "http://".$_SERVER['HTTP_HOST']."/bbs/". $this->lock_url($data['id']);
+        $result['posturl'] = "http://" . $_SERVER['HTTP_HOST'] . "/bbs/" . $this->lock_url($data['id']);
         return $this->returnSuccess("查询成功", $result);
     }
 
@@ -245,6 +243,9 @@ class Bbs extends Base
         if (!$post) {
             return $this->returnError('没有此帖子');
         }
+        if ($post['lock'] == 0) {
+            return $this->returnError('此贴子已被锁定，无法修改');
+        }
         $user = ModelUser::where('username', $cookiedata['username'])->where('appid', $cookiedata['appid'])->find();
         if (!$user) {
             return $this->returnError('没有此用户');
@@ -255,9 +256,18 @@ class Bbs extends Base
         if ($user['username'] != $post['username']) {
             return $this->returnError('此帖子不是你发表的,无法修改');
         }
+        $upload = new Upload();
+        $file = $upload->uploadDetail('file');
+        $a = json_encode($file);
+        $b = json_decode($a);
+        $imgurl = '';
+        foreach ($b as $v) {
+            $imgurl .= $v->fullPath . ",";
+        }
         $updatedata = [
             'postname' => $data['postname'],
             'postcontent' => $data['postcontent'],
+            'file' => $imgurl,
         ];
         $result = ModelPost::where('id', $data['id'])->update($updatedata);
         if ($result > 0) {
@@ -367,7 +377,8 @@ class Bbs extends Base
             ->join('user u', 'u.username = p.username')
             ->where('p.appid', $data['appid'])
             ->where('p.username', $data['username'])
-            ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+            ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
             ->order('p.replytime', 'desc')
             ->limit($limit)
             ->page($page)
@@ -606,8 +617,8 @@ class Bbs extends Base
      */
     public function GetAllPostList(Request $request)
     {
-        $limit = input('limit')?input('limit'):10;
-        $page = input('page')?input('page'):1;
+        $limit = input('limit') ? input('limit') : 10;
+        $page = input('page') ? input('page') : 1;
         $data = $request->param();
         $validate = Validate::make([
             'appid' => 'require|number',
@@ -625,7 +636,8 @@ class Bbs extends Base
             ->join('app a', 'a.appid = p.appid')
             ->join('user u', 'u.username = p.username')
             ->where('p.appid', $data['appid'])
-            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename')
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+            ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
             ->order('p.replytime', 'desc')
             ->limit($limit)
             ->page($page)
@@ -638,8 +650,8 @@ class Bbs extends Base
      */
     public function SearchPost(Request $request)
     {
-        $limit = input('limit')?input('limit'):10;
-        $page = input('page')?input('page'):1;
+        $limit = input('limit') ? input('limit') : 10;
+        $page = input('page') ? input('page') : 1;
         $data = $request->param();
         $validate = Validate::make([
             'appid' => 'require|number',
@@ -659,12 +671,13 @@ class Bbs extends Base
             ->join('user u', 'u.username = p.username')
             ->where('p.appid', $data['appid'])
             ->where('p.title', 'like', '%' . $data['keyword'] . '%')
-            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename')
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+            ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
             ->order('p.replytime', 'desc')
             ->limit($limit)
             ->page($page)
             ->select();
-        if($result == null){
+        if ($result == null) {
             return $this->returnError("没有查询到相关帖子");
         }
         return $this->returnSuccess("查询成功", $result);
@@ -673,7 +686,8 @@ class Bbs extends Base
     /**
      * 点赞帖子
      */
-    public function LikePost(Request $request){
+    public function LikePost(Request $request)
+    {
         if (Cookie::has('usertoken')) {
             $cookiedata = [
                 'username' => Cookie::get('username'),
@@ -736,7 +750,8 @@ class Bbs extends Base
     /**
      * 取消点赞帖子
      */
-    public function CancelLikePost(Request $request){
+    public function CancelLikePost(Request $request)
+    {
         if (Cookie::has('usertoken')) {
             $cookiedata = [
                 'username' => Cookie::get('username'),
@@ -793,9 +808,10 @@ class Bbs extends Base
     /**
      * 获取用户点赞的帖子
      */
-    public function GetLikePost(Request $request){
-        $limit = input('limit')?input('limit'):10;
-        $page = input('page')?input('page'):1;
+    public function GetLikePost(Request $request)
+    {
+        $limit = input('limit') ? input('limit') : 10;
+        $page = input('page') ? input('page') : 1;
         if (Cookie::has('usertoken')) {
             $data = [
                 'username' => Cookie::get('username'),
@@ -824,7 +840,7 @@ class Bbs extends Base
         if ($user->user_token != $data['usertoken']) {
             return $this->returnError('用户token错误');
         }
-            $result = Db::name('likepost')
+        $result = Db::name('likepost')
             ->alias('l')
             ->join('plate b', 'l.plateid = b.id')
             ->join('post p', 'l.postid = p.id')
@@ -832,10 +848,63 @@ class Bbs extends Base
             ->join('user u', 'l.username = u.username')
             ->where('l.appid', $data['appid'])
             ->where('l.username', $data['username'])
-            ->field('p.*,a.appname,u.nickname,u.usertx,u.title')
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+            ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
             ->limit($limit)
             ->page($page)
             ->select();
         return $this->returnSuccess("获取成功", $result);
+    }
+
+    /**
+     * 判断是否点赞帖子
+     */
+    public function IsLikePost(Request $request)
+    {
+        if (Cookie::has('usertoken')) {
+            $cookiedata = [
+                'username' => Cookie::get('username'),
+                'appid' => Cookie::get('appid'),
+            ];
+            $data = $request->param();
+            $validate = Validate::make([
+                'postid' => 'require|number',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->returnError($validate->getError());
+            }
+        } else {
+            $data = $request->param();
+            $validate = Validate::make([
+                'postid' => 'require|number',
+                'username' => 'require',
+                'appid' => 'require|number',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->returnError($validate->getError());
+            }
+            $cookiedata = [
+                'username' => $data['username'],
+                'appid' => $data['appid'],
+            ];
+        }
+        $app = ModelApp::get($cookiedata['appid']);
+        if (!$app) {
+            return $this->returnError('没有此app');
+        }
+        $user = ModelUser::where('username', $cookiedata['username'])->where('appid', $cookiedata['appid'])->find();
+        if (!$user) {
+            return $this->returnError('没有此用户');
+        }
+        $post = ModelPost::get($data['postid']);
+        if (!$post) {
+            return $this->returnError('没有此帖子');
+        }
+        $like = ModelLikePost::where('postid', $data['postid'])->where('username', $cookiedata['username'])->find();
+        if ($like) {
+            return $this->returnSuccess("true");
+        } else {
+            return $this->returnError("false");
+        }
     }
 }

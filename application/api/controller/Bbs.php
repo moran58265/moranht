@@ -635,7 +635,8 @@ class Bbs extends Controller
                 ->join('app a', 'a.appid = p.appid')
                 ->join('user u', 'u.username = p.username')
                 ->where('p.appid', $data['appid'])
-                ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+                ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+                ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
                 ->order('p.replytime', 'desc')
                 ->select();
         } catch (DataNotFoundException $e) {
@@ -854,7 +855,8 @@ class Bbs extends Controller
             ->join('user u', 'u.username = l.username')
             ->where('l.appid', $data['appid'])
             ->where('l.username', $data['username'])
-            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = l.postid) as commentnum')
+            ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
+            ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
             ->find();
             $result['likenum'] = Db::name('likepost')->where('appid', $data['appid'])->where('postid', $result['id'])->count();
         } catch (DataNotFoundException $e) {

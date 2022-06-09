@@ -94,11 +94,6 @@ class User extends Base
     public function setLogin(Request $request)
     {
         $data = $request->param();
-        $validate = Validate::make([
-            'username' => 'require',
-            'password' => 'require',
-            'appid' => 'require|number'
-        ]);
         $app = ModelApp::get($data['appid']);
         $user = ModelUser::where('username', $data['username'])->where('appid', $data['appid'])->find();
         if (Cookie::has('usertoken')) {

@@ -33,6 +33,7 @@ CREATE TABLE `mr_admin`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员列表' ROW_FORMAT = DYNAMIC;
 
+INSERT INTO `mr_admin` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '2659917175', '默然', '1', 'VxfLUq', '');
 -- ----------------------------
 -- Table structure for mr_app
 -- ----------------------------
@@ -105,6 +106,8 @@ CREATE TABLE `mr_email`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '邮箱配置' ROW_FORMAT = DYNAMIC;
 
+INSERT INTO `mr_email` VALUES (1, 'zhengyi@163.com', '465', 'smtp.163.com', '4888000', '默然iapp后台管理系统', '你看到这封邮件，说明你的邮箱配置已经正常了');
+
 -- ----------------------------
 -- Table structure for mr_emailcode
 -- ----------------------------
@@ -117,6 +120,7 @@ CREATE TABLE `mr_emailcode`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '注册验证码' ROW_FORMAT = DYNAMIC;
 
+INSERT INTO `mr_emailcode` VALUES (1, 'umoW', '127.0.0.1', 1654588570);
 -- ----------------------------
 -- Table structure for mr_km
 -- ----------------------------
@@ -178,6 +182,7 @@ CREATE TABLE `mr_passcode`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '找回密码验证码' ROW_FORMAT = DYNAMIC;
 
+INSERT INTO `mr_passcode` VALUES (1, '', '', 0);
 -- ----------------------------
 -- Table structure for mr_plate
 -- ----------------------------

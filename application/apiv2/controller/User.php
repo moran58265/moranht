@@ -91,10 +91,22 @@ class User extends Base
      */
     public function setLogin(Request $request)
     {
+        $data = $request->param();
+        $validate = Validate::make([
+            'username' => 'require',
+            'password' => 'require',
+            'appid' => 'require|number'
+        ]);
+        $app = ModelApp::get($data['appid']);
+        $user = ModelUser::where('username', $data['username'])->where('appid', $data['appid'])->find();
         if (Cookie::has('usertoken')) {
+            $usertoken = Cookie::get('usertoken');
+            if ($user->user_token != $usertoken) {
+                Cookie::clear();
+                return $this->returnError('身份验证失败，请重新登录');
+            }
             return $this->returnJson('您已经登录了');
         }
-        $data = $request->param();
         $validate = Validate::make([
             'username' => 'require',
             'password' => 'require',
@@ -103,11 +115,9 @@ class User extends Base
         if (!$validate->check($data)) {
             return $this->returnError($validate->getError());
         }
-        $app = ModelApp::get($data['appid']);
         if (!$app) {
             return $this->returnError('appid错误');
         }
-        $user = ModelUser::where('username', $data['username'])->where('appid', $data['appid'])->find();
         if (!$user) {
             return $this->returnError('用户不存在');
         }

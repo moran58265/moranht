@@ -107,7 +107,7 @@ class Upload
             return $path;
         } catch (\Exception $e){
             header('Content-Type: application/json; charset=UTF-8');
-            return Common::JsonDangerData($e->getMessage());
+            return Common::ReturnError($e->getMessage());
         }
     }
     private function getConfig($file){

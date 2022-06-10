@@ -4,13 +4,36 @@ namespace app\apiv2\controller;
 
 use app\admin\model\Email;
 use app\admin\model\User;
+use app\admin\model\App as ModelApp;
 use PHPMailer\PHPMailer\PHPMailer;
+use think\Db;
 
 class Base extends \think\Controller
 {
     public function __construct()
     {
         parent::__construct();
+        $update_time = time();
+        $data = $this->request->param();
+        Db::name('useronline')->where('update_time', '<', $update_time - 60 * 5)->delete();
+        if ($this->request->has('username') && $this->request->has('appid')) {
+            $update_time = time();
+            $user = User::where('username', $data['username'])->where('appid', $data['appid'])->find();
+            $app = ModelApp::where('appid', $data['appid'])->find();
+            if ($user && $app) {
+                $fupuser = Db::name('useronline')->where('user_id', $user['id'])->where('appid', $data['appid'])->find();
+                if ($fupuser) {
+                    Db::name('useronline')->where('user_id', $user['id'])->where('appid', $data['appid'])->update(['update_time' => $update_time]);
+                } else {
+                    $update = Db::name('useronline')->insert([
+                        'user_id' => $user['id'],
+                        'appid' => $data['appid'],
+                        'update_time' => $update_time,
+                    ]);
+                    Db::name('useronline')->where('update_time', '<', $update_time - 60 * 5)->delete();
+                }
+            }
+        }
     }
 
     /**
@@ -68,7 +91,7 @@ class Base extends \think\Controller
     public static function ip_address($nowip, $dbip)
     {
         header("Content-type: text/html; charset=utf-8");
-        try{
+        try {
             $nowurl = "http://whois.pconline.com.cn/jsAlert.jsp?callback=testJson&ip=" . $nowip;
             $nowipaddres = file_get_contents($nowurl);
             $nowhtml = iconv("gb2312", "utf-8//IGNORE", $nowipaddres);
@@ -82,10 +105,9 @@ class Base extends \think\Controller
             } else {
                 return ["code" => 400, "msg" => $nowaddres];
             }
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return ["code" => 400, "msg" => "未知ip"];
         }
-        
     }
 
     //获取当个ip所在的省份
@@ -233,7 +255,7 @@ class Base extends \think\Controller
      *
      * @param [type] $txt
      * @param string $key
-     */  
+     */
     public static function lock_url($txt, $key = 'morannn')
     {
         $txt = $txt . $key;
@@ -259,7 +281,7 @@ class Base extends \think\Controller
      *
      * @param [type] $txt
      * @param string $key
-     */  
+     */
     public static function unlock_url($txt, $key = 'morannn')
     {
         $txt = base64_decode(urldecode($txt));
@@ -281,5 +303,4 @@ class Base extends \think\Controller
         }
         return trim(base64_decode($tmp), $key);
     }
-
 }

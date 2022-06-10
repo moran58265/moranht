@@ -119,6 +119,7 @@ Route::rule('apiv2/Getinvitecode','apiv2/User/Getinvitecode');
 Route::rule('apiv2/GetinviterList','apiv2/User/GetinviterList');
 Route::rule('apiv2/LoginOut','apiv2/User/LoginOut');
 Route::rule('apiv2/GetOtherUserInfo','apiv2/user/GetOtherUserInfo');
+Route::rule('apiv2/GetOnlineUserNum','apiv2/user/GetOnlineUserNum');
 /**
  * app
  */

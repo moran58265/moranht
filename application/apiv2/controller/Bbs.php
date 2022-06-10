@@ -75,7 +75,8 @@ class Bbs extends Base
             ->order('p.replytime', 'desc')
             ->limit($limit)
             ->page($page)
-            ->select();
+            ->find();
+        $result['poatnum'] = ModelPost::where('plateid', $data['id'])->count(); 
         return $this->returnSuccess("查询成功", $result);
     }
 

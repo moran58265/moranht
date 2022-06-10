@@ -23,7 +23,6 @@ class Km extends Base
             }
             $datacookie = [
                 'username' => Cookie::get('username'),
-                'usertoken' => Cookie::get('usertoken'),
                 'appid' => Cookie::get('appid'),
             ];
         } else {
@@ -38,7 +37,6 @@ class Km extends Base
             }
             $datacookie = [
                 'username' => $data['username'],
-                'usertoken' => $data['usertoken'],
                 'appid' => $data['appid'],
             ];
         }

@@ -72,11 +72,11 @@ class Bbs extends Base
             ->where('p.plateid', $data['id'])
             ->field('p.*,a.appname,u.nickname,u.usertx,u.title,b.platename,(select count(*) from mr_comment where postid = p.id) as commentnum')
             ->field('(select count(*) from mr_likepost where postid = p.id) as likenum')
+            ->field("(select count(*) from mr_post where plateid = {$data['id']}) as postnum")
             ->order('p.replytime', 'desc')
             ->limit($limit)
             ->page($page)
-            ->find();
-        $result['poatnum'] = ModelPost::where('plateid', $data['id'])->count(); 
+            ->select();
         return $this->returnSuccess("查询成功", $result);
     }
 

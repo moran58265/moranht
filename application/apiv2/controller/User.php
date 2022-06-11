@@ -200,14 +200,6 @@ class User extends Base
         if ($user) {
             return $this->returnError('邮箱已存在');
         }
-        $userdevicenum = ModelUser::where('zcdevice', $data['device'])->count();
-        if ($userdevicenum != 0) {
-            if ($app->devicenum != 0) {
-                if ($app->devicenum < $userdevicenum) {
-                    return $this->returnError('设备数量已达上限');
-                }
-            }
-        }
         if (substr($data['useremail'], -7) == '@qq.com') {
             $userqq = substr($data['useremail'], 0, strpos($data['useremail'], '@'));
         } else {
@@ -217,14 +209,14 @@ class User extends Base
             if (empty($data['code'])) {
                 return $this->returnError('邮箱验证码不能为空');
             }
-            if(time() - Cookie::get('regcodetime') > 60){
+            if (time() - Cookie::get('regcodetime') > 60) {
                 return $this->ReturnError('验证码已过期');
             }
             if ($data['code'] != Cookie::get('regcode')) {
                 return $this->returnError('邮箱验证码错误');
             }
         }
-        if (empty($data['device'])) {
+        if (!$this->request->has('device')) {
             $adddata = [
                 'username' => $data['username'],
                 'password' => md5($data['password']),
@@ -238,6 +230,14 @@ class User extends Base
                 'creattime' => time(),
             ];
         } else {
+            $userdevicenum = ModelUser::where('zcdevice', $data['device'])->count();
+            if ($userdevicenum != 0) {
+                if ($app->devicenum != 0) {
+                    if ($app->devicenum < $userdevicenum) {
+                        return $this->returnError('设备数量已达上限');
+                    }
+                }
+            }
             $adddata = [
                 'username' => $data['username'],
                 'password' => md5($data['password']),
@@ -514,7 +514,7 @@ class User extends Base
         if ($passcode != $data['code']) {
             return $this->ReturnError('验证码错误');
         }
-        if(time() - Cookie::get('passcodetime') > 60){
+        if (time() - Cookie::get('passcodetime') > 60) {
             return $this->ReturnError('验证码已过期');
         }
         $newpassword = $this->getRandChar(6);
@@ -526,8 +526,8 @@ class User extends Base
         $emailcontent = "<h3>您的随机密码是：" . $newpassword . "<br>请及时修改为您易记的密码</h3>";
         $emailcontenthtml = '<div><includetail><div align="center"><div class="open_email"style="margin-left: 8px; margin-top: 8px; margin-bottom: 8px; margin-right: 8px;"><div><br><span class="genEmailContent"><div id="cTMail-Wrap"style="word-break: break-all;box-sizing:border-box;text-align:center;min-width:320px; max-width:660px; border:1px solid #f6f6f6; background-color:#f7f8fa; margin:auto; padding:20px 0 30px;"><div class="main-content"style=""><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse"><tbody><tr style="font-weight:300"><td style="width:3%;max-width:30px;"></td><td style="max-width:600px;"><h1>' . $emailresult["email_title"] . '</h1><p style="height:2px;background-color: #00a4ff;border: 0;font-size:0;padding:0;width:100%;margin-top:20px;"></p><div id="cTMail-inner"style="background-color:#fff; padding:23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align:left;"><table style="width:100%;font-weight:300;margin-bottom:10px;border-collapse:collapse;text-align:left;"><tbody><tr style="font-weight:300"><td style="width:3.2%;max-width:30px;"></td><td style="max-width:480px;text-align:left;"><h1 id="cTMail-title"style="font-size: 20px; line-height: 36px; margin: 0px 0px 22px;">找回密码</h1><p id="cTMail-userName"style="font-size:14px;color:#333; line-height:24px; margin:0;">尊敬的' . $data["username"] . '用户，您好！</p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;">' . $emailcontent . '</span></p><p class="cTMail-content"style="line-height: 24px; margin: 6px 0px 0px; overflow-wrap: break-word; word-break: break-all;"><span style="color: rgb(51, 51, 51); font-size: 14px;"><span style="font-weight: bold;">请注意密码的大小写。</span></span></p><dl style="font-size: 14px; color: rgb(51, 51, 51); line-height: 18px;"><dd style="margin: 0px 0px 6px; padding: 0px; font-size: 12px; line-height: 22px;"><p id="cTMail-sender"style="font-size: 14px; line-height: 26px; word-wrap: break-word; word-break: break-all; margin-top: 32px;">此致<br><strong>' . $emailresult["email_title"] . '</strong></p></dd></dl></td><td style="width:3.2%;max-width:30px;"></td></tr></tbody></table></div></td><td style="width:3%;max-width:30px;"></td></tr></tbody></table></div></div></span><br></div></div></div></includetail></div>';
         $this->send_mail($user['useremail'], "重置密码", $emailcontenthtml);
-        Cookie::set('passcode',null,-60);
-        Cookie::set('passcodetime',null,-60);
+        Cookie::set('passcode', null, -60);
+        Cookie::set('passcodetime', null, -60);
         return $this->returnJson("随机密码已发送到您的邮箱，请注意查看");
     }
 
@@ -800,20 +800,39 @@ class User extends Base
      */
     public function InviteCode(Request $request)
     {
-        $data = $request->param();
-        $validate = Validate::make([
-            'invitecode' => 'require',   //别人的邀请码
-            'username' => 'require',    //自己的用户名
-            'appid' => 'require|number',
-        ]);
-        if (!$validate->check($data)) {
-            return $this->ReturnError($validate->getError());
+        if (Cookie::has('usertoken')) {
+            $data = $request->param();
+            $validate = Validate::make([
+                'invitecode' => 'require',   //别人的邀请码
+            ]);
+            if (!$validate->check($data)) {
+                return $this->ReturnError($validate->getError());
+            }
+            $datacookie = [
+                'username' => Cookie::get('username'),
+                'usertoken' => Cookie::get('usertoken'),
+                'appid' => Cookie::get('appid'),
+            ];
+        } else {
+            $data = $request->param();
+            $validate = Validate::make([
+                'invitecode' => 'require',   //别人的邀请码
+                'username' => 'require',    //自己的用户名
+                'appid' => 'require|number',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->ReturnError($validate->getError());
+            }
+            $datacookie = [
+                'username' => $data['username'],
+                'appid' => $data['appid'],
+            ];
         }
-        $app = ModelApp::where('appid', $data['appid'])->find();
+        $app = ModelApp::where('appid', $datacookie['appid'])->find();
         if (!$app) {
             return $this->returnError('应用不存在');
         }
-        $user = ModelUser::where('username', $data['username'])->where('appid', $data['appid'])->find();
+        $user = ModelUser::where('username', $datacookie['username'])->where('appid', $datacookie['appid'])->find();
         if (!$user) {
             return $this->returnError('用户不存在');
         }
@@ -870,7 +889,7 @@ class User extends Base
             'exp' => $inviteexp + $invite->exp,
             'money' => $invitemoney + $invite->money,
         ];
-        $result = ModelUser::where('username', $data['username'])->where('appid', $data['appid'])->update($updatefuser);
+        $result = ModelUser::where('username', $datacookie['username'])->where('appid', $datacookie['appid'])->update($updatefuser);
         $invite = ModelUser::where('invitecode', $data['invitecode'])->update($updateuser);
         return $this->returnJson('填写成功');
     }
@@ -1025,7 +1044,8 @@ class User extends Base
     /**
      * 统计5分钟内在线过的人数
      */
-    public function GetOnlineUserNum(){
+    public function GetOnlineUserNum()
+    {
         $time = time() - 300;
         Db::name('useronline')->where('update_time', '<', $time)->delete();
         $num = Db::name('useronline')->where('update_time', '>', $time)->count();

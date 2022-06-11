@@ -120,6 +120,8 @@ Route::rule('apiv2/GetinviterList','apiv2/User/GetinviterList');
 Route::rule('apiv2/LoginOut','apiv2/User/LoginOut');
 Route::rule('apiv2/GetOtherUserInfo','apiv2/user/GetOtherUserInfo');
 Route::rule('apiv2/GetOnlineUserNum','apiv2/user/GetOnlineUserNum');
+Route::rule('apiv2/GetMessage','apiv2/bbs/GetMessage');
+Route::rule('apiv2/getUnreadMessageCount','apiv2/bbs/getUnreadMessageCount');
 /**
  * app
  */

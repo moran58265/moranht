@@ -6,6 +6,7 @@ use app\apiv2\controller\Base;
 use app\admin\model\App as ModelApp;
 use app\admin\model\Comment;
 use app\admin\model\Likepost as ModelLikePost;
+use app\admin\model\Message;
 use app\admin\model\Plate as ModelPlate;
 use app\admin\model\User as ModelUser;
 use app\admin\model\PlatePost as ModelPost;
@@ -543,7 +544,11 @@ class Bbs extends Base
                 'money' => $user['money'] + $app['commentmoney'],
                 'exp' => $user['exp'] + $app['commentexp'],
             ];
+            $commentid = $result->id;
             ModelUser::where('username', $cookiedata['username'])->where('appid', $cookiedata['appid'])->update($updateuser);
+            $msgcomment = Comment::get($commentid);
+            $msgpost = ModelPost::get($msgcomment->postid);
+            $this->msg_notification(3, $data['id'], $cookiedata['username'], $commentid, $msgpost->username, $cookiedata['appid'], date("Y-m-d H:i:s", time()));
             return $this->returnJson("评论成功");
         } else {
             return $this->returnError("评论失败");
@@ -745,6 +750,8 @@ class Bbs extends Base
         $like->plateid = $post->plateid;
         $like->creattime = date('Y-m-d H:i:s');
         $like->save();
+        $msgpost = ModelPost::get($data['postid']);
+        $this->msg_notification(2, $data['postid'], $cookiedata['username'], '', $msgpost->username, $cookiedata['appid'], date("Y-m-d H:i:s", time()));
         return $this->returnJson("点赞成功");
     }
 
@@ -907,5 +914,144 @@ class Bbs extends Base
         } else {
             return $this->returnError("false");
         }
+    }
+
+    /**
+     * 消息通知列表
+     * msgid 获取消息列表的类型 0全部 1系统消息 2点赞 3评论 
+     */
+    public function GetMessage(Request $request)
+    {
+        $msgid = input('msgid') ? input('msgid') : 0;
+        $limit = input('limit') ? input('limit') : 10;
+        $page = input('page') ? input('page') : 1;
+        if (Cookie::has('usertoken')) {
+            $data = [
+                'username' => Cookie::get('username'),
+                'usertoken' => Cookie::get('usertoken'),
+                'appid' => Cookie::get('appid'),
+            ];
+        } else {
+            $data = $request->param();
+            $validate = Validate::make([
+                'username' => 'require',
+                'appid' => 'require|number',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->returnError($validate->getError());
+            }
+        }
+        $app = ModelApp::get($data['appid']);
+        if (!$app) {
+            return $this->returnError('没有此app');
+        }
+        $user = ModelUser::where('username', $data['username'])->where('appid', $data['appid'])->find();
+        if (!$user) {
+            return $this->returnError('没有此用户');
+        }
+        switch ($msgid) {
+            case '0': //全部
+                $message = Message::where('appid', $data['appid'])->where('username', $data['username'])->whereOr('username', 0)->order('id desc')->limit($limit)->page($page)->select();
+                Message::where('appid', $data['appid'])->where('username', $data['username'])->whereOr('username', 0)->update(['isread' => 1]);
+                //循环遍历信息
+                $returnmsgalert = [];
+                foreach ($message as $key => $value) {
+                    if ($message[$key]['msgid'] == 1) {
+                        $returnmsgalert['msgtype'] = "系统消息";
+                        $returnmsgalert['msgcontent'] = $message[$key]['content'];
+                        $returnmsgalert['creattime'] = $message[$key]['creattime'];
+                    } else if ($message[$key]['msgid'] == 2) {
+                        $returnmsgalert['msgtype'] = "点赞信息";
+                        $post = ModelPost::get($message[$key]['postid']);
+                        $returnmsgalert['msgcontent'] = "用户" . $message[$key]['userid'] . "点赞了您的文章[" . $post->postname . "]";
+                        $returnmsgalert['creattime'] = $message[$key]['creattime'];
+                    } else {
+                        $returnmsgalert['msgtype'] = "评论信息";
+                        $post = ModelPost::get($message[$key]['postid']);
+                        $comment = Comment::get($message[$key]['commentid']);
+                        $returnmsgalert['msgcontent'] = "用户" . $message[$key]['userid'] . "评论了您的文章[" . $post->postname . "],评论内容为" . $comment->comment;
+                        $returnmsgalert['creattime'] = $message[$key]['creattime'];
+                    }
+                    $returnmsg[] = $returnmsgalert;
+                }
+                return $this->returnSuccess("查询成功", $returnmsg);
+                break;
+            case '1': //系统消息
+                $message = Message::where('username', 0)->where('appid', $data['appid'])->where('msgid', 1)->order('id desc')->limit($limit)->page($page)->select();
+                Message::where('username', 0)->where('appid', $data['appid'])->where('msgid', 1)->update(['isread' => 1]);
+                //循环遍历信息
+                $returnmsgalert = [];
+                foreach ($message as $key => $value) {
+                    $returnmsgalert['msgtype'] = "系统消息";
+                    $returnmsgalert['msgcontent'] = $message[$key]['content'];
+                    $returnmsgalert['creattime'] = $message[$key]['creattime'];
+                    $returnmsg[] = $returnmsgalert;
+                }
+                return $this->returnSuccess("查询成功", $returnmsg);
+                break;
+            case '2': //点赞信息
+                $message = Message::where('username', $data['username'])->where('appid', $data['appid'])->where('msgid', 2)->order('id desc')->limit($limit)->page($page)->select();
+                Message::where('username', $data['username'])->where('appid', $data['appid'])->where('msgid', 2)->update(['isread' => 1]);
+                //循环遍历信息
+                $returnmsgalert = [];
+                foreach ($message as $key => $value) {
+                    $returnmsgalert['msgtype'] = "点赞信息";
+                    $post = ModelPost::get($message[$key]['postid']);
+                    $returnmsgalert['msgcontent'] = "用户" . $message[$key]['userid'] . "点赞了您的文章[" . $post->postname . "]";
+                    $returnmsg[] = $returnmsgalert;
+                }
+                return $this->returnSuccess("查询成功", $returnmsg);
+                break;
+            case '3': //评论信息
+                $message = Message::where('username', $data['username'])->where('appid', $data['appid'])->where('msgid', 3)->order('id desc')->limit($limit)->page($page)->select();
+                Message::where('username', $data['username'])->where('appid', $data['appid'])->where('msgid', 3)->update(['isread' => 1]);
+                //循环遍历信息
+                $returnmsgalert = [];
+                foreach ($message as $key => $value) {
+                    $returnmsgalert['msgtype'] = "评论信息";
+                    $post = ModelPost::get($message[$key]['postid']);
+                    $comment = Comment::get($message[$key]['commentid']);
+                    $returnmsgalert['msgcontent'] = "用户" . $message[$key]['userid'] . "评论了您的文章[" . $post->postname . "],评论内容为" . $comment->comment;
+                    $returnmsg[] = $returnmsgalert;
+                }
+                return $this->returnSuccess("查询成功", $returnmsg);
+                break;
+            default:
+                return $this->returnError('获取失败');
+                break;
+        }
+    }
+
+    /**
+     * 获取未读消息数量
+     */
+    public function getUnreadMessageCount(Request $request)
+    {
+        if (Cookie::has('usertoken')) {
+            $data = [
+                'username' => Cookie::get('username'),
+                'usertoken' => Cookie::get('usertoken'),
+                'appid' => Cookie::get('appid'),
+            ];
+        } else {
+            $data = $request->param();
+            $validate = Validate::make([
+                'username' => 'require',
+                'appid' => 'require|number',
+            ]);
+            if (!$validate->check($data)) {
+                return $this->returnError($validate->getError());
+            }
+        }
+        $app = ModelApp::get($data['appid']);
+        if (!$app) {
+            return $this->returnError('没有此app');
+        }
+        $user = ModelUser::where('username', $data['username'])->where('appid', $data['appid'])->find();
+        if (!$user) {
+            return $this->returnError('没有此用户');
+        }
+        $count = Message::where('isread', 0)->where('appid', $data['appid'])->where('username', $data['username'])->count();
+        return $this->returnSuccess("查询成功", $count);
     }
 }

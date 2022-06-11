@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\admin\model\App as AppModel;
+use app\admin\model\Message;
 use app\common\controller\Common;
 use think\Db;
 use think\facade\Request;
@@ -104,5 +105,29 @@ class App extends BaseController
         } else {
             return Common::ReturnError('修改失败');
         }
+    }
+
+    //发布通知页面
+    public function addmsg()
+    {
+        return $this->fetch();
+    }
+
+    //发布通知
+    public function addmsgdo()
+    {
+        $data = input('post.');
+        $app = AppModel::get($data['appid']);
+        if($app == null){
+            return Common::ReturnError('应用不存在');
+        }
+        $msg = new Message();
+        $msg->appid = $data['appid'];
+        $msg->msgid = 1;
+        $msg->username = 0;
+        $msg->content = $data['content'];
+        $msg->creattime = date('Y-m-d H:i:s');
+        $msg->save();
+        return Common::ReturnSuccess("发布成功");
     }
 }

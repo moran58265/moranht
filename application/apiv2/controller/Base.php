@@ -5,8 +5,10 @@ namespace app\apiv2\controller;
 use app\admin\model\Email;
 use app\admin\model\User;
 use app\admin\model\App as ModelApp;
+use app\admin\model\Message;
 use PHPMailer\PHPMailer\PHPMailer;
 use think\Db;
+use think\facade\Cookie;
 
 class Base extends \think\Controller
 {
@@ -16,7 +18,12 @@ class Base extends \think\Controller
         $update_time = time();
         $data = $this->request->param();
         Db::name('useronline')->where('update_time', '<', $update_time - 60 * 5)->delete();
-        if ($this->request->has('username') && $this->request->has('appid')) {
+        if (Cookie::has('usertoken')) {
+            $data = [
+                'username' => Cookie::get('username'),
+                'usertoken' => Cookie::get('usertoken'),
+                'appid' => Cookie::get('appid'),
+            ];
             $update_time = time();
             $user = User::where('username', $data['username'])->where('appid', $data['appid'])->find();
             $app = ModelApp::where('appid', $data['appid'])->find();
@@ -31,6 +38,25 @@ class Base extends \think\Controller
                         'update_time' => $update_time,
                     ]);
                     Db::name('useronline')->where('update_time', '<', $update_time - 60 * 5)->delete();
+                }
+            }
+        }else{
+            if ($this->request->has('username') && $this->request->has('appid')) {
+                $update_time = time();
+                $user = User::where('username', $data['username'])->where('appid', $data['appid'])->find();
+                $app = ModelApp::where('appid', $data['appid'])->find();
+                if ($user && $app) {
+                    $fupuser = Db::name('useronline')->where('user_id', $user['id'])->where('appid', $data['appid'])->find();
+                    if ($fupuser) {
+                        Db::name('useronline')->where('user_id', $user['id'])->where('appid', $data['appid'])->update(['update_time' => $update_time]);
+                    } else {
+                        $update = Db::name('useronline')->insert([
+                            'user_id' => $user['id'],
+                            'appid' => $data['appid'],
+                            'update_time' => $update_time,
+                        ]);
+                        Db::name('useronline')->where('update_time', '<', $update_time - 60 * 5)->delete();
+                    }
                 }
             }
         }
@@ -302,5 +328,28 @@ class Base extends \think\Controller
             $tmp .= $chars[$j];
         }
         return trim(base64_decode($tmp), $key);
+    }
+
+    /**
+     * 消息通知系统
+     * msgid 消息类型 1为系统信息 2为点赞消息 3为评论消息 
+     * @param [type] $msgid  消息类型
+     * @param [type] $postid  文章id
+     * @param [type] $userid  用户名
+     * @param [type] $commentid  评论id
+     * @param [type] $username 通知用户
+     * @param [type] $appid 应用id
+     */
+    public static function msg_notification($msgid, $postid, $userid, $commentid, $username, $appid, $creattime)
+    {
+        $msg_notification = new Message();
+        $msg_notification->msgid = $msgid;
+        $msg_notification->postid = $postid;
+        $msg_notification->userid = $userid;
+        $msg_notification->commentid = $commentid;
+        $msg_notification->username = $username;
+        $msg_notification->appid = $appid;
+        $msg_notification->creattime = $creattime;
+        $msg_notification->save();
     }
 }

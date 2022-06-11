@@ -1,0 +1,90 @@
+{php}$title= 'app信息';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+
+    <div class="container-fluid p-t-15">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="" method="post">
+                            <div class="form-group">
+                                <label for="appid">应用id</label>
+                                <input type="text" class="form-control" id="appid" value="" placeholder="应用id">
+                            </div>
+                            <div class="form-group">
+                                <label for="content">通知内容</label>
+                                <input type="text" class="form-control" id="content" name="content" value=""
+                                    placeholder="请输入通知内容">
+                            </div>
+                            <button type="button" onclick="addmsg()"
+                                class="btn btn-w-sm btn-primary mb-2">提交</button>
+                            <button type="button" class="btn btn-default mb-2"
+                                onclick="javascript:history.back(-1);return false;">返 回
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+    function addmsg() {
+        var l = $('body').lyearloading({
+            opacity: 0.2,
+            spinnerSize: 'lg',
+            spinnerText: '后台处理中，请稍后...',
+            textColorClass: 'text-info',
+            spinnerColorClass: 'text-info'
+        });
+        var appid = $.trim($("#appid").val());
+        var content = $.trim($("#content").val());
+        $.ajax({
+            type: "POST",
+            url: "{:url('app/addmsgdo')}",
+            data: {
+                appid: appid,
+                content: content
+            },
+            dataType: "json",
+            success: function (data) {
+                setTimeout(function () {
+                    l.destroy();
+                }, 1e3)
+                if (data.code == 200) {
+                    $.notify({
+                        message: data.msg
+                    }, {
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        type: 'success'
+                    });
+                } else {
+                    $.notify({
+                        message: data.msg
+                    }, {
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        // settings
+                        type: 'danger'
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</body>
+
+</html>

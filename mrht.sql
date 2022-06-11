@@ -368,6 +368,22 @@ CREATE TABLE `mr_useronline`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '在线用户' ROW_FORMAT = Fixed;
 
+
+DROP TABLE IF EXISTS `mr_message`;
+CREATE TABLE `mr_message`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `msgid` int(11) NULL DEFAULT NULL COMMENT '消息类型',
+  `postid` int(11) NULL DEFAULT NULL COMMENT '文章id',
+  `userid` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '用户名',
+  `commentid` int(11) NULL DEFAULT NULL COMMENT '评论id',
+  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '通知用户',
+  `appid` int(11) NULL DEFAULT NULL,
+  `creattime` datetime(0) NULL DEFAULT NULL COMMENT '时间',
+  `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT '仅限类型为系统消息的时候用',
+  `isread` tinyint(1) NULL DEFAULT 0 COMMENT '0未读',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+
 -- ----------------------------
 -- Records of mr_useronline
 -- ----------------------------

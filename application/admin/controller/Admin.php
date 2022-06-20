@@ -2,10 +2,11 @@
 
 namespace app\admin\controller;
 
-use app\common\controller\Common;
+use app\admin\controller\Common;
 use think\facade\Cache;
 use think\facade\Session;
 use app\admin\model\Admin as AdminModel;
+use think\facade\Request;
 
 class Admin extends BaseController
 {
@@ -19,7 +20,7 @@ class Admin extends BaseController
                 return Common::ReturnError($validate->getError());
             }
             $Admininfo = AdminModel::where('id', Session::get('admin_id'))->find();
-            $admintoken = md5($Admininfo['password'].$Admininfo['salt']);
+            $admintoken = md5($Admininfo['password'] . $Admininfo['salt']);
             if ($admintoken != Session::get('adminToken')) {
                 return Common::ReturnError('非法操作');
             }
@@ -28,30 +29,34 @@ class Admin extends BaseController
             if ($res) {
                 $admininfo = AdminModel::get(Session::get('admin_id'));
                 session('admininfo', $admininfo->toArray());
+                Common::adminLog('修改管理员信息');
                 return Common::ReturnSuccess('修改成功');
             } else {
                 return Common::ReturnError('修改失败');
             }
-        }else{
+        } else {
             return $this->fetch('admin/admininfo');
         }
     }
 
-    public function geneadminkey(){
+    public function geneadminkey()
+    {
         $admintoken = md5(Common::getRandChar(10));
         $admininfo = AdminModel::get(Session::get('admin_id'));
         $admininfo->admintoken = $admintoken;
         $admininfo->save();
         session('admininfo', $admininfo->toArray());
-        return Common::ReturnJson($admintoken);
+        return Common::ReturnSuccess($admintoken);
     }
 
-    public function downadmintoken(){
+    public function downadmintoken()
+    {
         $admininfo = AdminModel::get(Session::get('admin_id'));
         $admininfo->admintoken = "";
         $admininfo->save();
         session('admininfo', $admininfo->toArray());
-        return Common::ReturnJson("关闭成功");
+        Common::adminLog('关闭管理员密钥');
+        return Common::ReturnSuccess("关闭成功");
     }
 
     //修改管理员密码
@@ -67,18 +72,19 @@ class Admin extends BaseController
             if ($Admininfo['password'] != md5($data['old_password'])) {
                 return Common::ReturnError('原密码错误');
             }
-            $admintoken = md5($Admininfo['password'].$Admininfo['salt']);
+            $admintoken = md5($Admininfo['password'] . $Admininfo['salt']);
             if ($admintoken != Session::get('adminToken')) {
                 return Common::ReturnError('非法操作');
             }
             $AdminModel = new AdminModel();
             $res = $AdminModel->save(['password' => md5($data['new_password'])], ['id' => Session::get('admin_id')]);
             if ($res) {
+                Common::adminLog('修改管理员密码');
                 return Common::ReturnSuccess('修改成功');
             } else {
                 return Common::ReturnError('修改失败');
             }
-        }else{
+        } else {
             return $this->fetch('admin/changepwd');
         }
     }
@@ -96,7 +102,7 @@ class Admin extends BaseController
         $pathArr = [
             'LOG_PATH'   => env('runtime_path') . 'log/',
             'CACHE_PATH' => env('runtime_path') . 'cache/',
-            'TEMP_PATH'  => env('runtime_path'). 'temp/'
+            'TEMP_PATH'  => env('runtime_path') . 'temp/'
         ];
         $dirs = (array) glob($pathArr['LOG_PATH'] . '*');
         foreach ($dirs as $dir) {
@@ -105,7 +111,36 @@ class Admin extends BaseController
         array_map('rmdir', $dirs);
         array_map('unlink', glob($pathArr['TEMP_PATH'] . '/*.*'));
         Cache::clear();
+        Common::adminLog('清除系统缓存');
         return Common::ReturnSuccess('清除成功');
     }
 
+    //管理员日志
+    public function adminlog()
+    {
+        $url = Request::host();
+        ini_set("user_agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0)");
+        $response = file_get_contents("http://ht.moranblog.cn/authweb.php?domain=" . $url);
+        $data = json_decode($response, true);
+        if($data['code'] == 1){
+            if (strtotime($data['data']['duetime']) < time()) {
+                return $this->error('授权已过期，请联系QQ2659917175');
+            }
+        }else{
+            return $this->error('暂未授权，请联系QQ2659917175');
+        }
+        return $this->fetch('admin/adminlog');
+    }
+
+    //管理员日志列表
+    public function adminloglist()
+    {
+        $limit = input('limit') ? input('limit') : 10;
+        $page = input('page') ? input('page') : 1;
+        $sort = input('sort') ? input('sort') : 'id';
+        $sortOrder = input('sortOrder') ? input('sortOrder') : 'asc';
+        $res = db('adminlog')->order($sort . ' ' . $sortOrder)->limit($limit)->page($page)->select();
+        $count = db('adminlog')->count();
+        return json(['rows' => $res, 'total' => $count]);
+    }
 }

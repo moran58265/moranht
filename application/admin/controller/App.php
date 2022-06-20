@@ -4,7 +4,7 @@ namespace app\admin\controller;
 
 use app\admin\model\App as AppModel;
 use app\admin\model\Message;
-use app\common\controller\Common;
+use app\admin\controller\Common;
 use think\Db;
 use think\facade\Request;
 
@@ -46,6 +46,7 @@ class App extends BaseController
         $post = Db::name('post')->where('appid',$appid)->delete();
         $shop = Db::name('shop')->where('appid',$appid)->delete();
         $shoporder = Db::name('shoporder')->where('appid',$appid)->delete();
+        Common::adminLog('删除app：'.$appall['appname']);
         return Common::ReturnSuccess("删除成功");
     }
 
@@ -59,6 +60,7 @@ class App extends BaseController
             $app->app_site_status = 'false';
             $app->save();
         }
+        Common::adminLog('禁用app：'.input('appid'));
         return Common::ReturnSuccess("修改成功");
     }
 
@@ -72,6 +74,7 @@ class App extends BaseController
             $app->app_site_status = 'true';
             $app->save();
         }
+        Common::adminLog('启用app：'.input('appid'));
         return Common::ReturnSuccess("修改成功");
     }
 
@@ -82,7 +85,9 @@ class App extends BaseController
         $app->appname = input('appname');
         $app->creattime = date('Y-m-d H:i:s');
         $app->appicon = Request::domain() . '/static/images/app.png';
+        $app->emailtitle = input('appname');
         $app->save();
+        Common::adminLog('添加app：'.input('appname'));
         return Common::ReturnSuccess("添加成功");
     }
 
@@ -101,6 +106,7 @@ class App extends BaseController
         $app = new AppModel();
         $res = $app->save($data, ['appid' => $data['appid']]);
         if ($res) {
+            Common::adminLog('修改app：'.$data['appid']);
             return Common::ReturnSuccess('修改成功');
         } else {
             return Common::ReturnError('修改失败');
@@ -128,6 +134,11 @@ class App extends BaseController
         $msg->content = $data['content'];
         $msg->creattime = date('Y-m-d H:i:s');
         $msg->save();
+        Common::adminLog('发布通知：'.$data['appid']."通知".$data['content']);
         return Common::ReturnSuccess("发布成功");
     }
+
+    
+   
+
 }

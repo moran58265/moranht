@@ -4,7 +4,7 @@ namespace app\admin\controller;
 
 use app\admin\model\Shop as ShopModel;
 use app\admin\Model\Shoporder;
-use app\common\controller\Common;
+use app\admin\controller\Common;
 use think\Db;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
@@ -61,6 +61,7 @@ class Shop extends BaseController
         $data['creat_time'] = date('Y-m-d H:i:s');
         $shop = new ShopModel();
         $shop->save($data);
+        Common::adminLog('添加商品'.$data['shopname']);
         return Common::ReturnSuccess('添加成功');
     }
 
@@ -76,12 +77,14 @@ class Shop extends BaseController
     {
         $data = $request->param();
         $shop = ShopModel::where('id',$data['id'])->update($data);
+        Common::adminLog('修改商品'.$data['shopname']);
         return Common::ReturnSuccess('修改成功');
     }
 
     public function delshop(){
         $id = input('id');
         $app = ShopModel::destroy($id);
+        Common::adminLog('删除商品'.$id);
         return Common::ReturnSuccess("删除成功");
     }
 
@@ -122,6 +125,7 @@ class Shop extends BaseController
     public function delshoporder(){
         $id = input('id');
         $app = Shoporder::destroy($id);
+        Common::adminLog('删除商品订单'.$id);
         return Common::ReturnSuccess("删除成功");
     }
 

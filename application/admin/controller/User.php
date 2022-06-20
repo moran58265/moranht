@@ -4,7 +4,7 @@ namespace app\admin\controller;
 
 use app\admin\model\User as UserModel;
 use app\admin\validate\User as UserValidate;
-use app\common\controller\Common;
+use app\admin\controller\Common;
 use think\Db;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
@@ -80,6 +80,7 @@ class User extends BaseController
     {
         $id = input('id');
         $app = UserModel::destroy($id);
+        Common::adminLog('删除用户'.$id);
         return Common::ReturnSuccess("删除成功");
     }
 
@@ -92,6 +93,7 @@ class User extends BaseController
             $app->banned = 'true';
             $app->save();
         }
+        Common::adminLog('修改用户禁用状态'.input('id'));
         return Common::ReturnSuccess("修改成功");
     }
 
@@ -104,6 +106,7 @@ class User extends BaseController
             $app->banned = 'false';
             $app->save();
         }
+        Common::adminLog('修改用户正常状态'.input('id'));
         return Common::ReturnSuccess("修改成功");
     }
 
@@ -128,6 +131,7 @@ class User extends BaseController
         $data['viptime'] = strtotime($data['viptime']);
         $res = $user->save($data, ['id' => $data['id']]);
         if ($res) {
+            Common::adminLog('修改用户信息'.$data['id']);
             return Common::ReturnSuccess('修改成功');
         } else {
             return Common::ReturnError('修改失败');
@@ -164,6 +168,7 @@ class User extends BaseController
         $data['creattime'] = time();
         $data['qq'] = substr($data['useremail'], 0, strpos($data['useremail'], '@'));
         $res = $user->save($data);
+        Common::adminLog('添加用户'.$data['username']);
         return Common::ReturnSuccess('添加成功');
     }
 
@@ -181,6 +186,7 @@ class User extends BaseController
                 $updateuser->invitecode = $invitecode;
                 $updateuser->save();
             }
+            Common::adminLog('生成所有用户邀请码');
             return Common::ReturnSuccess('所有用户邀请码已生成');
         }
     }

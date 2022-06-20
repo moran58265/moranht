@@ -3,7 +3,7 @@
 namespace app\admin\controller;
 
 use app\admin\model\Notes as NotesModel;
-use app\common\controller\Common;
+use app\admin\controller\Common;
 use think\Db;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
@@ -54,6 +54,7 @@ class Notes extends BaseController
     {
         $id = input('id');
         $app = NotesModel::destroy($id);
+        Common::adminLog('删除笔记'.$id);
         return Common::ReturnSuccess("删除成功");
     }
 
@@ -72,6 +73,7 @@ class Notes extends BaseController
         $notes = new NotesModel();
         $res = $notes->save($data, ['id' => $data['id']]);
         if ($res) {
+            Common::adminLog('编辑笔记'.$data['id']);
             return Common::ReturnSuccess('修改成功');
         } else {
             return Common::ReturnError('修改失败');

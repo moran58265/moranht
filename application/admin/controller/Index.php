@@ -2,10 +2,9 @@
 
 namespace app\admin\controller;
 
-use app\common\controller\Common;
-use app\common\controller\Upload;
-use think\Controller;
 use think\Db;
+use think\facade\Cookie;
+use think\facade\Request;
 
 class Index extends BaseController
 {
@@ -17,21 +16,25 @@ class Index extends BaseController
         $data['kmtotal'] = Db::name('km')->count(); #卡密总数
         $data['messagetotal'] = Db::name('notes')->count(); #笔记总数
         $data['todayviptotal'] = Db::name('user')->where('viptime', '>', time())->count(); #今日vip总数
-        $data['todayregtotal'] = Db::name('user')->where('creattime', '>', strtotime(date("Y-m-d"),time()))->count(); #今日注册总数
+        $data['todayregtotal'] = Db::name('user')->where('creattime', '>', strtotime(date("Y-m-d"), time()))->count(); #今日注册总数
         $data['isusekmtotal'] = Db::name('km')->where('isuse', '=', 'true')->count(); #已使用卡密总数
         $data['viewtotal'] = Db::name('app')->sum('view'); #访问总数
-        $data['signintotal'] = Db::name('user')->where('signtime','>',strtotime(date("Y-m-d"),time()))->count(); #今日签到人数
+        $data['signintotal'] = Db::name('user')->where('signtime', '>', strtotime(date("Y-m-d"), time()))->count(); #今日签到人数
         $data['paltetotal'] = Db::name('plate')->count(); #板块数量
         $data['posttotal'] = Db::name('post')->count(); #帖子数量
         $data['filetotal'] = Db::name('upload')->count(); #文件数量
-        return $this->fetch()->assign('data', $data);
+        $adminlog = db('adminlog')->order('id desc')->limit(10)->select();
+        return $this->fetch()->assign('data', $data)->assign('adminlog', $adminlog);
     }
 
-    public function upload()
+    /**
+     * 上传图片类，支持多图上传  作为公共类使用
+     */
+    public static function upload()
     {
         $upload = new Upload();
         $file = $upload->uploadDetail('file');
-        return Common::ReturnJson('上传成功', $file);
+        return Common::ReturnSuccessData($file, "上传成功");
     }
 
     //统计最近一周的每天注册量
@@ -65,7 +68,7 @@ class Index extends BaseController
             $result['date'][] = $value['date'];
             $result['count'][] = $value['count'];
         }
-        return Common::ReturnJson('获取成功', $result);
+        return Common::ReturnSuccessData($result);
     }
 
     //统计最近一周的每天用户量
@@ -98,7 +101,7 @@ class Index extends BaseController
             $result['date'][] = $value['date'];
             $result['count'][] = $value['count'];
         }
-        return Common::ReturnJson('获取成功', $result);
+        return Common::ReturnSuccessData($result);
     }
 
 
@@ -116,7 +119,7 @@ class Index extends BaseController
         ];
         $response = file_get_contents("https://www.moranblog.cn/mrhtupdate.php", false, stream_context_create($stream_opts));
         $data = json_decode($response, true);
-        return Common::ReturnJson('获取成功', $data);
+        return Common::ReturnSuccessData($data);
     }
 
     //下载zip文件
@@ -128,18 +131,17 @@ class Index extends BaseController
                 "verify_peer_name" => false,
             ]
         ];
-        try{
+        try {
             $downurl = input('post.');
             $arr = parse_url($downurl['url']);  //获取下载地址
             $fileName = basename(time());  //获取文件名
             $file = file_get_contents($downurl['url'], false, stream_context_create($stream_opts)); //获取文件内容
             $file_path = "./update/" . $fileName . ".zip";  //设置文件路径
             file_put_contents($file_path, $file);
-            return Common::ReturnJson($file_path);
-        }catch(\Exception $e){
+            return Common::ReturnSuccess($file_path);
+        } catch (\Exception $e) {
             return Common::ReturnError('下载失败');
         }
-        
     }
 
 
@@ -150,16 +152,16 @@ class Index extends BaseController
         $zip = new \ZipArchive();
         $res = $zip->open($file_path);  //解压文件
         //解压目录
-        try{
+        try {
             if ($res === true) {
                 $zip->extractTo('../');
                 $zip->close();
                 unlink(input('post.filepath')); //删除源文件
-                return Common::ReturnJson('解压成功');
+                return Common::ReturnSuccess('解压成功');
             } else {
-                return Common::ReturnJson('解压失败');
+                return Common::ReturnError('解压失败');
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return Common::ReturnError('请设置文件权限为755(www)');
         }
     }
@@ -176,38 +178,58 @@ class Index extends BaseController
                     Db::execute($value);
                 }
                 unlink('../sql.sql');
-                return Common::ReturnJson('执行成功');
+                return Common::ReturnSuccess('执行成功');
             } catch (\Exception $e) {
-                return Common::ReturnJson('执行成功');
+                return Common::ReturnError('执行成功');
             }
         } else {
-            return Common::ReturnJson('执行成功');
+            return Common::ReturnSuccess('执行成功');
         }
     }
 
 
     //首页获取app信息
-    public function getAllApp(){
+    public function getAllApp()
+    {
         $data = Db::query("select * from mr_app");
-        return Common::ReturnJson('获取成功',$data);
+        return Common::ReturnSuccessData($data);
     }
 
     //重新获取与此APP相关的信息
-    public function getAllChannel(){
-        $appid = input('post.appid')?input('post.appid'):'';
+    public function getAllChannel()
+    {
+        $appid = input('post.appid') ? input('post.appid') : '';
         $data = array();
-        $data['usertotal'] = Db::name('user')->where('appid',$appid)->count(); #用户总数
-        $data['apptotal'] = Db::name('app')->where('appid',$appid)->count(); #应用总数
-        $data['kmtotal'] = Db::name('km')->where('appid',$appid)->count(); #卡密总数
-        $data['messagetotal'] = Db::name('notes')->where('appid',$appid)->count(); #笔记总数
-        $data['todayviptotal'] = Db::name('user')->where('appid',$appid)->where('viptime', '>', time())->count(); #今日vip总数
-        $data['todayregtotal'] = Db::name('user')->where('appid',$appid)->where('creattime', '>', strtotime(date("Y-m-d"),time()))->count(); #今日注册总数
-        $data['isusekmtotal'] = Db::name('km')->where('appid',$appid)->where('isuse', '=', 'true')->count(); #已使用卡密总数
-        $data['viewtotal'] = Db::name('app')->where('appid',$appid)->sum('view'); #访问总数
-        $data['signintotal'] = Db::name('user')->where('appid',$appid)->where('signtime','>',strtotime(date("Y-m-d"),time()))->count(); #今日签到人数
-        $data['paltetotal'] = Db::name('plate')->where('appid',$appid)->count(); #板块数量
-        $data['posttotal'] = Db::name('post')->where('appid',$appid)->count(); #帖子数量
+        $data['usertotal'] = Db::name('user')->where('appid', $appid)->count(); #用户总数
+        $data['apptotal'] = Db::name('app')->where('appid', $appid)->count(); #应用总数
+        $data['kmtotal'] = Db::name('km')->where('appid', $appid)->count(); #卡密总数
+        $data['messagetotal'] = Db::name('notes')->where('appid', $appid)->count(); #笔记总数
+        $data['todayviptotal'] = Db::name('user')->where('appid', $appid)->where('viptime', '>', time())->count(); #今日vip总数
+        $data['todayregtotal'] = Db::name('user')->where('appid', $appid)->where('creattime', '>', strtotime(date("Y-m-d"), time()))->count(); #今日注册总数
+        $data['isusekmtotal'] = Db::name('km')->where('appid', $appid)->where('isuse', '=', 'true')->count(); #已使用卡密总数
+        $data['viewtotal'] = Db::name('app')->where('appid', $appid)->sum('view'); #访问总数
+        $data['signintotal'] = Db::name('user')->where('appid', $appid)->where('signtime', '>', strtotime(date("Y-m-d"), time()))->count(); #今日签到人数
+        $data['paltetotal'] = Db::name('plate')->where('appid', $appid)->count(); #板块数量
+        $data['posttotal'] = Db::name('post')->where('appid', $appid)->count(); #帖子数量
         $data['filetotal'] = Db::name('upload')->count(); #文件数量
-        return Common::ReturnJson('获取成功',$data);
+        return Common::ReturnSuccessData($data);
+    }
+
+
+    //判断是否是授权用户
+    public function isAuthorized()
+    {
+        $host = Request::domain();
+        $auth = file_get_contents($host . '/auth.txt');
+        $json = json_decode($auth, true);
+        if (strtotime($json['duetime']) > time()) {
+            if (Cookie::has('authcode')) {
+                return Common::ReturnError('授权用户');
+            }
+            Cookie::forever('authcode', 1);
+            return Common::ReturnSuccess("授权用户");
+        } else {
+            return Common::ReturnError("非授权用户");
+        }
     }
 }

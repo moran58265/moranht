@@ -15,11 +15,11 @@ return [
     // 服务器地址
     'hostname'        => '127.0.0.1',
     // 数据库名
-    'database'        => 'mrht',
+    'database'        => 'mrht_moranblog_c',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'mrht_moranblog_c',
     // 密码
-    'password'        => '123456',
+    'password'        => 'XzzzRP2z7rDmAAzB',
     // 端口
     'hostport'        => '',
     // 连接dsn

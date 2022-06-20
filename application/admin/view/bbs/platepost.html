@@ -1,4 +1,4 @@
-{php}$title= '帖子管理';{/php}
+{php}$title= 'app管理';{/php}
 {include file="layout/header"}
 <!--页面主要内容-->
 <main class="lyear-layout-content">
@@ -6,57 +6,25 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-toolbar d-flex flex-column flex-md-row">
-
-                        <!--                        <div class="search-bar ml-md-auto">-->
-                        <!--                            <input type="hidden" name="search_field" id="search-field" value="title" />-->
-                        <!--                            <div class="input-group ml-md-auto">-->
-                        <!--                                <div class="input-group mb-3">-->
-                        <!--                                    <input type="text" id="searchusername" class="form-control" placeholder="请输入板块名称">-->
-                        <!--                                    <div class="input-group-append">-->
-                        <!--                                        <span class="input-group-text" onclick="searchplate()">搜索</span>-->
-                        <!--                                    </div>-->
-                        <!--                                </div>-->
-                        <!--                            </div>-->
-                        <!--                        </div>-->
-                    </div>
                     <div class="card-body">
-
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="search_result">
-                                <thead>
-                                <tr>
-                                    <th>序号</th>
-                                    <th>帖子标题</th>
-                                    <th>用户名</th>
-                                    <th>板块名称</th>
-                                    <th>访问量</th>
-                                    <th>评论量</th>
-                                    <th>创建时间</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {volist name="list" id="post" key="u"}
-                                    <td>{$u}</td>
-                                    <td>{$post.postname}</td>
-                                    <td>{$post.username}</td>
-                                    <td>{$post.platename}</td>
-                                    <td>{$post.view}</td>
-                                    <td>{$post.commentnum}</td>
-                                    <td>{$post.creat_time}</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a class="btn btn-xs btn-default" href='/admin/bbs/querypost/id/{$post.id}' title="" data-toggle="tooltip" data-original-title="编辑"><i class="mdi mdi-pencil"></i></a>
-                                            <a class="btn btn-xs btn-default id ajax-get confirm" dataid = "{$post.id}" onclick="deleteplatepost(this)" title="" data-toggle="tooltip" data-original-title="删除"><i class="mdi mdi-window-close"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {/volist}
-                                </tbody>
-                            </table>
+                        <div id="toolbar" class="toolbar-btn-action">
+                            <!-- <button type="button" data-toggle="modal" data-target="#exampleModal"
+                                class="btn btn-label btn-primary m-r-5">
+                                <label><i class="mdi mdi-plus" aria-hidden="true"></i></label>新增
+                            </button> -->
+                            <button id="btn_delete" type="button" class="btn btn-label btn-danger">
+                                <label><i class="mdi mdi-window-close" aria-hidden="true"></i></label>删除
+                            </button>
                         </div>
-                        {$page|raw}
+                        <div class="input-group mb-3">
+                            <input type="text" name="searchword" id="searchword" class="form-control"
+                                placeholder="标题">
+                            <div class="input-group-append">
+                                <input type="button" id="search_btn" class="input-group-text" value="查询">
+                            </div>
+                        </div>
+
+                        <table id="tb_departments"></table>
                     </div>
                 </div>
             </div>
@@ -68,111 +36,137 @@
 </div>
 {include file="layout/footer"}
 <script>
+    $('#tb_departments').bootstrapTable({
+        classes: 'table table-bordered table-hover table-striped',
+        url: "{:url('bbs/platepostlist')}",
+        method: 'get',
+        dataType: 'json',
+        uniqueId: 'appid',
+        idField: 'appid',             // 每行的唯一标识字段
+        toolbar: '#toolbar',       // 工具按钮容器
+        clickToSelect: true,     // 是否启用点击选中行
+        showColumns: true,         // 是否显示所有的列
+        showRefresh: true,         // 是否显示刷新按钮
 
-    $(document).ready(function() {
-        $(document).on('click', '.file-browser', function() {
-            var $browser = $(this);
-            var file = $browser.closest('.file-group').find('[type="file"]');
-            file.on( 'click', function(e) {
-                e.stopPropagation();
-            });
-            file.trigger('click');
-        });
+        showToggle: true,        // 是否显示详细视图和列表视图的切换按钮(clickToSelect同时设置为true时点击会报错)
 
-        $(document).on('change', '.file-group [type="file"]', function() {
-            var l = $('body').lyearloading({
-                opacity: 0.2,
-                spinnerSize: 'lg',
-                spinnerText: '后台处理中，请稍后...',
-                textColorClass: 'text-info',
-                spinnerColorClass: 'text-info'
-            });
-            var $this    = $(this);
-            var $input   = $(this)[0];
-            var $len     = $input.files.length;
-            var formFile = new FormData();
+        pagination: true,                    // 是否显示分页
+        sortOrder: "asc",                    // 排序方式
+        queryParams: function (params) {
+            var temp = {
+                limit: params.limit,         // 每页数据量
+                offset: params.offset,       // sql语句起始索引
+                page: (params.offset / params.limit) + 1,
+                sort: params.sort,           // 排序的列名
+                sortOrder: params.order,      // 排序方式'asc' 'desc'
+                postname: $('#searchword').val()
+            };
+            return temp;
+        },                                   // 传递参数
+        sidePagination: "server",            // 分页方式：client客户端分页，server服务端分页
+        pageNumber: 1,                       // 初始化加载第一页，默认第一页
+        pageSize: 10,                        // 每页的记录行数
+        pageList: [10, 25, 50, 100],         // 可供选择的每页的行数
+        //search: true,                      // 是否显示表格搜索，此搜索是客户端搜索
 
-            if ($len == 0) {
-                return false;
-            } else {
-                var fileAccaccept = $this.attr('accaccept');
-                var fileType      = $input.files[0].type;
-                var type          = (fileType.substr(fileType.lastIndexOf("/") + 1)).toLowerCase();
+        showExport: true,        // 是否显示导出按钮, 导出功能需要导出插件支持(tableexport.min.js)
+        exportDataType: "basic", // 导出数据类型, 'basic':当前页, 'all':所有数据, 'selected':选中的数据
 
-                if (!type || fileAccaccept.indexOf(type) == -1) {
-                    $.notify({
-                        message: '您上传图片的类型不符合(.jpg|.jpeg|.gif|.png|.bmp)',
-                    },{
-                        placement: {
-                            from: "top",
-                            align: "center"
-                        },
-                        type: 'success'
-                    });
-                    l.destroy();
-                    return false;
-                }
-                formFile.append("file", $input.files[0]);
-            }
-
-            var data = formFile;
-
-            $.ajax({
-                url: "{:url('/admin/app/upload')}",
-                data: data,
-                type: "POST",
-                dataType: "json",
-                //上传文件无需缓存
-                cache: false,
-                //用于对data参数进行序列化处理 这里必须false
-                processData: false,
-                //必须
-                contentType: false,
-                success: function (res) {
-                    setTimeout(function() {
-                        l.destroy();
-                    }, 1e3)
-                    if (res.code == 200) {
-                        $.notify({
-                            message: res.msg
-                        },{
-                            placement: {
-                                from: "top",
-                                align: "center"
-                            },
-                            type: 'success'
-                        });
-                        //console.log(res.data[0].filePath);
-                        $this.closest('.file-group').find('.file-value').val(res.data[0].fullPath);
-                    } else {
-                        $.notify({
-                            message: "系统错误"
-                        },{
-                            placement: {
-                                from: "top",
-                                align: "center"
-                            },
-                            // settings
-                            type: 'danger'
-                        });
-                    }
+        columns: [{
+            field: 'example',
+            checkbox: true    // 是否显示复选框
+        }, {
+            field: 'id',
+            title: 'id',
+            sortable: true    // 是否排序
+        }, {
+            field: 'postname',
+            title: '帖子标题',
+        }, {
+            field: 'username',
+            title: '用户名'
+        }, {
+            field: 'platename',
+            title: '板块名称',
+        }, {
+            field: 'view',
+            title: '访问量'
+        }, {
+            field: 'commentnum',
+            title: '评论量',
+            sortable: true
+        }, {
+            field: 'creat_time',
+            title: '创建时间',
+        }, {
+            field: 'operate',
+            title: '操作',
+            formatter: btnGroup,  // 自定义方法
+            events: {
+                'click .edit-btn': function (event, value, row, index) {
+                    window.location.href = "{:url('bbs/querypost')}?id=" + row.id;
                 },
-            });
-        });
+                'click .del-btn': function (event, value, row, index) {
+                    deletepost(row.id);
+                }
+            }
+        }],
+        onLoadSuccess: function (data) {
+            $("[data-toggle='tooltip']").tooltip();
+        }
     });
 
-    function getnumber() {
-        var date = $("input[name = 'ids[]']");
-        var str = [];
-        for(let i = 0;i < date.length;i++) {
-            if (date[i].checked == true) {
-                str.push(date[i].value);
-            }
-        }
-        return str;
+    // 操作按钮
+    function btnGroup() {
+        let html =
+            '<a href="#!" class="btn btn-xs btn-default m-r-5 edit-btn" title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>' +
+            '<a href="#!" class="btn btn-xs btn-default del-btn" title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>';
+        return html;
     }
 
-    function deleteplatepost(obj){
+    //搜索
+    $('#search_btn').click(function () {
+        //ajax查询
+        $.ajax({
+            type: "POST",
+            url: "{:url('bbs/platepostlist')}",
+            data: {
+                postname: $.trim($('#searchword').val()),
+            },
+            dataType: "json",
+            success: function (data) {
+                $('#tb_departments').bootstrapTable('load', data);
+            }
+        });
+    });
+    //获取选中的id
+    function getnumber() {
+        var selRows = $('#tb_departments').bootstrapTable("getSelections");
+        if (selRows.length == 0) {
+            $.notify({
+                message: "请至少选择一行"
+            }, {
+                placement: {
+                    from: "top",
+                    align: "center"
+                },
+                // settings
+                type: 'danger'
+            });
+            return false;
+        }
+        var postData = "";
+        $.each(selRows, function (i) {
+            postData += this.id;
+            if (i < selRows.length - 1) {
+                postData += ",";
+            }
+        });
+        return postData;
+    }
+
+    //删除应用
+    function deletepost(id) {
         var l = $('body').lyearloading({
             opacity: 0.2,
             spinnerSize: 'lg',
@@ -180,22 +174,21 @@
             textColorClass: 'text-info',
             spinnerColorClass: 'text-info'
         });
-        var id = $(obj).attr("dataid");
         $.ajax({
             type: "POST",
-            url: "{:url('/admin/bbs/delplatepost')}",
+            url: "{:url('bbs/delplatepost')}",
             data: {
                 id: id,
             },
-            //dataType: "json",
+            dataType: "json",
             success: function (data) {
-                setTimeout(function() {
+                setTimeout(function () {
                     l.destroy();
                 }, 1e3)
                 if (data.code == 200) {
                     $.notify({
                         message: data.msg
-                    },{
+                    }, {
                         placement: {
                             from: "top",
                             align: "center"
@@ -206,7 +199,7 @@
                 } else {
                     $.notify({
                         message: data.msg
-                    },{
+                    }, {
                         placement: {
                             from: "top",
                             align: "center"
@@ -219,79 +212,11 @@
         });
     }
 
-    function delplateposttotal(){
-        var getnum = getnumber().toString();
-        console.log(getnum);
-        if (getnum.length == 0){
-            $.notify({
-                message: "你还没有选择呢",
-            },{
-                placement: {
-                    from: "top",
-                    align: "center"
-                },
-                type: 'success'
-            });
-        }else{
-            var l = $('body').lyearloading({
-                opacity: 0.2,
-                spinnerSize: 'lg',
-                spinnerText: '后台处理中，请稍后...',
-                textColorClass: 'text-info',
-                spinnerColorClass: 'text-info'
-            });
-            $.ajax({
-                type: "POST",
-                url: "{:url('/admin/bbs/delplatepost')}",
-                data: {
-                    id: getnum
-                },
-                dataType: "json",
-                success: function (data) {
-                    setTimeout(function() {
-                        l.destroy();
-                    }, 1e3)
-                    if (data.code == 200) {
-                        $.notify({
-                            message: data.msg
-                        },{
-                            placement: {
-                                from: "top",
-                                align: "center"
-                            },
-                            type: 'success'
-                        });
-                        setTimeout("location.reload();", 2000);
-                    } else {
-                        $.notify({
-                            message: data.msg
-                        },{
-                            placement: {
-                                from: "top",
-                                align: "center"
-                            },
-                            // settings
-                            type: 'danger'
-                        });
-                    }
-                },
-            });
-        }
-    }
 
-    function searchplate(){
-        var searchuserplatename = $.trim($("#searchusername").val());
-        if (searchuserplatename == "" || searchuserplatename == null){
-            $.notify({
-                message: '请输入搜索内容'
-            },{
-                placement: {
-                    from: "top",
-                    align: "center"
-                },
-                // settings
-                type: 'danger'
-            });
+    $("#btn_delete").click(function () {
+        var getnum = getnumber();
+        //console.log(getnum);
+        if (getnum == false) {
             return false;
         }
         var l = $('body').lyearloading({
@@ -303,51 +228,40 @@
         });
         $.ajax({
             type: "POST",
-            url: "/admin/plate/searchplate",
+            url: "{:url('bbs/delplatepost')}",
             data: {
-                searchuserplatename: searchuserplatename,
+                id: getnum
             },
             dataType: "json",
-            success: function (json) {
-                setTimeout(function() {
+            success: function (data) {
+                setTimeout(function () {
                     l.destroy();
                 }, 1e3)
-                if (json.code == 200){
-                    var s = "<thead><tr><th>ID</th><th>用户名</th><th>昵称</th><th>应用名称</th><th>创建时间</th><th>操作</th></tr></thead><tbody>";
-                    for (var i = 0;i<json.data.length;i++) {
-                        s += '<tr><td>' +
-                            json.data[i].id +
-                            "</td><td>" +
-                            json.data[i].username +
-                            "</td><td>" +
-                            json.data[i].nickname +
-                            "</td><td>" +
-                            json.data[i].appname +
-                            "</td><td>" +
-                            json.data[i].time +
-                            '</td><td><div class="btn-group"> <a class="btn btn-xs btn-default" href="/admin/user/queryuser/id/'+
-                            json.data[i].id +
-                            '"title="" data-toggle="tooltip" data-original-title="编辑"><i class="mdi mdi-pencil"></i></a><a class="btn btn-xs btn-default id ajax-get confirm" dataid = "'+
-                            json.data[i].id +
-                            '" onclick="deleteuser(this)" title="" data-toggle="tooltip" data-original-title="删除"><i class="mdi mdi-window-close"></i></a></td></tr></tbody>';
-                    }
-                    $("#search_result").html(s);
-                }else{
+                if (data.code == 200) {
                     $.notify({
                         message: data.msg
-                    },{
+                    }, {
                         placement: {
                             from: "top",
                             align: "center"
                         },
-                        // settings
+                        type: 'success'
+                    });
+                    setTimeout("location.reload();", 2000);
+                } else {
+                    $.notify({
+                        message: data.msg
+                    }, {
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
                         type: 'danger'
                     });
                 }
-            }
-        })
-    }
-
+            },
+        });
+    })
 </script>
 
 </body>

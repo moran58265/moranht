@@ -5,13 +5,13 @@
  Source Server Type    : MySQL
  Source Server Version : 50726
  Source Host           : localhost:3306
- Source Schema         : mrhtuser
+ Source Schema         : mrht
 
  Target Server Type    : MySQL
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 10/06/2022 22:59:08
+ Date: 20/06/2022 18:59:59
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,20 @@ CREATE TABLE `mr_admin`  (
 -- ----------------------------
 -- Records of mr_admin
 -- ----------------------------
-INSERT INTO `mr_admin` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '2659917175', '默然', '1', 'XwcLbc', '');
+INSERT INTO `mr_admin` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '2659917175', '默然1233', '1', 'm6ReuG', '');
+
+-- ----------------------------
+-- Table structure for mr_adminlog
+-- ----------------------------
+DROP TABLE IF EXISTS `mr_adminlog`;
+CREATE TABLE `mr_adminlog`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `adminname` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `msg` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `creattime` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mr_app
@@ -66,23 +79,24 @@ CREATE TABLE `mr_app`  (
   `postexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '发帖经验',
   `commentmoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '评论获得money',
   `commentexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '评论获得经验',
-  `invitemoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `invitemoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
   `inviteexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `invitevip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `finvitemoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `finviteexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `finvitevip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `invitevip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
+  `finvitemoney` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '被',
+  `finviteexp` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
+  `finvitevip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0',
   `app_site_status` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'true' COMMENT 'true/false',
   `is_email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'false' COMMENT '注册是否要验证码true/false',
   `hierarchy` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '[0 => \'名称1\',100=>\'名称2\',200=>\'名称3\',300=>\'名称4\',400=>\'名称5\']' COMMENT '经验等级划分',
   `view` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '访问量',
   `devicenum` int(11) NOT NULL DEFAULT 0 COMMENT '每个设备限制几个用户注册0代表无限',
+  `emailtitle` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '邮箱标题',
+  `isemailmsg` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'false' COMMENT 'true/false',
+  `issign` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'false' COMMENT 'true/false',
+  `istoken` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'false' COMMENT 'true/false',
+  `signkey` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'sign的key值',
   PRIMARY KEY (`appid`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 10000 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'app列表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of mr_app
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for mr_comment
@@ -98,10 +112,6 @@ CREATE TABLE `mr_comment`  (
   `creattime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of mr_comment
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for mr_email
@@ -121,7 +131,7 @@ CREATE TABLE `mr_email`  (
 -- ----------------------------
 -- Records of mr_email
 -- ----------------------------
-INSERT INTO `mr_email` VALUES (1, 'zhengyi@163.com', '465', 'smtp.163.com', '4888000', '默然iapp后台管理系统', '你看到这封邮件，说明你的邮箱配置已经正常了');
+INSERT INTO `mr_email` VALUES (1, '210793979@qq.com', '465', 'smtp.qq.com', '123456', '默然iapp后台管理系统', '你看到这封邮件，说明你的邮箱配置已经正常了');
 
 -- ----------------------------
 -- Table structure for mr_emailcode
@@ -138,7 +148,7 @@ CREATE TABLE `mr_emailcode`  (
 -- ----------------------------
 -- Records of mr_emailcode
 -- ----------------------------
-INSERT INTO `mr_emailcode` VALUES (1, 'umoW', '127.0.0.1', 1654588570);
+INSERT INTO `mr_emailcode` VALUES (1, 'IxCX', '127.0.0.1', 1654843841);
 
 -- ----------------------------
 -- Table structure for mr_km
@@ -160,10 +170,6 @@ CREATE TABLE `mr_km`  (
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '卡密列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of mr_km
--- ----------------------------
-
--- ----------------------------
 -- Table structure for mr_likepost
 -- ----------------------------
 DROP TABLE IF EXISTS `mr_likepost`;
@@ -177,8 +183,27 @@ CREATE TABLE `mr_likepost`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
+
 -- ----------------------------
--- Records of mr_likepost
+-- Table structure for mr_message
+-- ----------------------------
+DROP TABLE IF EXISTS `mr_message`;
+CREATE TABLE `mr_message`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `msgid` int(11) NULL DEFAULT NULL COMMENT '消息类型',
+  `postid` int(11) NULL DEFAULT NULL COMMENT '文章id',
+  `userid` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '用户名',
+  `commentid` int(11) NULL DEFAULT NULL COMMENT '评论id',
+  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '通知用户',
+  `appid` int(11) NULL DEFAULT NULL,
+  `creattime` datetime(0) NULL DEFAULT NULL COMMENT '时间',
+  `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT '仅限类型为系统消息的时候用',
+  `isread` tinyint(1) NULL DEFAULT 0 COMMENT '0未读',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mr_message
 -- ----------------------------
 
 -- ----------------------------
@@ -196,10 +221,6 @@ CREATE TABLE `mr_notes`  (
   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建者',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '笔记内容' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of mr_notes
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for mr_passcode
@@ -228,12 +249,11 @@ CREATE TABLE `mr_plate`  (
   `plateicon` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '板块icon',
   `appid` int(11) NULL DEFAULT NULL COMMENT 'appid',
   `creattime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `admin` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '板块管理员',
+  `plateontent` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '板块描述',
+  `plategg` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '板块公告',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '板块' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of mr_plate
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for mr_post
@@ -256,9 +276,6 @@ CREATE TABLE `mr_post`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '文章' ROW_FORMAT = Dynamic;
 
--- ----------------------------
--- Records of mr_post
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for mr_shop
@@ -273,14 +290,12 @@ CREATE TABLE `mr_shop`  (
   `inventory` int(255) NULL DEFAULT NULL COMMENT '库存',
   `sales` int(255) NULL DEFAULT 0 COMMENT '销量',
   `appid` int(11) NULL DEFAULT NULL COMMENT 'app',
-  `creat_time` datetime(0) NULL DEFAULT NULL,
-  `shopimg` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `creat_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `shopimg` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '商品图片',
+  `shopcontent` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '商品描述',
+  `shopresult` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '为其他类型作为输出结果',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '商城' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of mr_shop
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for mr_shoporder
@@ -315,9 +330,6 @@ CREATE TABLE `mr_upload`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '附件' ROW_FORMAT = Dynamic;
 
--- ----------------------------
--- Records of mr_upload
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for mr_user
@@ -334,7 +346,7 @@ CREATE TABLE `mr_user`  (
   `signature` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '这个人暂未介绍自己' COMMENT '个性签名',
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '暂无称号' COMMENT '头衔',
   `appid` int(11) NULL DEFAULT NULL COMMENT 'appid',
-  `viptime` varchar(11) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'vip时间',
+  `viptime` int(11) NULL DEFAULT NULL COMMENT 'vip时间',
   `money` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '余额',
   `exp` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '经验',
   `admin` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否是管理员',
@@ -353,7 +365,20 @@ CREATE TABLE `mr_user`  (
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '用户账号' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of mr_user
+-- Table structure for mr_userlog
+-- ----------------------------
+DROP TABLE IF EXISTS `mr_userlog`;
+CREATE TABLE `mr_userlog`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `appid` int(11) NULL DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `msg` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `creattime` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mr_userlog
 -- ----------------------------
 
 -- ----------------------------
@@ -367,22 +392,6 @@ CREATE TABLE `mr_useronline`  (
   `appid` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '在线用户' ROW_FORMAT = Fixed;
-
-
-DROP TABLE IF EXISTS `mr_message`;
-CREATE TABLE `mr_message`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `msgid` int(11) NULL DEFAULT NULL COMMENT '消息类型',
-  `postid` int(11) NULL DEFAULT NULL COMMENT '文章id',
-  `userid` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '用户名',
-  `commentid` int(11) NULL DEFAULT NULL COMMENT '评论id',
-  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '通知用户',
-  `appid` int(11) NULL DEFAULT NULL,
-  `creattime` datetime(0) NULL DEFAULT NULL COMMENT '时间',
-  `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT '仅限类型为系统消息的时候用',
-  `isread` tinyint(1) NULL DEFAULT 0 COMMENT '0未读',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mr_useronline

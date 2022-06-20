@@ -3,7 +3,9 @@
 namespace app\admin\controller;
 
 use app\admin\model\Plate;
-use app\common\controller\Common;
+use app\admin\controller\Common;
+use app\admin\model\PlatePost;
+use app\admin\model\User;
 use think\Db;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
@@ -19,14 +21,14 @@ class Bbs extends BaseController
     {
         return $this->fetch('/bbs/index');
     }
-    
+
     public function getplatelist()
     {
-        $limit = input('limit')?input('limit'):10;
-        $page = input('page')?input('page'):1;
-        $sort = input('sort')?input('sort'):'appid';
-        $sortOrder = input('sortOrder')?input('sortOrder'):'desc';
-        $platename = input('platename')?input('platename'):'';
+        $limit = input('limit') ? input('limit') : 10;
+        $page = input('page') ? input('page') : 1;
+        $sort = input('sort') ? input('sort') : 'appid';
+        $sortOrder = input('sortOrder') ? input('sortOrder') : 'desc';
+        $platename = input('platename') ? input('platename') : '';
         $appList = Db::name('plate')
             ->alias('p')
             ->join('app a', 'a.appid=p.appid')
@@ -65,6 +67,7 @@ class Bbs extends BaseController
         $plate = new Plate();
         $db = $plate->save($data);
         if ($db > 0) {
+            Common::adminLog('添加版块:' . $data['platename']);
             return Common::ReturnSuccess("添加成功");
         } else {
             return Common::ReturnError("添加失败");
@@ -75,6 +78,7 @@ class Bbs extends BaseController
     {
         $appid = input('id');
         $app = Plate::destroy($appid);
+        Common::adminLog('删除版块:' . $appid);
         return Common::ReturnSuccess("删除成功");
     }
 
@@ -101,51 +105,58 @@ class Bbs extends BaseController
         if (!$validate->check($data)) {
             return Common::ReturnError($validate->getError());
         }
-        $update = [
-            'platename' => $data['platename'],
-            'plateicon' => $data['plateicon'],
-        ];
-        $db = Db::name('plate')->where('id', $data['id'])->update($update);
+        $user = User::where('username', $data['admin'])->find();
+        if ($user == null) {
+            return Common::ReturnError('用户不存在');
+        }
+        $db = Plate::where('id', $data['id'])->update($data);
         if ($db > 0) {
+            Common::adminLog('修改版块:' . $data['platename']);
             return Common::ReturnSuccess("修改成功");
         } else {
             return Common::ReturnError("修改失败");
         }
     }
 
-
     public function platepost()
     {
-        try {
-            $listPost = Db::name('post')
-                ->alias('p')
-                ->join('app a', 'a.appid = p.appid')
-                ->join('plate q', 'q.id = p.plateid')
-                ->field('p.*,a.appname,q.platename,(SELECT COUNT(*) FROM mr_comment as c WHERE c.postid  = p.id) as commentnum')
-                ->distinct(true)
-                ->paginate(10);
-        } catch (DbException $e) {
-            return Common::ReturnError($e->getMessage());
-        }
-        $page = $listPost->render();
-        return $this->fetch('/bbs/platepost', ['list' => $listPost, 'page' => $page]);
+        return $this->fetch('bbs/platepost');
     }
 
-    public function delplatepost(Request $request)
+    public function platepostlist()
     {
-        $data = $request->post();
-        try {
-            $user = Db::name('post')->delete($data['id']);
-        } catch (PDOException $e) {
-            return Common::ReturnError($e->getMessage());
-        } catch (Exception $e) {
-            return Common::ReturnError($e->getMessage());
-        }
-        if ($user > 0) {
-            return Common::ReturnSuccess("删除成功");
-        } else {
-            return Common::ReturnError('删除失败');
-        }
+        $limit = input('limit') ? input('limit') : 10;
+        $page = input('page') ? input('page') : 1;
+        $sort = input('sort') ? input('sort') : 'id';
+        $sortOrder = input('sortOrder') ? input('sortOrder') : 'asc';
+        $postname = input('postname') ? input('postname') : '';
+        $listPost = Db::name('post')
+            ->alias('p')
+            ->join('app a', 'a.appid=p.appid')
+            ->join('plate q', 'q.id = p.plateid')
+            ->where('postname', "like", '%' . $postname . '%')
+            ->field('p.*,a.appname,q.platename,(SELECT COUNT(*) FROM mr_comment as c WHERE c.postid  = p.id) as commentnum')
+            ->order($sort, $sortOrder)
+            ->limit($limit)
+            ->page($page)
+            ->select();
+        $listPostcount = Db::name('post')
+            ->alias('p')
+            ->join('app a', 'a.appid=p.appid')
+            ->join('plate q', 'q.id = p.plateid')
+            ->where('postname', "like", '%' . $postname . '%')
+            ->field('p.*,a.appname,q.platename,(SELECT COUNT(*) FROM mr_comment as c WHERE c.postid  = p.id) as commentnum')
+            ->distinct(true)
+            ->count();
+        return json(['rows' => $listPost, 'total' => $listPostcount]);
+    }
+
+    public function delplatepost()
+    {
+        $id = input('id');
+        $post = PlatePost::destroy($id);
+        Common::adminLog('删除帖子:' . $id);
+        return Common::ReturnSuccess("删除成功");
     }
 
     public function querypost($id)
@@ -187,6 +198,7 @@ class Bbs extends BaseController
         ];
         $db = Db::name('post')->where('id', $data['id'])->update($update);
         if ($db > 0) {
+            Common::adminLog('修改帖子:' . $data['postname']);
             return Common::ReturnSuccess("修改成功");
         } else {
             return Common::ReturnError("修改失败");

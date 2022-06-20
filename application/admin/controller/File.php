@@ -2,52 +2,35 @@
 
 namespace app\admin\controller;
 
-use app\common\controller\Common;
-use think\Db;
-use think\Exception;
-use think\exception\DbException;
-use think\exception\PDOException;
-use think\Request;
+use app\admin\model\File as ModelFile;
+use app\admin\controller\Common;
 
 
 class File extends BaseController
 {
     public function index(){
-        try {
-            $listfile = Db::name('upload')->paginate(10);
-        } catch (DbException $e) {
-            return Common::ReturnError($e->getMessage());
-        }
-        $page = $listfile->render();
-        return $this->fetch('/file/index', ['list' => $listfile, 'page' => $page]);
+        return $this->fetch();
     }
 
-    public function deletefile(Request $request){
-        $data = $request->post();
-        try {
-            $file = Db::name('upload')->where('id',$data['id'])->find();
-        } catch (PDOException $e) {
-            return Common::ReturnError($e->getMessage());
-        } catch (Exception $e) {
-            return Common::ReturnError( $e->getMessage());
-        }
-        if(file_exists(".".$file['filePath'])){
-            $res = unlink(".".$file['filePath']);
-            if ($res){
-                try {
-                    $delfile = Db::name('upload')->where('id', $data['id'])->delete();
-                } catch (PDOException $e) {
-                    return Common::ReturnError($e->getMessage());
-                } catch (Exception $e) {
-                    return Common::ReturnError($e->getMessage());
-                }
-                return Common::ReturnSuccess("删除成功");
-            }else{
-                return Common::ReturnError('删除失败');
-            }
-        }else{
-            return Common::ReturnError('服务器错误');
-        }
+    //获取所有附件信息
+    public function getfilelist()
+    {
+        $limit = input('limit')?input('limit'):10;
+        $page = input('page')?input('page'):1;
+        $sort = input('sort')?input('sort'):'id';
+        $sortOrder = input('sortOrder')?input('sortOrder'):'asc';
+        $file = ModelFile::order($sort,$sortOrder)->limit($limit)->page($page)->select();
+        $count = ModelFile::count();
+        return json(['rows' => $file,'total' => $count]);
+    }
+
+    //删除用户
+    public function deletefile()
+    {
+        $id = input('id');
+        $file = ModelFile::destroy($id);
+        Common::adminLog('删除附件'.$id);
+        return Common::ReturnSuccess("删除成功");
     }
 
 }

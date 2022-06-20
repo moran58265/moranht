@@ -44,6 +44,14 @@
                             <input type="email" class="form-control" id="inventory" value="{$shop.inventory}" placeholder="请输入库存数量">
                           </div>
                           <div class="form-group" >
+                            <label for="shopcontent">商品描述</label>
+                            <input type="email" class="form-control" id="shopcontent" value="{$shop.shopcontent}" placeholder="请输入商品描述">
+                          </div>
+                          <div class="form-group" >
+                            <label for="shopresult">为其他类型商品作为输出结果</label>
+                            <input type="email" class="form-control" id="shopresult" value="{$shop.shopresult}" placeholder="为其他类型作为输出结果">
+                          </div>
+                          <div class="form-group" >
                             <label for="appid">appid</label>
                             <input type="text" class="form-control" id="appid" value="{$shop.appid}" placeholder="请输入应用id" disabled>
                           </div>
@@ -78,6 +86,8 @@
         var money = $.trim($("#money").val());
         var vipnum = $.trim($("#vipnum").val());
         var inventory = $.trim($("#inventory").val());
+        var shopcontent = $.trim($("#shopcontent").val());
+        var shopresult = $.trim($("#shopresult").val());
         $.ajax({
             type: "POST",
             url: "{:url('shop/updateshop')}",
@@ -89,6 +99,8 @@
                 money: money,
                 vipnum: vipnum,
                 inventory:inventory,
+                shopcontent:shopcontent,
+                shopresult:shopresult
             },
             dataType: "json",
             success: function (data) {

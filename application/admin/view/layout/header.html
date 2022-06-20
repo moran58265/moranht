@@ -20,28 +20,7 @@
     <link rel="stylesheet" type="text/css" href="/static/js/bootstrap-table/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="/static/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="/static/js/bootstrap-clockpicker/bootstrap-clockpicker.min.css">
-    <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
-    <script>LA.init({id: "Jehqf3YX8V5Obz4T",ck: "Jehqf3YX8V5Obz4T"})</script>
     <style>
-        .imgPreview {
-            display: none;
-            top: 0;
-            left: 0;
-            width: 100%;
-            /*容器占满整个屏幕*/
-            height: 100%;
-            position: fixed;
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .imgPreview img {
-            z-index: 50;
-            width: 40%;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
     </style>
 </head>
 
@@ -305,6 +284,7 @@
                                 <img id="adminnewtx" class="img-avatar img-avatar-48 m-r-10"
                                     src="http://q1.qlogo.cn/g?b=qq&nk={$Think.session.admininfo['userqq']}&s=640" />
                                 <span id="adminnewname">{$Think.session.admininfo['nickname']}</span>
+                                <input type="hidden" id="code" value="">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-right">
                                 <li>
@@ -314,6 +294,10 @@
                                 <li>
                                     <a class="dropdown-item" href="{:url('admin/changepwd')}"><i
                                             class="mdi mdi-lock-outline"></i> 修改密码</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{:url('admin/adminlog')}"><i
+                                            class="mdi mdi-file-document-box-outline"></i> 管理员日志</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="Clear_All()"><i

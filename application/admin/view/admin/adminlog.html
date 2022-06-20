@@ -1,0 +1,84 @@
+{php}$title= '管理员日志';{/php}
+{include file="layout/header"}
+<!--页面主要内容-->
+<main class="lyear-layout-content">
+    <div class="container-fluid p-t-15">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="toolbar" class="toolbar-btn-action">
+                        </div>
+                        <table id="tb_departments"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+{include file="layout/footer"}
+<script>
+    $('#tb_departments').bootstrapTable({
+        classes: 'table table-bordered table-hover table-striped',
+        url: "{:url('admin/adminloglist')}",
+        method: 'get',
+        dataType: 'json',
+        uniqueId: 'appid',
+        idField: 'appid',             // 每行的唯一标识字段
+        toolbar: '#toolbar',       // 工具按钮容器
+        clickToSelect: true,     // 是否启用点击选中行
+        showColumns: true,         // 是否显示所有的列
+        showRefresh: true,         // 是否显示刷新按钮
+
+        showToggle: true,        // 是否显示详细视图和列表视图的切换按钮(clickToSelect同时设置为true时点击会报错)
+
+        pagination: true,                    // 是否显示分页
+        sortOrder: "asc",                    // 排序方式
+        queryParams: function (params) {
+            var temp = {
+                limit: params.limit,         // 每页数据量
+                offset: params.offset,       // sql语句起始索引
+                page: (params.offset / params.limit) + 1,
+                sort: params.sort,           // 排序的列名
+                sortOrder: params.order,      // 排序方式'asc' 'desc'
+            };
+            return temp;
+        },                                   // 传递参数
+        sidePagination: "server",            // 分页方式：client客户端分页，server服务端分页
+        pageNumber: 1,                       // 初始化加载第一页，默认第一页
+        pageSize: 10,                        // 每页的记录行数
+        pageList: [10, 25, 50, 100],         // 可供选择的每页的行数
+        //search: true,                      // 是否显示表格搜索，此搜索是客户端搜索
+
+        showExport: true,        // 是否显示导出按钮, 导出功能需要导出插件支持(tableexport.min.js)
+        exportDataType: "basic", // 导出数据类型, 'basic':当前页, 'all':所有数据, 'selected':选中的数据
+
+        columns: [ {
+            field: 'id',
+            title: 'id',
+            sortable: true    // 是否排序
+        }, {
+            field: 'adminname',
+            title: '管理员名称',
+        }, {
+            field: 'msg',
+            title: '事件类型'
+        }, {
+            field: 'creattime',
+            title: '操作时间'
+        }, {
+            field: 'ip',
+            title: '操作ip',
+        }],
+        onLoadSuccess: function (data) {
+            $("[data-toggle='tooltip']").tooltip();
+        }
+    });
+</script>
+
+</body>
+
+</html>

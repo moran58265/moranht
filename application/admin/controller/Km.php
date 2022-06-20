@@ -4,7 +4,7 @@ namespace app\admin\controller;
 
 use app\admin\model\Km as KmModel;
 use app\admin\model\App as AppModel;
-use app\common\controller\Common;
+use app\admin\controller\Common;
 use think\Db;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
@@ -59,6 +59,7 @@ class Km extends BaseController
     {
         $id = input('id');
         $app = KmModel::destroy($id);
+        Common::adminLog('删除卡密'.$id);
         return Common::ReturnSuccess("删除成功");
     }
 
@@ -83,6 +84,7 @@ class Km extends BaseController
             $km->data($data);
             $km->save();
         }
+        Common::adminLog('添加卡密'.$data['generatenum'].'个');
         return Common::ReturnSuccess("添加成功");
     }
 
@@ -101,6 +103,7 @@ class Km extends BaseController
         }
         fclose($file);
         $download =  new \think\response\Download('km/km.txt');
+        Common::adminLog('导出卡密');
         return $download->name('km.txt');
     }
 

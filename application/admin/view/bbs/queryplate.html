@@ -28,6 +28,18 @@
                             <label for="appname">app名称</label>
                             <input type="text" class="form-control" id="appname" value="{$plate.appname}" disabled>
                         </div>
+                        <div class="form-group">
+                            <label for="admin">板块管理员</label>
+                            <input type="text" class="form-control" id="admin" value="{$plate.admin}" placeholder="直接输入用户账号即可">
+                        </div>
+                        <div class="form-group">
+                            <label for="plateontent">板块描述</label>
+                            <input type="text" class="form-control" id="plateontent" value="{$plate.plateontent}" placeholder="板块描述">
+                        </div>
+                        <div class="form-group">
+                            <label for="plategg">板块公告</label>
+                            <input type="text" class="form-control" id="plategg" value="{$plate.plategg}" placeholder="板块公告">
+                        </div>
                         <button type="button" onclick="updateplate()" class="btn btn-w-sm btn-primary mb-2">提交</button>
                         <button type="button" class="btn btn-default mb-2" onclick="javascript:history.back(-1);return false;">返 回
                         </button>
@@ -53,6 +65,9 @@
         var id = $.trim($("#id").val());
         var platename = $.trim($("#platename").val());
         var plateicon = $.trim($("#plateicon").val());
+        var admin = $.trim($("#admin").val());
+        var plateontent = $.trim($("#plateontent").val());
+        var plategg = $.trim($("#plategg").val());
         $.ajax({
             type: "POST",
             url: "{:url('bbs/updateplate')}",
@@ -60,6 +75,9 @@
                 id: id,
                 platename: platename,
                 plateicon: plateicon,
+                admin: admin,
+                plateontent: plateontent,
+                plategg: plategg
             },
             dataType: "json",
             success: function (data) {

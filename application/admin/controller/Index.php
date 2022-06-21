@@ -226,7 +226,7 @@ class Index extends BaseController
             if (Cookie::has('authcode')) {
                 return Common::ReturnError('授权用户');
             }
-            Cookie::forever('authcode', 1);
+            Cookie::forever('authcode', 1,3600*24*5);
             return Common::ReturnSuccess("授权用户");
         } else {
             return Common::ReturnError("非授权用户");

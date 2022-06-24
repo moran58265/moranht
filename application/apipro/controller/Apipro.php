@@ -13,7 +13,7 @@ use app\admin\model\Notes;
 use app\admin\model\Plate;
 use app\admin\model\PlatePost;
 use app\admin\model\Shop;
-use app\admin\Model\Shoporder;
+use app\admin\model\Shoporder;
 use app\admin\model\User;
 use think\Db;
 use think\facade\Cookie;

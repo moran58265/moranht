@@ -214,4 +214,25 @@ class Index extends BaseController
         $data['filetotal'] = Db::name('upload')->count(); #文件数量
         return Common::ReturnSuccessData($data);
     }
+<<<<<<< HEAD
+=======
+
+
+    //判断是否是授权用户
+    public function isAuthorized()
+    {
+        $host = Request::domain();
+        $auth = file_get_contents($host . '/auth.txt');
+        $json = json_decode($auth, true);
+        if (strtotime($json['duetime']) > time()) {
+            if (Cookie::has('authcode')) {
+                return Common::ReturnError('授权用户');
+            }
+            Cookie::forever('authcode', 1,3600*24*5);
+            return Common::ReturnSuccess("授权用户");
+        } else {
+            return Common::ReturnError("非授权用户");
+        }
+    }
+>>>>>>> 65397660d776cb795cd7b8980daef3f614b34c5c
 }

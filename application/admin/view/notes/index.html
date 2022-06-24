@@ -9,7 +9,7 @@
           <div class="card-body">
             <div id="toolbar" class="toolbar-btn-action">
               <button id="btn_delete" type="button" class="btn btn-label btn-danger">
-               <label><i class="mdi mdi-window-close" aria-hidden="true"></i></label>删除
+                <label><i class="mdi mdi-window-close" aria-hidden="true"></i></label>删除
               </button>
             </div>
             <div class="input-group mb-3">
@@ -89,10 +89,10 @@
     }, {
       field: 'updatetime',
       title: '修改时间'
-    },{
+    }, {
       field: 'appname',
       title: '应用名称'
-    },{
+    }, {
       field: 'username',
       title: '创建者'
     }, {
@@ -101,7 +101,7 @@
       formatter: btnGroup,  // 自定义方法
       events: {
         'click .edit-btn': function (event, value, row, index) {
-          window.location.href = "{:url('notes/querynote')}?id="+row.id;
+          window.location.href = "{:url('notes/querynote')}?id=" + row.id;
         },
         'click .del-btn': function (event, value, row, index) {
           deletenotes(row.id);
@@ -116,8 +116,8 @@
   // 操作按钮
   function btnGroup() {
     let html =
-            '<a href="#!" class="btn btn-xs btn-default m-r-5 edit-btn" title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>' +
-            '<a href="#!" class="btn btn-xs btn-default del-btn" title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>';
+      '<a href="#!" class="btn btn-xs btn-default m-r-5 edit-btn" title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>' +
+      '<a href="#!" class="btn btn-xs btn-default del-btn" title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>';
     return html;
   }
 
@@ -127,7 +127,7 @@
       type: "POST",
       url: "{:url('notes/Getnoteslist')}",
       data: {
-        title : $.trim($('#searchtitle').val()),
+        title: $.trim($('#searchtitle').val()),
       },
       dataType: "json",
       success: function (data) {
@@ -162,49 +162,52 @@
   }
 
   function deletenotes(id) {
-    var l = $('body').lyearloading({
-      opacity: 0.2,
-      spinnerSize: 'lg',
-      spinnerText: '后台处理中，请稍后...',
-      textColorClass: 'text-info',
-      spinnerColorClass: 'text-info'
-    });
-    $.ajax({
-      type: "POST",
-      url: "{:url('notes/deletenotes')}",
-      data: {
-        id: id,
-      },
-      dataType: "json",
-      success: function (data) {
-        setTimeout(function () {
-          l.destroy();
-        }, 1e3)
-        if (data.code == 200) {
-          $.notify({
-            message: data.msg
-          }, {
-            placement: {
-              from: "top",
-              align: "center"
-            },
-            type: 'success'
-          });
-          $('#tb_departments').bootstrapTable('refresh');
-        } else {
-          $.notify({
-            message: data.msg
-          }, {
-            placement: {
-              from: "top",
-              align: "center"
-            },
-            // settings
-            type: 'danger'
-          });
-        }
-      },
-    });
+    var r = confirm("确定要删除吗？");
+    if (r == true) {
+      var l = $('body').lyearloading({
+        opacity: 0.2,
+        spinnerSize: 'lg',
+        spinnerText: '后台处理中，请稍后...',
+        textColorClass: 'text-info',
+        spinnerColorClass: 'text-info'
+      });
+      $.ajax({
+        type: "POST",
+        url: "{:url('notes/deletenotes')}",
+        data: {
+          id: id,
+        },
+        dataType: "json",
+        success: function (data) {
+          setTimeout(function () {
+            l.destroy();
+          }, 1e3)
+          if (data.code == 200) {
+            $.notify({
+              message: data.msg
+            }, {
+              placement: {
+                from: "top",
+                align: "center"
+              },
+              type: 'success'
+            });
+            $('#tb_departments').bootstrapTable('refresh');
+          } else {
+            $.notify({
+              message: data.msg
+            }, {
+              placement: {
+                from: "top",
+                align: "center"
+              },
+              // settings
+              type: 'danger'
+            });
+          }
+        },
+      });
+    }
   }
 
   $("#btn_delete").click(function () {

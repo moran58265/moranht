@@ -221,7 +221,6 @@
                   </tr>
                 </thead>
                 <tbody id="adminlog">
-                  {if $_COOKIE["auth"]==1}
                   {volist name="adminlog" id="adminlog"}
                   <tr>
                     <td>{$adminlog.id}</td>
@@ -231,11 +230,6 @@
                     <td>{$adminlog.creattime}</td>
                   </tr>
                   {/volist}
-                  {else /}
-                  <tr>
-                    <td style="font-size: 22px;text-align: center;" colspan="5">仅限授权用户使用</td>
-                  </tr>
-                  {/if}
                 </tbody>
               </table>
             </div>
@@ -257,7 +251,7 @@
                   <td>项目名称：默然iApp后台管理系统</td>
                 </tr>
                 <tr>
-                  <td>项目版本：<bb id="nowbb">2.8.0</bb>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="nowupdate()"
+                  <td>项目版本：<bb id="nowbb">2.8.1</bb>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="nowupdate()"
                       href="javascript:void(0)">检测更新</a></td>
                 </tr>
                 <tr>

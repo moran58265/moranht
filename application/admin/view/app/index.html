@@ -8,7 +8,8 @@
         <div class="card">
           <div class="card-body">
             <div id="toolbar" class="toolbar-btn-action">
-              <button type="button" data-toggle="modal" data-target="#exampleModal" class="btn btn-label btn-primary m-r-5">
+              <button type="button" data-toggle="modal" data-target="#exampleModal"
+                class="btn btn-label btn-primary m-r-5">
                 <label><i class="mdi mdi-plus" aria-hidden="true"></i></label>新增
               </button>
               <button id="btn_edit" type="button" class="btn btn-label btn-success m-r-5">
@@ -32,7 +33,8 @@
           </div>
         </div>
       </div>
-      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -42,7 +44,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <div class="form-group" >
+              <div class="form-group">
                 <label for="appname">应用名称</label>
                 <input type="text" class="form-control" id="appname" placeholder="请输入应用名称">
               </div>
@@ -66,7 +68,7 @@
     classes: 'table table-bordered table-hover table-striped',
     url: "{:url('app/getapplist')}",
     method: 'get',
-    dataType : 'json',
+    dataType: 'json',
     uniqueId: 'appid',
     idField: 'appid',             // 每行的唯一标识字段
     toolbar: '#toolbar',       // 工具按钮容器
@@ -78,7 +80,7 @@
 
     pagination: true,                    // 是否显示分页
     sortOrder: "asc",                    // 排序方式
-    queryParams: function(params) {
+    queryParams: function (params) {
       var temp = {
         limit: params.limit,         // 每页数据量
         offset: params.offset,       // sql语句起始索引
@@ -111,11 +113,11 @@
     }, {
       field: 'view',
       title: '访问量'
-    },{
+    }, {
       field: 'appicon',
       title: 'app图标',
-      formatter:function(value, row, index){
-        value="<img src='"+row.appicon+"' style='width:50px;height:50px;border-radius: 15px;'/>";
+      formatter: function (value, row, index) {
+        value = "<img src='" + row.appicon + "' style='width:50px;height:50px;border-radius: 15px;'/>";
         return value;
       }
     }, {
@@ -125,11 +127,11 @@
       field: 'creattime',
       title: '创建时间',
       sortable: true
-    },  {
+    }, {
       field: 'status',
       title: '状态',
-      formatter:function(value, row, index){
-        var value="";
+      formatter: function (value, row, index) {
+        var value = "";
         if (row.app_site_status == 'false') {
           value = '<span class="badge badge-danger">禁用</span>';
         } else {
@@ -143,35 +145,34 @@
       formatter: btnGroup,  // 自定义方法
       events: {
         'click .edit-btn': function (event, value, row, index) {
-          window.location.href = "{:url('app/queryapp')}?appid="+row.appid;
+          window.location.href = "{:url('app/queryapp')}?appid=" + row.appid;
         },
         'click .del-btn': function (event, value, row, index) {
           deleteapp(row.appid);
         }
       }
     }],
-    onLoadSuccess: function(data){
+    onLoadSuccess: function (data) {
       $("[data-toggle='tooltip']").tooltip();
     }
   });
 
   // 操作按钮
-  function btnGroup ()
-  {
+  function btnGroup() {
     let html =
-            '<a href="#!" class="btn btn-xs btn-default m-r-5 edit-btn" title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>' +
-            '<a href="#!" class="btn btn-xs btn-default del-btn" title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>';
+      '<a href="#!" class="btn btn-xs btn-default m-r-5 edit-btn" title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>' +
+      '<a href="#!" class="btn btn-xs btn-default del-btn" title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>';
     return html;
   }
 
   //搜索
-  $('#search_btn').click(function (){
+  $('#search_btn').click(function () {
     //ajax查询
     $.ajax({
       type: "POST",
       url: "{:url('app/getapplist')}",
       data: {
-        appname : $.trim($('#searchappname').val()),
+        appname: $.trim($('#searchappname').val()),
       },
       dataType: "json",
       success: function (data) {
@@ -181,10 +182,10 @@
   });
 
   //修改正常状态
-  $("#btn_edit").click(function(){
+  $("#btn_edit").click(function () {
     var getnum = getnumber();
     //console.log(getnum);
-    if (getnum == false){
+    if (getnum == false) {
       return false;
     }
     //ajax修改状态
@@ -195,13 +196,13 @@
         appid: getnum
       },
       dataType: "json",
-      success: function(data){
+      success: function (data) {
         if (data.code == 200) {
           $('#tb_departments').bootstrapTable('refresh');
         } else {
           $.notify({
             message: data.msg
-          },{
+          }, {
             placement: {
               from: "top",
               align: "center"
@@ -215,10 +216,10 @@
 
 
   //修改禁用状态
-  $("#btn_down").click(function(){
+  $("#btn_down").click(function () {
     var getnum = getnumber();
     //console.log(getnum);
-    if (getnum == false){
+    if (getnum == false) {
       return false;
     }
     //ajax修改状态
@@ -229,13 +230,13 @@
         appid: getnum
       },
       dataType: "json",
-      success: function(data){
+      success: function (data) {
         if (data.code == 200) {
           $('#tb_departments').bootstrapTable('refresh');
         } else {
           $.notify({
             message: data.msg
-          },{
+          }, {
             placement: {
               from: "top",
               align: "center"
@@ -249,10 +250,10 @@
   //获取选中的id
   function getnumber() {
     var selRows = $('#tb_departments').bootstrapTable("getSelections");
-    if(selRows.length == 0){
+    if (selRows.length == 0) {
       $.notify({
         message: "请至少选择一行"
-      },{
+      }, {
         placement: {
           from: "top",
           align: "center"
@@ -263,8 +264,8 @@
       return false;
     }
     var postData = "";
-    $.each(selRows,function(i) {
-      postData +=  this.appid;
+    $.each(selRows, function (i) {
+      postData += this.appid;
       if (i < selRows.length - 1) {
         postData += ",";
       }
@@ -273,7 +274,7 @@
   }
 
   //添加应用
-function addapp() {
+  function addapp() {
     $("#addbtn").attr('disable', 'true');
     var l = $("#addbtn").lyearloading({
       opacity: 0.2,
@@ -290,11 +291,12 @@ function addapp() {
       success: function (data) {
         $("#shutdown").click();
         setTimeout(function () {
-          l.destroy();}, 1e3)
-        if (data.code == 200){
+          l.destroy();
+        }, 1e3)
+        if (data.code == 200) {
           $.notify({
             message: data.msg
-          },{
+          }, {
             placement: {
               from: "top",
               align: "center"
@@ -302,10 +304,10 @@ function addapp() {
             type: 'success'
           });
           $('#tb_departments').bootstrapTable('refresh');
-        }else{
+        } else {
           $.notify({
             message: data.msg
-          },{
+          }, {
             placement: {
               from: "top",
               align: "center"
@@ -319,57 +321,59 @@ function addapp() {
   };
 
   //删除应用
-  function deleteapp(appid){
-    var l = $('body').lyearloading({
-      opacity: 0.2,
-      spinnerSize: 'lg',
-      spinnerText: '后台处理中，请稍后...',
-      textColorClass: 'text-info',
-      spinnerColorClass: 'text-info'
-    });
-    $.ajax({
-      type: "POST",
-      url: "{:url('app/deleteapp')}",
-      data: {
-        appid: appid,
-      },
-      dataType: "json",
-      success: function (data) {
-        setTimeout(function() {
-          l.destroy();
-        }, 1e3)
-        if (data.code == 200) {
-          $.notify({
-            message: data.msg
-          },{
-            placement: {
-              from: "top",
-              align: "center"
-            },
-            type: 'success'
-          });
-          setTimeout("location.reload();", 2000);
-        } else {
-          $.notify({
-            message: data.msg
-          },{
-            placement: {
-              from: "top",
-              align: "center"
-            },
-            // settings
-            type: 'danger'
-          });
-        }
-      },
-    });
+  function deleteapp(appid) {
+    var r = confirm("确定要删除吗？");
+    if (r == true) {
+      var l = $('body').lyearloading({
+        opacity: 0.2,
+        spinnerSize: 'lg',
+        spinnerText: '后台处理中，请稍后...',
+        textColorClass: 'text-info',
+        spinnerColorClass: 'text-info'
+      });
+      $.ajax({
+        type: "POST",
+        url: "{:url('app/deleteapp')}",
+        data: {
+          appid: appid,
+        },
+        dataType: "json",
+        success: function (data) {
+          setTimeout(function () {
+            l.destroy();
+          }, 1e3)
+          if (data.code == 200) {
+            $.notify({
+              message: data.msg
+            }, {
+              placement: {
+                from: "top",
+                align: "center"
+              },
+              type: 'success'
+            });
+            setTimeout("location.reload();", 2000);
+          } else {
+            $.notify({
+              message: data.msg
+            }, {
+              placement: {
+                from: "top",
+                align: "center"
+              },
+              // settings
+              type: 'danger'
+            });
+          }
+        },
+      });
+    }
   }
-
 
   $("#btn_delete").click(function () {
     var getnum = getnumber();
     //console.log(getnum);
-    if (getnum == false){
+    if (getnum == false) {
       return false;
     }
     var l = $('body').lyearloading({
@@ -387,13 +391,13 @@ function addapp() {
       },
       dataType: "json",
       success: function (data) {
-        setTimeout(function() {
+        setTimeout(function () {
           l.destroy();
         }, 1e3)
         if (data.code == 200) {
           $.notify({
             message: data.msg
-          },{
+          }, {
             placement: {
               from: "top",
               align: "center"
@@ -404,7 +408,7 @@ function addapp() {
         } else {
           $.notify({
             message: data.msg
-          },{
+          }, {
             placement: {
               from: "top",
               align: "center"

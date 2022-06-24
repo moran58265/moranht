@@ -136,49 +136,52 @@
 
     //删除应用
     function deletefile(id) {
-        var l = $('body').lyearloading({
-            opacity: 0.2,
-            spinnerSize: 'lg',
-            spinnerText: '后台处理中，请稍后...',
-            textColorClass: 'text-info',
-            spinnerColorClass: 'text-info'
-        });
-        $.ajax({
-            type: "POST",
-            url: "{:url('file/deletefile')}",
-            data: {
-                id: id,
-            },
-            dataType: "json",
-            success: function (data) {
-                setTimeout(function () {
-                    l.destroy();
-                }, 1e3)
-                if (data.code == 200) {
-                    $.notify({
-                        message: data.msg
-                    }, {
-                        placement: {
-                            from: "top",
-                            align: "center"
-                        },
-                        type: 'success'
-                    });
-                    setTimeout("location.reload();", 2000);
-                } else {
-                    $.notify({
-                        message: data.msg
-                    }, {
-                        placement: {
-                            from: "top",
-                            align: "center"
-                        },
-                        // settings
-                        type: 'danger'
-                    });
-                }
-            },
-        });
+        var r = confirm("确定要删除吗？");
+        if (r == true) {
+            var l = $('body').lyearloading({
+                opacity: 0.2,
+                spinnerSize: 'lg',
+                spinnerText: '后台处理中，请稍后...',
+                textColorClass: 'text-info',
+                spinnerColorClass: 'text-info'
+            });
+            $.ajax({
+                type: "POST",
+                url: "{:url('file/deletefile')}",
+                data: {
+                    id: id,
+                },
+                dataType: "json",
+                success: function (data) {
+                    setTimeout(function () {
+                        l.destroy();
+                    }, 1e3)
+                    if (data.code == 200) {
+                        $.notify({
+                            message: data.msg
+                        }, {
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            type: 'success'
+                        });
+                        setTimeout("location.reload();", 2000);
+                    } else {
+                        $.notify({
+                            message: data.msg
+                        }, {
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            // settings
+                            type: 'danger'
+                        });
+                    }
+                },
+            });
+        }
     }
 
 

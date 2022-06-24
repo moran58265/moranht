@@ -29,7 +29,9 @@ class Login extends Controller
         }
         $checkbox = input('post.checkbox');
         if ($checkbox == 1) {
-            ini_set('session.gc_maxlifetime', 5 * 24 * 60 * 60);
+            // session([
+            //     'expire' => '3600 * 24 * 5',
+            // ]);
         }
         session('admin_id', $user->id);
         session('admininfo', $user->toArray());
@@ -37,18 +39,19 @@ class Login extends Controller
         session('adminToken', md5($user['password'] . $salt));
         $user->salt = $salt;
         $user->save();
-        try {
-            $url = $this->request->host();
-            $response = file_get_contents("http://ht.moranblog.cn/authweb.php?domain=" . $url);
-            $data = json_decode($response, true);
-            if (strtotime($data['data']['duetime']) < time()) {
-                Cookie::set('auth', 2, 3600);
-            } else {
-                Cookie::set('auth', 1, 3600);
-            }
-        } catch (\Exception $e) {
-            Cookie::set('auth', 2, 3600);
-        }
+        //授权
+        // try {
+        //     $url = $this->request->host();
+        //     $response = file_get_contents("http://ht.moranblog.cn/authweb.php?domain=" . $url);
+        //     $data = json_decode($response, true);
+        //     if (strtotime($data['data']['duetime']) < time()) {
+        //         Session('auth',2);
+        //     } else {
+        //         session('auth',1);
+        //     }
+        // } catch (\Exception $e) {
+        //     session('auth',2);
+        // }
         Common::adminLog('登录成功');
         return Common::ReturnSuccess('登录成功');
     }

@@ -118,17 +118,6 @@ class Admin extends BaseController
     //管理员日志
     public function adminlog()
     {
-        $url = Request::host();
-        ini_set("user_agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0)");
-        $response = file_get_contents("http://ht.moranblog.cn/authweb.php?domain=" . $url);
-        $data = json_decode($response, true);
-        if($data['code'] == 1){
-            if (strtotime($data['data']['duetime']) < time()) {
-                return $this->error('授权已过期，请联系QQ2659917175');
-            }
-        }else{
-            return $this->error('暂未授权，请联系QQ2659917175');
-        }
         return $this->fetch('admin/adminlog');
     }
 

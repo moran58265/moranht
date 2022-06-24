@@ -8,7 +8,8 @@
                 <div class="card">
                     <div class="card-body">
                         <div id="toolbar" class="toolbar-btn-action">
-                            <button type="button" data-toggle="modal" data-target="#exampleModal" class="btn btn-primary m-r-5">
+                            <button type="button" data-toggle="modal" data-target="#exampleModal"
+                                class="btn btn-primary m-r-5">
                                 <span class="mdi mdi-plus" aria-hidden="true"></span>新增
                             </button>
                             <button id="btn_delete" type="button" class="btn btn-danger">
@@ -16,7 +17,8 @@
                             </button>
                         </div>
                         <div class="input-group mb-3">
-                            <input type="text" name="search_platename" id="search_platename" class="form-control" placeholder="板块名称">
+                            <input type="text" name="search_platename" id="search_platename" class="form-control"
+                                placeholder="板块名称">
                             <div class="input-group-append">
                                 <input type="button" id="search_btn" class="input-group-text" value="查询">
                             </div>
@@ -26,7 +28,8 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -36,27 +39,29 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group" >
+                            <div class="form-group">
                                 <label for="platename">板块名称</label>
                                 <input type="text" class="form-control" id="platename" placeholder="请输入板块名称">
                             </div>
                             <div class="form-group file-group">
                                 <label for="plateicon">icon图标</label>
                                 <div class="input-group">
-                                    <input type="text" id="plateicon" class="form-control file-value" name="web_site_logo" value="" placeholder="icon图标">
+                                    <input type="text" id="plateicon" class="form-control file-value"
+                                        name="web_site_logo" value="" placeholder="icon图标">
                                     <input type="file" accaccept=".png,.jpg,.jpeg,.bmp,.gif" style="display: none">
                                     <div class="input-group-btn">
                                         <button class="btn btn-default file-browser" type="button">上传图片</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group" >
+                            <div class="form-group">
                                 <label for="appid">appid</label>
                                 <input type="text" class="form-control" id="appid" placeholder="请输入应用id">
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" id="shutdown" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-secondary" id="shutdown"
+                                data-dismiss="modal">关闭</button>
                             <button type="button" id="addbtn" onclick="addplate()" class="btn btn-primary">保存</button>
                         </div>
                     </div>
@@ -74,7 +79,7 @@
         classes: 'table table-bordered table-hover table-striped',
         url: "{:url('bbs/getplatelist')}",
         method: 'get',
-        dataType : 'json',
+        dataType: 'json',
         uniqueId: 'id',
         idField: 'id',             // 每行的唯一标识字段
         toolbar: '#toolbar',       // 工具按钮容器
@@ -86,7 +91,7 @@
 
         pagination: true,                    // 是否显示分页
         sortOrder: "desc",                    // 排序方式
-        queryParams: function(params) {
+        queryParams: function (params) {
             var temp = {
                 limit: params.limit,         // 每页数据量
                 offset: params.offset,       // sql语句起始索引
@@ -119,11 +124,11 @@
         }, {
             field: 'plateicon',
             title: '板块icon',
-            formatter:function(value, row, index){
-                value="<img src='"+row.plateicon+"' style='width:50px;height:50px;border-radius: 15px;'/>";
+            formatter: function (value, row, index) {
+                value = "<img src='" + row.plateicon + "' style='width:50px;height:50px;border-radius: 15px;'/>";
                 return value;
             }
-        },{
+        }, {
             field: 'appname',
             title: '应用名称',
         }, {
@@ -135,21 +140,20 @@
             formatter: btnGroup,  // 自定义方法
             events: {
                 'click .edit-btn': function (event, value, row, index) {
-                  window.location.href = "{:url('bbs/queryplate')}?id="+row.id;
+                    window.location.href = "{:url('bbs/queryplate')}?id=" + row.id;
                 },
                 'click .del-btn': function (event, value, row, index) {
                     deleteplate(row.id);
                 }
             }
         }],
-        onLoadSuccess: function(data){
+        onLoadSuccess: function (data) {
             $("[data-toggle='tooltip']").tooltip();
         }
     });
 
     // 操作按钮
-    function btnGroup ()
-    {
+    function btnGroup() {
         let html =
             '<a href="#!" class="btn btn-xs btn-default m-r-5 edit-btn" title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>' +
             '<a href="#!" class="btn btn-xs btn-default del-btn" title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>';
@@ -157,7 +161,7 @@
     }
 
     //搜索
-    $('#search_btn').click(function (){
+    $('#search_btn').click(function () {
         //ajax查询
         $.ajax({
             type: "POST",
@@ -175,10 +179,10 @@
     //获取选中的id
     function getnumber() {
         var selRows = $('#tb_departments').bootstrapTable("getSelections");
-        if(selRows.length == 0){
+        if (selRows.length == 0) {
             $.notify({
                 message: "请至少选择一行"
-            },{
+            }, {
                 placement: {
                     from: "top",
                     align: "center"
@@ -189,8 +193,8 @@
             return false;
         }
         var postData = "";
-        $.each(selRows,function(i) {
-            postData +=  this.id;
+        $.each(selRows, function (i) {
+            postData += this.id;
             if (i < selRows.length - 1) {
                 postData += ",";
             }
@@ -220,11 +224,12 @@
             success: function (data) {
                 $("#shutdown").click();
                 setTimeout(function () {
-                    l.destroy();}, 1e3)
-                if (data.code == 200){
+                    l.destroy();
+                }, 1e3)
+                if (data.code == 200) {
                     $.notify({
                         message: data.msg
-                    },{
+                    }, {
                         placement: {
                             from: "top",
                             align: "center"
@@ -232,10 +237,10 @@
                         type: 'success'
                     });
                     $('#tb_departments').bootstrapTable('refresh');
-                }else{
+                } else {
                     $.notify({
                         message: data.msg
-                    },{
+                    }, {
                         placement: {
                             from: "top",
                             align: "center"
@@ -249,57 +254,59 @@
     };
 
     //删除应用
-    function deleteplate(id){
-        var l = $('body').lyearloading({
-            opacity: 0.2,
-            spinnerSize: 'lg',
-            spinnerText: '后台处理中，请稍后...',
-            textColorClass: 'text-info',
-            spinnerColorClass: 'text-info'
-        });
-        $.ajax({
-            type: "POST",
-            url: "{:url('bbs/deleteplate')}",
-            data: {
-                id: id,
-            },
-            dataType: "json",
-            success: function (data) {
-                setTimeout(function() {
-                    l.destroy();
-                }, 1e3)
-                if (data.code == 200) {
-                    $.notify({
-                        message: data.msg
-                    },{
-                        placement: {
-                            from: "top",
-                            align: "center"
-                        },
-                        type: 'success'
-                    });
-                    setTimeout("location.reload();", 2000);
-                } else {
-                    $.notify({
-                        message: data.msg
-                    },{
-                        placement: {
-                            from: "top",
-                            align: "center"
-                        },
-                        // settings
-                        type: 'danger'
-                    });
-                }
-            },
-        });
+    function deleteplate(id) {
+        var r = confirm("确定要删除吗？");
+        if (r == true) {
+            var l = $('body').lyearloading({
+                opacity: 0.2,
+                spinnerSize: 'lg',
+                spinnerText: '后台处理中，请稍后...',
+                textColorClass: 'text-info',
+                spinnerColorClass: 'text-info'
+            });
+            $.ajax({
+                type: "POST",
+                url: "{:url('bbs/deleteplate')}",
+                data: {
+                    id: id,
+                },
+                dataType: "json",
+                success: function (data) {
+                    setTimeout(function () {
+                        l.destroy();
+                    }, 1e3)
+                    if (data.code == 200) {
+                        $.notify({
+                            message: data.msg
+                        }, {
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            type: 'success'
+                        });
+                        setTimeout("location.reload();", 2000);
+                    } else {
+                        $.notify({
+                            message: data.msg
+                        }, {
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            // settings
+                            type: 'danger'
+                        });
+                    }
+                },
+            });
+        }
     }
-
 
     $("#btn_delete").click(function () {
         var getnum = getnumber();
         //console.log(getnum);
-        if (getnum == false){
+        if (getnum == false) {
             return false;
         }
         var l = $('body').lyearloading({
@@ -317,13 +324,13 @@
             },
             dataType: "json",
             success: function (data) {
-                setTimeout(function() {
+                setTimeout(function () {
                     l.destroy();
                 }, 1e3)
                 if (data.code == 200) {
                     $.notify({
                         message: data.msg
-                    },{
+                    }, {
                         placement: {
                             from: "top",
                             align: "center"
@@ -334,7 +341,7 @@
                 } else {
                     $.notify({
                         message: data.msg
-                    },{
+                    }, {
                         placement: {
                             from: "top",
                             align: "center"
@@ -346,17 +353,17 @@
         });
     });
 
-    $(document).ready(function() {
-        $(document).on('click', '.file-browser', function() {
+    $(document).ready(function () {
+        $(document).on('click', '.file-browser', function () {
             var $browser = $(this);
             var file = $browser.closest('.file-group').find('[type="file"]');
-            file.on( 'click', function(e) {
+            file.on('click', function (e) {
                 e.stopPropagation();
             });
             file.trigger('click');
         });
 
-        $(document).on('change', '.file-group [type="file"]', function() {
+        $(document).on('change', '.file-group [type="file"]', function () {
             var l = $('body').lyearloading({
                 opacity: 0.2,
                 spinnerSize: 'lg',
@@ -364,22 +371,22 @@
                 textColorClass: 'text-info',
                 spinnerColorClass: 'text-info'
             });
-            var $this    = $(this);
-            var $input   = $(this)[0];
-            var $len     = $input.files.length;
+            var $this = $(this);
+            var $input = $(this)[0];
+            var $len = $input.files.length;
             var formFile = new FormData();
 
             if ($len == 0) {
                 return false;
             } else {
                 var fileAccaccept = $this.attr('accaccept');
-                var fileType      = $input.files[0].type;
-                var type          = (fileType.substr(fileType.lastIndexOf("/") + 1)).toLowerCase();
+                var fileType = $input.files[0].type;
+                var type = (fileType.substr(fileType.lastIndexOf("/") + 1)).toLowerCase();
 
                 if (!type || fileAccaccept.indexOf(type) == -1) {
                     $.notify({
                         message: '您上传图片的类型不符合(.jpg|.jpeg|.gif|.png|.bmp)',
-                    },{
+                    }, {
                         placement: {
                             from: "top",
                             align: "center"
@@ -406,13 +413,13 @@
                 //必须
                 contentType: false,
                 success: function (res) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         l.destroy();
                     }, 1e3)
                     if (res.code == 200) {
                         $.notify({
                             message: res.msg
-                        },{
+                        }, {
                             placement: {
                                 from: "top",
                                 align: "center"
@@ -424,7 +431,7 @@
                     } else {
                         $.notify({
                             message: "系统错误"
-                        },{
+                        }, {
                             placement: {
                                 from: "top",
                                 align: "center"

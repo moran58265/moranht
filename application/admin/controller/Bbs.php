@@ -78,6 +78,7 @@ class Bbs extends BaseController
     {
         $appid = input('id');
         $app = Plate::destroy($appid);
+        $platepost = PlatePost::destroy(['plateid' => $appid]);
         Common::adminLog('删除版块:' . $appid);
         return Common::ReturnSuccess("删除成功");
     }
@@ -177,6 +178,7 @@ class Bbs extends BaseController
             return Common::ReturnError($e->getMessage());
         }
     }
+
     public function updatepost(Request $request)
     {
         $data = $request->post();
@@ -204,4 +206,36 @@ class Bbs extends BaseController
             return Common::ReturnError("修改失败");
         }
     }
+
+    public function auditpost()
+    {
+       return $this->fetch('bbs/auditpost');
+    }
+
+    //审核帖子
+    public function auditcheckpost()
+    {
+        $id = input('id');
+        $audit_result = input('audit_result');
+        $post = Db::name('post')->where('id', $id)->update(['is_audit' => $audit_result]);
+        if ($post > 0) {
+            Common::adminLog('审核帖子:' . $id);
+            return Common::ReturnSuccess("审核成功");
+        } else {
+            return Common::ReturnError("审核失败");
+        }
+    }
+
+    //通过全部帖子
+    public function auditallpost()
+    {
+        $post = Db::name('post')->where('is_audit', 1)->update(['is_audit' => 0]);
+        if ($post > 0) {
+            Common::adminLog('审核帖子全部');
+            return Common::ReturnSuccess("审核成功");
+        } else {
+            return Common::ReturnError("审核失败");
+        }
+    }
+
 }

@@ -1,2 +1,515 @@
-<?php ?><?php /* 2659917175 */ ?><?php
-if(!function_exists('sg_load')){$__v=phpversion();$__x=explode('.',$__v);$__v2=$__x[0].'.'.(int)$__x[1];$__u=strtolower(substr(php_uname(),0,3));$__ts=(@constant('PHP_ZTS') || @constant('ZEND_THREAD_SAFE')?'ts':'');$__f=$__f0='ixed.'.$__v2.$__ts.'.'.$__u;$__ff=$__ff0='ixed.'.$__v2.'.'.(int)$__x[2].$__ts.'.'.$__u;$__ed=@ini_get('extension_dir');$__e=$__e0=@realpath($__ed);$__dl=function_exists('dl') && function_exists('file_exists') && @ini_get('enable_dl') && !@ini_get('safe_mode');if($__dl && $__e && version_compare($__v,'5.2.5','<') && function_exists('getcwd') && function_exists('dirname')){$__d=$__d0=getcwd();if(@$__d[1]==':') {$__d=str_replace('\\','/',substr($__d,2));$__e=str_replace('\\','/',substr($__e,2));}$__e.=($__h=str_repeat('/..',substr_count($__e,'/')));$__f='/ixed/'.$__f0;$__ff='/ixed/'.$__ff0;while(!file_exists($__e.$__d.$__ff) && !file_exists($__e.$__d.$__f) && strlen($__d)>1){$__d=dirname($__d);}if(file_exists($__e.$__d.$__ff)) dl($__h.$__d.$__ff); else if(file_exists($__e.$__d.$__f)) dl($__h.$__d.$__f);}if(!function_exists('sg_load') && $__dl && $__e0){if(file_exists($__e0.'/'.$__ff0)) dl($__ff0); else if(file_exists($__e0.'/'.$__f0)) dl($__f0);}if(!function_exists('sg_load')){$__ixedurl='http://www.sourceguardian.com/loaders/download.php?php_v='.urlencode($__v).'&php_ts='.($__ts?'1':'0').'&php_is='.@constant('PHP_INT_SIZE').'&os_s='.urlencode(php_uname('s')).'&os_r='.urlencode(php_uname('r')).'&os_m='.urlencode(php_uname('m'));$__sapi=php_sapi_name();if(!$__e0) $__e0=$__ed;if(function_exists('php_ini_loaded_file')) $__ini=php_ini_loaded_file(); else $__ini='php.ini';if((substr($__sapi,0,3)=='cgi')||($__sapi=='cli')||($__sapi=='embed')){$__msg="\nPHP script '".__FILE__."' is protected by SourceGuardian and requires a SourceGuardian loader '".$__f0."' to be installed.\n\n1) Download the required loader '".$__f0."' from the SourceGuardian site: ".$__ixedurl."\n2) Install the loader to ";if(isset($__d0)){$__msg.=$__d0.DIRECTORY_SEPARATOR.'ixed';}else{$__msg.=$__e0;if(!$__dl){$__msg.="\n3) Edit ".$__ini." and add 'extension=".$__f0."' directive";}}$__msg.="\n\n";}else{$__msg="<html><body>PHP script '".__FILE__."' is protected by <a href=\"http://www.sourceguardian.com/\">SourceGuardian</a> and requires a SourceGuardian loader '".$__f0."' to be installed.<br><br>1) <a href=\"".$__ixedurl."\" target=\"_blank\">Click here</a> to download the required '".$__f0."' loader from the SourceGuardian site<br>2) Install the loader to ";if(isset($__d0)){$__msg.=$__d0.DIRECTORY_SEPARATOR.'ixed';}else{$__msg.=$__e0;if(!$__dl){$__msg.="<br>3) Edit ".$__ini." and add 'extension=".$__f0."' directive<br>4) Restart the web server";}}$__msg.="</body></html>";}die($__msg);exit();}}return sg_load('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');
+<?php
+
+namespace app\apipro\controller;
+
+use app\admin\model\App;
+use app\admin\model\Email;
+use app\admin\model\Message;
+use app\admin\model\User;
+use think\Controller;
+use PHPMailer\PHPMailer\PHPMailer;
+use think\facade\Cookie;
+
+class Common extends Controller
+{
+    public function __construct()
+    {
+        $timemap = time();
+        parent::__construct();
+        // $this->AuthWeb();   //验证此域名是否授权
+        $this->limit = $this->request->param('limit', 10, 'intval');  //每页显示条数
+        $this->page = $this->request->param('page', 1, 'intval');   //当前页数
+        $this->appid = $this->request->param('appid', '', 'intval');   //appid
+        $this->expire = $this->request->param('expire', '180', 'intval');   //请求有效期
+        if ($this->appid == '') {
+            echo self::returnJson(400, 'appid不能为空');
+            exit;
+        }
+        $this->app = App::get($this->appid);
+        if (!$this->app) {
+            echo self::returnJson(400, 'appid不存在');
+            exit;
+        }
+        //验证时间戳是否过期
+        if (time() - $timemap > $this->expire) {
+            echo json_encode(['code' => 400, 'msg' => '请求已过期', 'data' => [], 'time' => time()]);
+            exit;
+        }
+        //在线人数统计
+        $this->NowOnline();
+    }
+
+    /**
+     * 网站授权
+     */
+    public function AuthWeb()
+    {
+        ini_set("user_agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0)");
+        $file = "auth.txt";
+        $authfile = './static/js/fullcalendar/bootstrap/auth.txt';
+        if (!file_exists($file)) {
+            if (file_exists($authfile)) {
+                unlink($authfile);
+            }
+        }
+        if (file_exists($authfile)) {
+            $a = filectime($authfile);
+            $creattimefile = date("Y-m-d H:i:s", $a);
+            if (time() - strtotime($creattimefile) > 3600) {
+                //超过12小时则删除授权文件
+                unlink($authfile);
+                unlink($file);
+            }
+            //获取授权文件内容
+            $auth = file_get_contents($file);
+            $json = json_decode($auth, true);
+            if ($json['domain'] != $this->request->host()) {
+                echo json_encode(array('code' => 400, 'msg' => '授权域名不正确,请联系管理员qq：2659917175'));
+                exit;
+            }
+            if (strtotime($json['duetime']) < time()) {
+                echo json_encode(array('code' => 400, 'msg' => '授权已过期,请联系管理员qq：2659917175'));
+                exit;
+            }
+            $auth = file_get_contents($authfile);
+            $dejson = self::decrypt($auth);
+            $json = json_decode($dejson, true);
+            if ($json['domain'] != $this->request->host()) {
+                echo json_encode(array('code' => 400, 'msg' => '授权域名不正确,请联系管理员qq：2659917175'));
+                exit;
+            }
+            if (self::decrypt($json['duetime']) < time()) {
+                echo json_encode(array('code' => 400, 'msg' => '授权已过期,请联系管理员qq：2659917175'));
+                exit;
+            }
+        } else {
+            //获取域名
+            $domain = $this->request->host();
+            //远程访问接口判断是否授权
+            $stream_opts = [
+                "ssl" => [
+                    "verify_peer" => false,
+                    "verify_peer_name" => false,
+                ]
+            ];
+            $response = file_get_contents("http://ht.moranblog.cn/authweb.php?domain=" . $domain, false, stream_context_create($stream_opts));
+            $data = json_decode($response, true);
+            if ($data['code'] == 1) {
+                //生成数组并写入文件
+                $myfile = fopen("auth.txt", "w");
+                $authtwo = fopen("./static/js/fullcalendar/bootstrap/auth.txt", "w");
+                $arr = [
+                    'domain' => $domain,
+                    'duetime' => $this->encrypt(strtotime($data['data']['duetime'])),
+                    'createtime' => time(),
+                ];
+                $arra = [
+                    'domain' => $domain,
+                    'duetime' => $data['data']['duetime'],
+                    'createtime' => $data['data']['creattime'],
+                ];
+                $myfile = fopen("auth.txt", "w");
+                fwrite($myfile, json_encode($arra));
+                fwrite($authtwo, Common::encrypt(json_encode($arr)));
+                fclose($myfile);
+            } else {
+                echo json_encode(array('code' => 400, 'msg' => '暂无授权，请联系管理员qq：2659917175'));
+                exit;
+            }
+        }
+    }
+
+    /**
+     * 定义返回格式
+     */
+    public static function returnJson($code, $msg, $data = [])
+    {
+        $arr = [
+            'code' => $code,
+            'msg' => $msg,
+            'data' => $data,
+            'time' => time(),
+        ];
+        echo json_encode($arr);
+        exit;
+    }
+
+    /**
+     * 加密
+     */
+    public static function encrypt($string)
+    {
+        $operation = 'EDECODE';
+        $expiry = 12 * 3600;
+        //密文有效期。 如果为0，密文将不会被自动删除
+        $key = md5('moranblog.cn');
+        // 动态密匙长度，相同的明文会生成不同密文就是依靠动态密匙     
+        $ckey_length = 16;
+        // 密匙     
+        $key = md5($key ? $key : $GLOBALS['discuz_auth_key']);
+        // 密匙a会参与加解密     
+        $keya = md5(substr($key, 0, 16));
+        // 密匙b会用来做数据完整性验证     
+        $keyb = md5(substr($key, 16, 16));
+        // 密匙c用于变化生成的密文     
+        $keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
+        // 参与运算的密匙     
+        $cryptkey = $keya . md5($keya . $keyc);
+        $key_length = strlen($cryptkey);
+        // 明文，前10位用来保存时间戳，解密时验证数据有效性，10到26位用来保存$keyb(密匙b)，   
+        //解密时会通过这个密匙验证数据完整性     
+        // 如果是解码的话，会从第$ckey_length位开始，因为密文前$ckey_length位保存 动态密匙，以保证解密正确     
+        $string = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) :  sprintf('%010d', $expiry ? $expiry + time() : 0) . substr(md5($string . $keyb), 0, 16) . $string;
+        $string_length = strlen($string);
+        $result = '';
+        $box = range(0, 255);
+        $rndkey = array();
+        // 产生密匙簿
+        for ($i = 0; $i <= 255; $i++) {
+            $rndkey[$i] = ord($cryptkey[$i % $key_length]);
+        }
+        // 用固定的算法，打乱密匙簿，增加随机性，好像很复杂，实际上对并不会增加密文的强度     
+        for ($j = $i = 0; $i < 256; $i++) {
+            $j = ($j + $box[$i] + $rndkey[$i]) % 256;
+            $tmp = $box[$i];
+            $box[$i] = $box[$j];
+            $box[$j] = $tmp;
+        }
+        // 核心加解密部分     
+        for ($a = $j = $i = 0; $i < $string_length; $i++) {
+            $a = ($a + 1) % 256;
+            $j = ($j + $box[$a]) % 256;
+            $tmp = $box[$a];
+            $box[$a] = $box[$j];
+            $box[$j] = $tmp;
+            // 从密匙簿得出密匙进行异或，再转成字符     
+            $result .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
+        }
+        if ($operation == 'DECODE') {
+            // 验证数据有效性，请看未加密明文的格式     
+            if ((substr($result, 0, 10) == 0 || substr($result, 0, 10) - time() > 0) &&  substr($result, 10, 16) == substr(md5(substr($result, 26) . $keyb), 0, 16)) {
+                return substr($result, 26);
+            } else {
+                return '';
+            }
+        } else {
+            // 把动态密匙保存在密文里，这也是为什么同样的明文，生产不同密文后能解密的原因     
+            // 因为加密后的密文可能是一些特殊字符，复制过程可能会丢失，所以用base64编码     
+            return $keyc . str_replace('=', '', base64_encode($result));
+        }
+    }
+
+    /**
+     * 解密
+     */
+    public static function decrypt($string)
+    {
+        $operation = 'DECODE';
+        $expiry = 12 * 3600;
+        //密文有效期。 如果为0，密文将不会被自动删除
+        $key = md5('moranblog.cn');
+        // 动态密匙长度，相同的明文会生成不同密文就是依靠动态密匙     
+        $ckey_length = 16;
+        // 密匙     
+        $key = md5($key ? $key : $GLOBALS['discuz_auth_key']);
+        // 密匙a会参与加解密     
+        $keya = md5(substr($key, 0, 16));
+        // 密匙b会用来做数据完整性验证     
+        $keyb = md5(substr($key, 16, 16));
+        // 密匙c用于变化生成的密文     
+        $keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
+        // 参与运算的密匙     
+        $cryptkey = $keya . md5($keya . $keyc);
+        $key_length = strlen($cryptkey);
+        // 明文，前10位用来保存时间戳，解密时验证数据有效性，10到26位用来保存$keyb(密匙b)，   
+        //解密时会通过这个密匙验证数据完整性     
+        // 如果是解码的话，会从第$ckey_length位开始，因为密文前$ckey_length位保存 动态密匙，以保证解密正确     
+        $string = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) :  sprintf('%010d', $expiry ? $expiry + time() : 0) . substr(md5($string . $keyb), 0, 16) . $string;
+        $string_length = strlen($string);
+        $result = '';
+        $box = range(0, 255);
+        $rndkey = array();
+        // 产生密匙簿
+        for ($i = 0; $i <= 255; $i++) {
+            $rndkey[$i] = ord($cryptkey[$i % $key_length]);
+        }
+        // 用固定的算法，打乱密匙簿，增加随机性，好像很复杂，实际上对并不会增加密文的强度     
+        for ($j = $i = 0; $i < 256; $i++) {
+            $j = ($j + $box[$i] + $rndkey[$i]) % 256;
+            $tmp = $box[$i];
+            $box[$i] = $box[$j];
+            $box[$j] = $tmp;
+        }
+        // 核心加解密部分     
+        for ($a = $j = $i = 0; $i < $string_length; $i++) {
+            $a = ($a + 1) % 256;
+            $j = ($j + $box[$a]) % 256;
+            $tmp = $box[$a];
+            $box[$a] = $box[$j];
+            $box[$j] = $tmp;
+            // 从密匙簿得出密匙进行异或，再转成字符     
+            $result .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
+        }
+        if ($operation == 'DECODE') {
+            // 验证数据有效性，请看未加密明文的格式     
+            if ((substr($result, 0, 10) == 0 || substr($result, 0, 10) - time() > 0) &&  substr($result, 10, 16) == substr(md5(substr($result, 26) . $keyb), 0, 16)) {
+                return substr($result, 26);
+            } else {
+                return '';
+            }
+        } else {
+            // 把动态密匙保存在密文里，这也是为什么同样的明文，生产不同密文后能解密的原因     
+            // 因为加密后的密文可能是一些特殊字符，复制过程可能会丢失，所以用base64编码     
+            return $keyc . str_replace('=', '', base64_encode($result));
+        }
+    }
+
+    /**
+     * 判断ip是否在某个网段内
+     *
+     * @param [type] $nowip
+     * @param [type] $dbip
+     */
+    public static function ip_address($nowip, $dbip)
+    {
+        header("Content-type: text/html; charset=utf-8");
+        try {
+            $nowurl = "http://whois.pconline.com.cn/jsAlert.jsp?callback=testJson&ip=" . $nowip;
+            $nowipaddres = file_get_contents($nowurl);
+            $nowhtml = iconv("gb2312", "utf-8//IGNORE", $nowipaddres);
+            $nowaddres = mb_substr($nowhtml, 9, -4);
+            $dburl = "http://whois.pconline.com.cn/jsAlert.jsp?callback=testJson&ip=" . $nowip;
+            $dbipaddres = file_get_contents($dburl);
+            $dbhtml = iconv("gb2312", "utf-8//IGNORE", $dbipaddres);
+            $dbaddres = mb_substr($dbhtml, 9, -4);
+            if ($nowaddres == $dbaddres) {
+                return ["code" => 200, "msg" => $nowaddres];
+            } else {
+                return ["code" => 400, "msg" => $nowaddres];
+            }
+        } catch (\Exception $exception) {
+            return ["code" => 400, "msg" => "未知ip"];
+        }
+    }
+
+    //获取当个ip所在的省份
+    public static function get_ip_address($ip)
+    {
+        //访问api接口获取ip地址http://ip-api.com/json/ip地址?lang=zh-CN
+        //获取当前ip所在的省份
+        $url = "http://whois.pconline.com.cn/jsAlert.jsp?callback=testJson&ip=" . $ip;
+        try {
+            $ipaddres = file_get_contents($url);
+            $iphtml = iconv("gb2312", "utf-8//IGNORE", $ipaddres);
+            $addres = mb_substr($iphtml, 9, -4);
+            return $addres;
+        } catch (\Exception $e) {
+            return '未知ip';
+        }
+    }
+
+    /**
+     * 获取用户真实IP
+     * @param int $type
+     * @param bool $adv
+     */
+    public static function get_user_ip($type = 0, $adv = true)
+    {
+        $type      = $type ? 1 : 0;
+        static $ip = null;
+        if (null !== $ip) {
+            return $ip[$type];
+        }
+
+        if ($adv) {
+            if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+                $pos = array_search('unknown', $arr);
+                if (false !== $pos) {
+                    unset($arr[$pos]);
+                }
+                $ip = trim(current($arr));
+            } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+                $ip = $_SERVER['HTTP_CLIENT_IP'];
+            } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+                $ip = $_SERVER['REMOTE_ADDR'];
+            }
+        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $pos = array_search('unknown', $arr);
+            if (false !== $pos) {
+                unset($arr[$pos]);
+            }
+            $ip = trim(current($arr));
+        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        // IP地址合法验证
+        $long = sprintf("%u", ip2long($ip));
+        $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
+        return $ip[$type];
+    }
+
+    /**
+     * 发送邮箱
+     * @param string $toEmail 发送到邮箱
+     * @param string $emailTitle 发送邮箱标题
+     * @param string $emailContent 发送邮箱内容
+     * @return \think\response\Json
+     */
+    public static function send_mail($toEmail, $emailTitle = '', $emailContent = '')
+    {
+        try {
+            $result = Email::get(1);
+            $mail = new Phpmailer();
+            $mail->isSMTP(); // 使用SMTP服务（发送邮件的服务）
+            $mail->CharSet = "utf8"; // 编码格式为utf8，不设置编码的话，中文会出现乱码
+            $mail->Host = $result['mail_way']; // 发送方的SMTP服务器地址
+            $mail->SMTPAuth = true; // 是否使用身份验证
+            $mail->Username = $result['username']; // 申请了smtp服务的邮箱名（自己的邮箱名）
+            $mail->Password = $result['password']; // 发送方的邮箱密码，不是登录密码,是qq的第三方授权登录码,要自己去开启（之前叫你保存的那个密码）
+            $mail->SMTPSecure = "ssl"; // 使用ssl协议方式,
+            $mail->Port = $result['port']; // QQ邮箱的ssl协议方式端口号是465/587
+            $mail->setFrom($result['username'], $result['email_title']);
+            // 设置发件人信息，如邮件格式说明中的发件人,
+            $mail->addAddress($toEmail); // 设置收件人信息，如邮件格式说明中的收件人
+            //$mail->addReplyTo($test_email['email_user'],"Reply");// 设置回复人信息，指的是收件人收到邮件后，如果要回复，回复邮件将发送到的邮箱地址
+            $mail->Subject = $emailTitle; // 邮件标题
+            $mail->Body = $emailContent; // 邮件正文
+            //配置html格式发送
+            $mail->isHTML(true);
+            //$mail->AltBody = "This is the plain text纯文本";// 这个是设置纯文本方式显示的正文内容，如果不支持Html方式，就会用到这个，基本无用**
+            if (!$mail->send()) { // 发送邮件
+                return self::returnJson(400, $mail->ErrorInfo);
+            } else {
+                return self::returnJson(200, '发送成功');
+            }
+        } catch (\Exception $exception) {
+            return self::returnJson(400, $exception);
+        }
+    }
+
+
+    /**
+     * 随机验证码
+     *
+     * @param [type] $length
+     */
+    public static function getRandChar($length)
+    {
+        $str = null;
+        $strPol = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+        $max = strlen($strPol) - 1;
+        for ($i = 0; $i < $length; $i++) {
+            $str .= $strPol[rand(0, $max)];
+        }
+        return $str;
+    }
+
+    /**
+     * 用户日志方法
+     */
+    public static function userLog($appid, $username, $msg)
+    {
+        $add = [
+            'appid' => $appid,
+            'username' => $username,
+            'msg' => $msg,
+            'creattime' => date('Y-m-d H:i:s', time()),
+            'ip' => self::get_user_ip(),
+        ];
+        db('userlog')->insert($add);
+    }
+
+    public static function lock_url($txt, $key = 'morannn')
+    { //加密
+        $txt = $txt . $key;
+        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=+";
+        $nh = rand(0, 64);
+        $ch = $chars[$nh];
+        $mdKey = md5($key . $ch);
+        $mdKey = substr($mdKey, $nh % 8, $nh % 8 + 7);
+        $txt = base64_encode($txt);
+        $tmp = '';
+        $i = 0;
+        $j = 0;
+        $k = 0;
+        for ($i = 0; $i < strlen($txt); $i++) {
+            $k = $k == strlen($mdKey) ? 0 : $k;
+            $j = ($nh + strpos($chars, $txt[$i]) + ord($mdKey[$k++])) % 64;
+            $tmp .= $chars[$j];
+        }
+        return urlencode(base64_encode($ch . $tmp));
+    }
+
+    //解密函数  
+
+    public static function unlock_url($txt, $key = 'morannn')
+    {
+        $txt = base64_decode(urldecode($txt));
+        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=+";
+        $ch = $txt[0];
+        $nh = strpos($chars, $ch);
+        $mdKey = md5($key . $ch);
+        $mdKey = substr($mdKey, $nh % 8, $nh % 8 + 7);
+        $txt = substr($txt, 1);
+        $tmp = '';
+        $i = 0;
+        $j = 0;
+        $k = 0;
+        for ($i = 0; $i < strlen($txt); $i++) {
+            $k = $k == strlen($mdKey) ? 0 : $k;
+            $j = strpos($chars, $txt[$i]) - $nh - ord($mdKey[$k++]);
+            while ($j < 0) $j += 64;
+            $tmp .= $chars[$j];
+        }
+        return trim(base64_decode($tmp), $key);
+    }
+
+    //在线人数统计
+    public function NowOnline()
+    {
+        $update_time = time();
+        db('useronline')->where('update_time', '<', time())->delete();
+        if (Cookie::has('usertoken')) {
+            $data = [
+                'username' => Cookie::get('username'),
+                'usertoken' => Cookie::get('usertoken'),
+                'appid' => Cookie::get('appid'),
+            ];
+            $update_time = time();
+            $user = User::where('username', $data['username'])->where('appid', $data['appid'])->find();
+            if ($user) {
+                $fupuser = db('useronline')->where('user_id', $user['id'])->where('appid', $data['appid'])->find();
+                if ($fupuser) {
+                    db('useronline')->where('user_id', $user['id'])->where('appid', $data['appid'])->update(['update_time' => $update_time]);
+                } else {
+                    db('useronline')->insert(['user_id' => $user['id'], 'appid' => $data['appid'], 'update_time' => $update_time]);
+                }
+            }
+        }
+    }
+
+    /**
+     * 消息通知系统
+     * msgid 消息类型 1为系统信息 2为点赞消息 3为评论消息 
+     * @param [type] $msgid  消息类型
+     * @param [type] $postid  文章id
+     * @param [type] $userid  用户名
+     * @param [type] $commentid  评论id
+     * @param [type] $username 通知用户
+     * @param [type] $appid 应用id
+     */
+    public static function msg_notification($msgid, $postid, $userid, $commentid, $username, $appid, $creattime)
+    {
+        $msg_notification = new Message();
+        $msg_notification->msgid = $msgid;
+        $msg_notification->postid = $postid;
+        $msg_notification->userid = $userid;
+        $msg_notification->commentid = $commentid;
+        $msg_notification->username = $username;
+        $msg_notification->appid = $appid;
+        $msg_notification->creattime = $creattime;
+        $msg_notification->save();
+    }
+}
